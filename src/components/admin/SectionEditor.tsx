@@ -1,0 +1,395 @@
+"use client";
+
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { ArrowDown, ArrowUp, Check, Trash2 } from "lucide-react";
+
+import { Field, LocaleTabs, inputClass } from "@/components/admin/ui";
+import { saveSectionContent } from "@/lib/admin/actions/pages";
+import { storageUrl } from "@/lib/site";
+
+/**
+ * Friendly editor for one page section's jsonb content, per locale.
+ * Renders typed inputs based on the section type — no raw JSON.
+ */
+
+type Locale = "en" | "sq";
+type Content = Record<string, unknown>;
+type MediaOption = { id: string; storage_path: string; alt_en: string | null };
+
+type Props = {
+  sectionId: string;
+  sectionKey: string;
+  type: string;
+  initial: { en: Content; sq: Content };
+  mediaOptions: MediaOption[];
+};
+
+const SECTION_LABELS: Record<string, string> = {
+  hero: "Hero banner",
+  cards: "Card grid",
+  grid: "Feature grid",
+  "product-grid": "Featured products",
+  faq: "FAQ block",
+  "logo-strip": "Partner logos",
+  counters: "Number counters",
+  location: "Location & hours",
+  cta: "Call to action",
+  "rich-text": "Text block",
+  list: "Bullet list",
+  gallery: "Image gallery",
+  "contact-info": "Contact details",
+};
+
+export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptions }: Props) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [locale, setLocale] = useState<Locale>("en");
+  const [content, setContent] = useState(initial);
+  const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  const current = content[locale];
+  const set = (key: string, value: unknown) => {
+    setStatus("idle");
+    setContent((prev) => ({ ...prev, [locale]: { ...prev[locale], [key]: value } }));
+  };
+  const str = (key: string) => String((current[key] as string | number | undefined) ?? "");
+  const num = (key: string) => Number(current[key] ?? 0);
+  const items = <T,>(key: string): T[] => (Array.isArray(current[key]) ? (current[key] as T[]) : []);
+
+  function save() {
+    setError(null);
+    startTransition(async () => {
+      const result = await saveSectionContent(sectionId, type, content);
+      if (!result.ok) {
+        setStatus("error");
+        setError(result.error);
+        return;
+      }
+      setStatus("saved");
+      router.refresh();
+    });
+  }
+
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-900">
+            {SECTION_LABELS[type] ?? type}
+          </h2>
+          <p className="text-xs text-slate-400">{sectionKey}</p>
+        </div>
+        <LocaleTabs locale={locale} onChange={setLocale} />
+      </div>
+
+      <div className="mt-5 space-y-4">
+        {"heading" in mergeKeys(type) && (
+          <Field label="Heading">
+            <input type="text" value={str("heading")} onChange={(e) => set("heading", e.target.value)} className={inputClass} />
+          </Field>
+        )}
+
+        {type === "hero" && (
+          <>
+            <Field label="Subheading">
+              <textarea rows={2} value={str("subheading")} onChange={(e) => set("subheading", e.target.value)} className={inputClass} />
+            </Field>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Button label">
+                <input type="text" value={str("cta_label")} onChange={(e) => set("cta_label", e.target.value)} className={inputClass} />
+              </Field>
+              <Field label="Phone number">
+                <input type="text" value={str("phone")} onChange={(e) => set("phone", e.target.value)} className={inputClass} />
+              </Field>
+            </div>
+          </>
+        )}
+
+        {(type === "cards" || type === "grid") && (
+          <ItemListEditor
+            items={items<{ title: string; body: string }>("items")}
+            onChange={(next) => set("items", next)}
+            fields={[
+              { key: "title", label: "Title" },
+              { key: "body", label: "Text", rows: 2 },
+            ]}
+            newItem={{ title: "", body: "" }}
+          />
+        )}
+
+        {type === "counters" && (
+          <ItemListEditor
+            items={items<{ label: string; value: string }>("items")}
+            onChange={(next) => set("items", next)}
+            fields={[
+              { key: "value", label: "Value (e.g. 25+)" },
+              { key: "label", label: "Label" },
+            ]}
+            newItem={{ label: "", value: "" }}
+          />
+        )}
+
+        {(type === "cta" || type === "rich-text") && (
+          <Field label="Text">
+            <textarea rows={type === "rich-text" ? 8 : 3} value={str("body")} onChange={(e) => set("body", e.target.value)} className={inputClass} />
+          </Field>
+        )}
+        {type === "cta" && (
+          <Field label="Button label">
+            <input type="text" value={str("cta_label")} onChange={(e) => set("cta_label", e.target.value)} className={inputClass} />
+          </Field>
+        )}
+
+        {type === "list" && (
+          <StringListEditor items={items<string>("items")} onChange={(next) => set("items", next)} />
+        )}
+
+        {(type === "location" || type === "contact-info") && (
+          <>
+            <Field label="Address">
+              <input type="text" value={str("address")} onChange={(e) => set("address", e.target.value)} className={inputClass} />
+            </Field>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Phone">
+                <input type="text" value={str("phone")} onChange={(e) => set("phone", e.target.value)} className={inputClass} />
+              </Field>
+              {type === "contact-info" && (
+                <Field label="Email">
+                  <input type="email" value={str("email")} onChange={(e) => set("email", e.target.value)} className={inputClass} />
+                </Field>
+              )}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Map latitude">
+                <input type="number" step="0.0001" value={num("lat")} onChange={(e) => set("lat", Number(e.target.value))} className={inputClass} />
+              </Field>
+              <Field label="Map longitude">
+                <input type="number" step="0.0001" value={num("lng")} onChange={(e) => set("lng", Number(e.target.value))} className={inputClass} />
+              </Field>
+            </div>
+          </>
+        )}
+
+        {type === "location" && (
+          <ItemListEditor
+            items={items<{ days: string; hours: string }>("hours")}
+            onChange={(next) => set("hours", next)}
+            fields={[
+              { key: "days", label: "Days (e.g. Monday – Friday)" },
+              { key: "hours", label: "Hours (e.g. 08:00 – 17:00)" },
+            ]}
+            newItem={{ days: "", hours: "" }}
+            heading="Opening hours"
+          />
+        )}
+
+        {type === "gallery" && (
+          <MediaMultiPicker
+            selected={items<string>("media_ids")}
+            onChange={(next) => set("media_ids", next)}
+            options={mediaOptions}
+          />
+        )}
+      </div>
+
+      <div className="mt-5 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={save}
+          disabled={pending}
+          className="rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
+        >
+          {pending ? "Saving…" : "Save section"}
+        </button>
+        {status === "saved" && (
+          <span className="inline-flex items-center gap-1 text-sm text-green-700">
+            <Check className="h-4 w-4" aria-hidden /> Saved
+          </span>
+        )}
+        {status === "error" && error && <span className="text-sm text-red-600">{error}</span>}
+      </div>
+    </div>
+  );
+}
+
+/** Which common keys a type uses (heading shown for all current types). */
+function mergeKeys(type: string): Record<string, true> {
+  void type;
+  return { heading: true };
+}
+
+function ItemListEditor<T extends Record<string, string>>({
+  items,
+  onChange,
+  fields,
+  newItem,
+  heading,
+}: {
+  items: T[];
+  onChange: (items: T[]) => void;
+  fields: { key: keyof T & string; label: string; rows?: number }[];
+  newItem: T;
+  heading?: string;
+}) {
+  const move = (index: number, delta: number) => {
+    const target = index + delta;
+    if (target < 0 || target >= items.length) return;
+    const next = [...items];
+    [next[index], next[target]] = [next[target], next[index]];
+    onChange(next);
+  };
+
+  return (
+    <div>
+      {heading && <p className="text-sm font-medium text-slate-900">{heading}</p>}
+      <div className="mt-2 space-y-3">
+        {items.map((item, index) => (
+          <div key={index} className="rounded-md border border-slate-200 p-3">
+            <div className="flex justify-end gap-1">
+              <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Move up" className="p-1 text-slate-400 hover:text-brand-700 disabled:opacity-30">
+                <ArrowUp className="h-3.5 w-3.5" />
+              </button>
+              <button type="button" onClick={() => move(index, 1)} disabled={index === items.length - 1} aria-label="Move down" className="p-1 text-slate-400 hover:text-brand-700 disabled:opacity-30">
+                <ArrowDown className="h-3.5 w-3.5" />
+              </button>
+              <button type="button" onClick={() => onChange(items.filter((_, i) => i !== index))} aria-label="Remove" className="p-1 text-slate-400 hover:text-red-600">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {fields.map((field) =>
+                field.rows ? (
+                  <textarea
+                    key={field.key}
+                    rows={field.rows}
+                    value={item[field.key] ?? ""}
+                    placeholder={field.label}
+                    onChange={(e) =>
+                      onChange(items.map((it, i) => (i === index ? { ...it, [field.key]: e.target.value } : it)))
+                    }
+                    className={`${inputClass} mt-0`}
+                  />
+                ) : (
+                  <input
+                    key={field.key}
+                    type="text"
+                    value={item[field.key] ?? ""}
+                    placeholder={field.label}
+                    onChange={(e) =>
+                      onChange(items.map((it, i) => (i === index ? { ...it, [field.key]: e.target.value } : it)))
+                    }
+                    className={`${inputClass} mt-0`}
+                  />
+                ),
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange([...items, { ...newItem }])}
+        className="mt-2 text-sm font-medium text-brand-700 hover:text-brand-800"
+      >
+        + Add item
+      </button>
+    </div>
+  );
+}
+
+function StringListEditor({
+  items,
+  onChange,
+}: {
+  items: string[];
+  onChange: (items: string[]) => void;
+}) {
+  return (
+    <div>
+      <p className="text-sm font-medium text-slate-900">List items</p>
+      <div className="mt-2 space-y-2">
+        {items.map((item, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <input
+              type="text"
+              value={item}
+              onChange={(e) => onChange(items.map((it, i) => (i === index ? e.target.value : it)))}
+              className={`${inputClass} mt-0 flex-1`}
+            />
+            <button type="button" onClick={() => onChange(items.filter((_, i) => i !== index))} aria-label="Remove" className="p-1.5 text-slate-400 hover:text-red-600">
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange([...items, ""])}
+        className="mt-2 text-sm font-medium text-brand-700 hover:text-brand-800"
+      >
+        + Add item
+      </button>
+    </div>
+  );
+}
+
+function MediaMultiPicker({
+  selected,
+  onChange,
+  options,
+}: {
+  selected: string[];
+  onChange: (ids: string[]) => void;
+  options: MediaOption[];
+}) {
+  const toggle = (id: string) =>
+    onChange(selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]);
+
+  if (options.length === 0) {
+    return (
+      <p className="text-sm text-slate-500">
+        No images in the media library yet — upload some under Media first.
+      </p>
+    );
+  }
+
+  return (
+    <div>
+      <p className="text-sm font-medium text-slate-900">
+        Gallery images <span className="font-normal text-slate-400">({selected.length} selected)</span>
+      </p>
+      <div className="mt-2 grid max-h-72 grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-5">
+        {options.map((media) => {
+          const isSelected = selected.includes(media.id);
+          return (
+            <button
+              key={media.id}
+              type="button"
+              onClick={() => toggle(media.id)}
+              className={`relative aspect-square overflow-hidden rounded-md border-2 ${
+                isSelected ? "border-brand-600" : "border-transparent"
+              }`}
+              title={media.alt_en ?? ""}
+            >
+              <Image
+                src={storageUrl("media", media.storage_path)}
+                alt={media.alt_en ?? ""}
+                fill
+                sizes="120px"
+                className="object-cover"
+              />
+              {isSelected && (
+                <span className="absolute right-1 top-1 rounded-full bg-brand-700 p-0.5 text-white">
+                  <Check className="h-3 w-3" />
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

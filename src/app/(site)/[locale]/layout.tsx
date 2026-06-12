@@ -1,0 +1,120 @@
+import type { Metadata } from "next";
+import { Geist } from "next/font/google";
+import { notFound } from "next/navigation";
+
+import "../../globals.css";
+
+import { JsonLd } from "@/components/JsonLd";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
+import type { Locale } from "@/lib/database.types";
+import { getPage, getSlugMap } from "@/lib/db/content";
+import { getDictionary } from "@/lib/i18n/dictionary";
+import { basePathFor } from "@/lib/i18n/urls";
+import { contactInfoSchema, parseContent } from "@/lib/sections";
+import { ROUTE_SLUGS, SITE_NAME, SITE_URL } from "@/lib/site";
+
+/**
+ * Public site root layout — one per locale ('/' = en, '/sq' = sq, enforced by
+ * proxy.ts). Owns <html lang>. Pages are static, revalidated on demand by
+ * admin saves; the hourly ISR window is a safety net.
+ */
+export const revalidate = 3600;
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const LOCALES: Locale[] = ["en", "sq"];
+
+function isLocale(value: string): value is Locale {
+  return (LOCALES as string[]).includes(value);
+}
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: SITE_NAME,
+    description:
+      locale === "sq"
+        ? `${SITE_NAME} — dritare, dyer & sisteme xhami në Pejë, Kosovë.`
+        : `${SITE_NAME} — windows, doors & glass systems in Pejë, Kosovo.`,
+  };
+}
+
+export default async function SiteLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+
+  const dict = getDictionary(locale);
+  const routes = ROUTE_SLUGS[locale];
+  const basePath = basePathFor(locale);
+
+  // Footer contact details + language-switcher slug map.
+  const [contactPage, slugPairs] = await Promise.all([
+    getPage(locale, "contact"),
+    getSlugMap(),
+  ]);
+  const infoSection = contactPage?.sections.find((s) => s.type === "contact-info");
+  const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
+
+  return (
+    <html lang={locale} className={`${geistSans.variable} h-full`}>
+      <body className="flex min-h-full flex-col">
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            name: SITE_NAME,
+            url: SITE_URL,
+            telephone: info.phone || undefined,
+            email: info.email || undefined,
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Pejë",
+              addressCountry: "XK",
+              streetAddress: info.address || undefined,
+            },
+            geo: { "@type": "GeoCoordinates", latitude: info.lat, longitude: info.lng },
+          }}
+        />
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+        >
+          {dict.common.skipToContent}
+        </a>
+        <Header
+          dict={dict}
+          basePath={basePath}
+          routes={routes}
+          locale={locale}
+          slugPairs={slugPairs}
+        />
+        <main id="main" className="flex-1">{children}</main>
+        <Footer
+          dict={dict}
+          basePath={basePath}
+          routes={routes}
+          contact={{ address: info.address, phone: info.phone, email: info.email }}
+        />
+      </body>
+    </html>
+  );
+}
