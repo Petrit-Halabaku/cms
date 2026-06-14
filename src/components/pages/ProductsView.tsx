@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 
+import { Reveal } from "@/components/motion/Reveal";
+import { PageHero } from "@/components/PageHero";
 import { SectionRenderer } from "@/components/sections/SectionRenderer";
 import type { Locale } from "@/lib/database.types";
 import { getCategories, getPage } from "@/lib/db/content";
@@ -21,38 +23,46 @@ export async function ProductsView({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <header className="bg-brand-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">{page.title}</h1>
-        </div>
-      </header>
+      <PageHero kicker={dict.footer.tagline} title={page.title} />
       {page.sections.map((section) => (
         <SectionRenderer key={section.id} section={section} ctx={ctx} />
       ))}
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+        <Reveal
+          stagger={0.08}
+          className="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {categories.map((category, i) => (
             <Link
               key={category.id}
               href={`${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`}
-              className="group rounded-lg border border-slate-200 bg-white p-6 transition-shadow hover:shadow-md"
+              className="group relative flex min-h-56 flex-col border-r border-b border-line bg-paper p-8 transition-colors duration-300 hover:bg-brand-50/60"
             >
-              <h2 className="text-lg font-semibold text-slate-900 group-hover:text-brand-700">
+              <span
+                aria-hidden
+                className="absolute top-0 left-0 h-0.5 w-0 bg-brand-700 transition-all duration-500 group-hover:w-full"
+              />
+              <p className="font-serif text-sm italic text-brand-700">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h2 className="mt-4 font-display text-xl text-slate-900 transition-colors group-hover:text-brand-700">
                 {category.name}
               </h2>
               {category.description && (
-                <p className="mt-2 text-sm text-slate-600">{category.description}</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-slate-600">
+                  {category.description}
+                </p>
               )}
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
+              <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-brand-700">
                 {dict.common.learnMore}
                 <ArrowRight
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                   aria-hidden
                 />
               </span>
             </Link>
           ))}
-        </div>
+        </Reveal>
       </section>
     </>
   );

@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import { ContactForm } from "@/components/forms/ContactForm";
+import { Reveal } from "@/components/motion/Reveal";
+import { PageHero } from "@/components/PageHero";
 import type { Locale } from "@/lib/database.types";
 import { getPage } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
@@ -16,47 +18,60 @@ export async function ContactView({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <header className="bg-brand-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">{page.title}</h1>
-        </div>
-      </header>
+      <PageHero kicker={dict.footer.tagline} title={page.title} />
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
-        <div>
-          <h2 className="text-xl font-semibold text-slate-900">{info.heading}</h2>
-          <ul className="mt-6 space-y-4 text-slate-600">
-            <li className="flex items-center gap-3">
-              <MapPin className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:px-8">
+        <Reveal>
+          <h2 className="flex items-center gap-3 font-display text-xl text-slate-900">
+            <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
+            {info.heading}
+          </h2>
+          <ul className="mt-8 border-t border-line">
+            <li className="flex items-start gap-3.5 border-b border-line py-4 text-slate-600">
+              <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden />
               {info.address}
             </li>
-            <li className="flex items-center gap-3">
-              <Phone className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
-              <a href={`tel:${info.phone.replace(/\s/g, "")}`} className="hover:text-brand-700">
+            <li className="border-b border-line">
+              <a
+                href={`tel:${info.phone.replace(/\s/g, "")}`}
+                className="flex items-center gap-3.5 py-4 text-slate-600 transition-colors hover:text-brand-700"
+              >
+                <Phone className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
                 {info.phone}
               </a>
             </li>
-            <li className="flex items-center gap-3">
-              <Mail className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
-              <a href={`mailto:${info.email}`} className="hover:text-brand-700">
+            <li className="border-b border-line">
+              <a
+                href={`mailto:${info.email}`}
+                className="flex items-center gap-3.5 py-4 text-slate-600 transition-colors hover:text-brand-700"
+              >
+                <Mail className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
                 {info.email}
               </a>
             </li>
           </ul>
 
           <ContactForm locale={locale} dict={dict} />
-        </div>
+        </Reveal>
 
-        <div className="overflow-hidden rounded-lg bg-slate-100">
-          <iframe
-            title={info.heading}
-            src={`https://www.google.com/maps?q=${info.lat},${info.lng}&z=15&output=embed`}
-            className="h-full min-h-[420px] w-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
-        </div>
+        <Reveal delay={0.15}>
+          <div className="relative h-full">
+            <div
+              aria-hidden
+              className="absolute -top-4 -right-4 h-full w-full border border-brand-200 bg-brand-50"
+            />
+            <div className="relative h-full overflow-hidden border border-line bg-brand-50">
+              <iframe
+                title={info.heading}
+                src={`https://www.google.com/maps?q=${info.lat},${info.lng}&z=15&output=embed`}
+                className="h-full min-h-[420px] w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </Reveal>
       </div>
     </>
   );

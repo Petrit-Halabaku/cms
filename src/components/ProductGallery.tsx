@@ -38,19 +38,22 @@ export function ProductGallery({ images, locale, heading }: Props) {
 
   return (
     <section aria-label={heading}>
-      <h2 className="text-2xl font-bold text-slate-900">{heading}</h2>
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900">
+        <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
+        {heading}
+      </h2>
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {images.map((media, index) => (
           <button
             key={media.id}
             type="button"
-            className="relative aspect-square overflow-hidden rounded-lg bg-slate-100"
+            className="group relative aspect-square overflow-hidden border border-line bg-brand-50"
             onClick={() => setOpenIndex(index)}
           >
             <MediaImage
               media={media}
               locale={locale}
-              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, 25vw"
             />
           </button>

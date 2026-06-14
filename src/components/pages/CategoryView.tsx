@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { Reveal } from "@/components/motion/Reveal";
+import { PageHero } from "@/components/PageHero";
 import { ProductGrid } from "@/components/ProductCard";
 import type { Locale } from "@/lib/database.types";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/content";
@@ -23,23 +25,22 @@ export async function CategoryView({
 
   return (
     <>
-      <header className="bg-brand-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">{category.name}</h1>
-          {category.description && (
-            <p className="mt-4 max-w-2xl text-lg text-slate-600">{category.description}</p>
-          )}
-        </div>
-      </header>
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <PageHero
+        kicker={dict.nav.products}
+        title={category.name}
+        intro={category.description ?? undefined}
+      />
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         {products.length > 0 ? (
-          <ProductGrid
-            products={products}
-            locale={locale}
-            hrefFor={(p) =>
-              `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}/${p.slug}`
-            }
-          />
+          <Reveal stagger={0.08}>
+            <ProductGrid
+              products={products}
+              locale={locale}
+              hrefFor={(p) =>
+                `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}/${p.slug}`
+              }
+            />
+          </Reveal>
         ) : (
           <p className="text-slate-600">{dict.product.noProducts}</p>
         )}

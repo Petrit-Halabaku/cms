@@ -7,7 +7,7 @@ import type { Locale } from "@/lib/database.types";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 
 const inputClass =
-  "mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600";
+  "mt-2 w-full border border-line bg-white px-3.5 py-2.5 text-sm transition-colors focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600";
 
 const initialState: FormState = { status: "idle", message: "" };
 
@@ -24,7 +24,7 @@ export function QuoteForm({ locale, dict, categories }: Props) {
     return (
       <p
         role="status"
-        className="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+        className="border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
       >
         {state.message}
       </p>
@@ -105,14 +105,14 @@ export function QuoteForm({ locale, dict, categories }: Props) {
       </div>
       <p className="text-xs text-slate-500">* {dict.form.requiredHint}</p>
       {state.status === "error" && (
-        <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {state.message}
         </p>
       )}
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 disabled:opacity-50"
+        className="rounded-full bg-brand-700 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-800 disabled:opacity-50"
       >
         {pending ? dict.form.sending : dict.form.submit}
       </button>

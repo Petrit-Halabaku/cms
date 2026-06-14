@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Archivo, Instrument_Serif } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import "../../globals.css";
@@ -21,9 +21,21 @@ import { ROUTE_SLUGS, SITE_NAME, SITE_URL } from "@/lib/site";
  */
 export const revalidate = 3600;
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Archivo's variable width axis gives the slightly-expanded architectural
+// display style (see .font-display); Instrument Serif is the italic accent.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-accent",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 const LOCALES: Locale[] = ["en", "sq"];
@@ -75,7 +87,7 @@ export default async function SiteLayout({
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
 
   return (
-    <html lang={locale} className={`${geistSans.variable} h-full`}>
+    <html lang={locale} className={`${archivo.variable} ${instrumentSerif.variable} h-full`}>
       <body className="flex min-h-full flex-col">
         <JsonLd
           data={{
