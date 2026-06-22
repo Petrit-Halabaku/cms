@@ -8,6 +8,18 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { ROUTE_SLUGS } from "@/lib/site";
 
+/** Stable, locale-independent hero key per category (keyed by the fixed UUID),
+ *  so EN + SQ share one file at /hero/categories/<key>/hero.webp. */
+const CATEGORY_HERO_KEY: Record<string, string> = {
+  "a0000000-0000-4000-8000-000000000001": "windows",
+  "a0000000-0000-4000-8000-000000000002": "doors",
+  "a0000000-0000-4000-8000-000000000003": "sliding-systems",
+  "a0000000-0000-4000-8000-000000000004": "facades",
+  "a0000000-0000-4000-8000-000000000005": "glass",
+  "a0000000-0000-4000-8000-000000000006": "hardware-mechanisms",
+  "a0000000-0000-4000-8000-000000000007": "shading-shutters",
+};
+
 export async function CategoryView({
   locale,
   categorySlug,
@@ -21,6 +33,8 @@ export async function CategoryView({
   const products = await getProductsByCategory(locale, category.id);
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
+  const heroKey = CATEGORY_HERO_KEY[category.id];
+  const heroImage = heroKey ? `/hero/categories/${heroKey}/hero.webp` : undefined;
 
   return (
     <>
@@ -28,6 +42,8 @@ export async function CategoryView({
         kicker={dict.nav.products}
         title={category.name}
         intro={category.description ?? undefined}
+        image={heroImage}
+        imageAlt={category.name}
       />
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         {products.length > 0 ? (

@@ -17,7 +17,12 @@ export async function ContactView({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <PageHero kicker={dict.footer.tagline} title={page.title} />
+      <PageHero
+        kicker={dict.footer.tagline}
+        title={page.title}
+        image="/hero/contact/hero.webp"
+        imageAlt={page.title}
+      />
 
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:px-8">
         <Reveal>

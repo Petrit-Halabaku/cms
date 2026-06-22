@@ -19,10 +19,17 @@ export async function SimplePageView({
   if (!page) notFound();
   const dict = getDictionary(locale);
   const ctx = { locale, basePath: basePathFor(locale), dict };
+  // About gets a full-bleed hero photo; services keeps the plain header.
+  const heroImage = pageKey === "about" ? "/hero/about/hero.webp" : undefined;
 
   return (
     <>
-      <PageHero kicker={dict.footer.tagline} title={page.title} />
+      <PageHero
+        kicker={dict.footer.tagline}
+        title={page.title}
+        image={heroImage}
+        imageAlt={page.title}
+      />
       {page.sections.map((section) => (
         <SectionRenderer key={section.id} section={section} ctx={ctx} />
       ))}
