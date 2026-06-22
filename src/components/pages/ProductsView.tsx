@@ -7,7 +7,7 @@ import type { Locale } from "@/lib/database.types";
 import { getAllProducts, getPage } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
-import { ROUTE_SLUGS } from "@/lib/site";
+import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
 
 export async function ProductsView({ locale }: { locale: Locale }) {
   const [page, products] = await Promise.all([
@@ -24,7 +24,7 @@ export async function ProductsView({ locale }: { locale: Locale }) {
       <PageHero
         kicker={dict.footer.tagline}
         title={page.title}
-        image="/hero/projects/hero.jpg"
+        image={storageUrl("media", "hero/projects.webp")}
         imageAlt="GERGOCI headquarters"
       />
       {page.sections.map((section) => (

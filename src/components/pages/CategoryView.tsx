@@ -6,7 +6,7 @@ import type { Locale } from "@/lib/database.types";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
-import { ROUTE_SLUGS } from "@/lib/site";
+import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
 
 /** Stable, locale-independent hero key per category (keyed by the fixed UUID),
  *  so EN + SQ share one file at /hero/categories/<key>/hero.webp. */
@@ -34,7 +34,7 @@ export async function CategoryView({
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
   const heroKey = CATEGORY_HERO_KEY[category.id];
-  const heroImage = heroKey ? `/hero/categories/${heroKey}/hero.webp` : undefined;
+  const heroImage = heroKey ? storageUrl("media", `hero/categories/${heroKey}.webp`) : undefined;
 
   return (
     <>

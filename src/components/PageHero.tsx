@@ -20,7 +20,7 @@ export function PageHero({ kicker, title, intro, image, imageAlt = "" }: Props) 
 
   return (
     <header
-      className={`relative flex flex-col justify-end overflow-hidden border-b border-line ${hasImage ? "min-h-[50vh] bg-brand-950" : "bg-paper"
+      className={`relative flex flex-col justify-end overflow-hidden border-b border-line ${hasImage ? "min-h-[60vh] bg-brand-950" : "bg-paper"
         }`}
     >
       {hasImage ? (

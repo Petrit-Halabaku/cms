@@ -7,6 +7,7 @@ import type { Locale } from "@/lib/database.types";
 import { getPage } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
+import { storageUrl } from "@/lib/site";
 
 export async function ContactView({ locale }: { locale: Locale }) {
   const page = await getPage(locale, "contact");
@@ -20,7 +21,7 @@ export async function ContactView({ locale }: { locale: Locale }) {
       <PageHero
         kicker={dict.footer.tagline}
         title={page.title}
-        image="/hero/contact/hero.webp"
+        image={storageUrl("media", "hero/contact.webp")}
         imageAlt={page.title}
       />
 
