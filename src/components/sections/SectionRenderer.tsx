@@ -448,28 +448,35 @@ function RichText({ section }: { section: PageSection }) {
   const content = parseContent(richTextSchema, section.content);
   const paragraphs = content.body.split("\n\n").filter(Boolean);
   return (
-    <section className="py-20 sm:py-28">
-      <Container className="grid gap-12 lg:grid-cols-12">
+    <section className="relative overflow-hidden py-20 sm:py-28">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 right-0 h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.28),transparent)]"
+      />
+      <Container className="relative grid gap-12 border-t border-line pt-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
           {content.heading && (
             <div className="lg:sticky lg:top-28">
-              <SectionHeading heading={content.heading} />
+              <span aria-hidden className="block h-px w-12 bg-brand-700" />
+              <SectionHeading heading={content.heading} className="mt-6" />
             </div>
           )}
         </div>
-        <Reveal className="space-y-5 lg:col-span-7 lg:col-start-6">
-          {paragraphs.map((paragraph, i) => (
-            <p
-              key={i}
-              className={
-                i === 0
-                  ? "text-xl leading-relaxed text-slate-700"
-                  : "leading-relaxed text-slate-600"
-              }
-            >
-              {paragraph}
-            </p>
-          ))}
+        <Reveal className="space-y-6 lg:col-span-8 lg:col-start-5">
+          {paragraphs.map((paragraph, i) =>
+            i === 0 ? (
+              <p
+                key={i}
+                className="border-l-2 border-brand-700 pl-6 font-display text-2xl leading-snug text-justify text-slate-900 sm:text-3xl"
+              >
+                {paragraph}
+              </p>
+            ) : (
+              <p key={i} className="max-w-2xl text-lg leading-relaxed text-slate-600">
+                {paragraph}
+              </p>
+            ),
+          )}
         </Reveal>
       </Container>
     </section>

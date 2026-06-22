@@ -21,7 +21,12 @@ export async function ProductsView({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <PageHero kicker={dict.footer.tagline} title={page.title} />
+      <PageHero
+        kicker={dict.footer.tagline}
+        title={page.title}
+        image="/hero/projects/hero.jpg"
+        imageAlt="GERGOCI headquarters"
+      />
       {page.sections.map((section) => (
         <SectionRenderer key={section.id} section={section} ctx={ctx} />
       ))}
