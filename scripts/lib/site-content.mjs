@@ -167,22 +167,6 @@ export const SECTIONS = {
     mode: "full",
     ...counters(COUNTER_NOTE),
   },
-  // Home closing CTA — repointed to Call-now after the Get-a-Quote feature was removed.
-  // Must match what scripts/_remove-quote applied to the live DB so re-running
-  // fill-content stays idempotent (does NOT revert to a quote CTA).
-  "d0000000-0000-4000-8000-000000000109": {
-    mode: "full",
-    en: {
-      heading: "Ready to start?",
-      body: "Call us and we'll talk through your windows, doors or glass project.",
-      cta_label: "Call now",
-    },
-    sq: {
-      heading: "Gati për të filluar?",
-      body: "Na telefononi dhe do të bisedojmë për projektin tuaj — dritare, dyer ose xham.",
-      cta_label: "Telefono tani",
-    },
-  },
   // ---- about -------------------------------------------------------------
   "d0000000-0000-4000-8000-000000000201": {
     mode: "full",

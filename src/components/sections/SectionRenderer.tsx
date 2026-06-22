@@ -105,16 +105,19 @@ function MullionLines() {
 function SectionHeading({
   heading,
   className = "",
+  dark = false,
 }: {
   heading: string;
   className?: string;
+  /** Light heading text for dark (navy) section backgrounds. */
+  dark?: boolean;
 }) {
   return (
     <div className={`flex items-start gap-4 ${className}`}>
       <span aria-hidden className="mt-2.5 block h-3.5 w-3.5 shrink-0 bg-brand-700 sm:mt-3.5" />
       <SplitHeading
         text={heading}
-        className="font-display text-3xl text-slate-900 sm:text-4xl"
+        className={`font-display text-3xl sm:text-4xl ${dark ? "text-white" : "text-slate-900"}`}
       />
     </div>
   );
@@ -253,11 +256,16 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
   const faqs = await getFaqs(ctx.locale);
   if (faqs.length === 0) return null;
   return (
-    <section className="bg-mist py-20 sm:py-28">
-      <Container className="grid gap-12 lg:grid-cols-12">
+    <section className="relative overflow-hidden bg-brand-950 py-20 sm:py-28">
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
+        <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
+        <span className="absolute top-0 left-3/4 h-full w-px bg-white/5" />
+      </div>
+      <Container className="relative grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
-            <SectionHeading heading={content.heading} />
+            <SectionHeading heading={content.heading} dark />
           </div>
         </div>
         <Reveal className="lg:col-span-8">

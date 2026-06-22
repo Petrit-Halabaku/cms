@@ -22,7 +22,10 @@ export default function AdminRootLayout({
 }) {
   return (
     <html lang="en" className={`${archivo.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-slate-50">{children}</body>
+      {/* suppressHydrationWarning: browser extensions inject attributes onto <body>. */}
+      <body className="flex min-h-full flex-col bg-slate-50" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

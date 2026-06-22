@@ -70,8 +70,8 @@ export const contactInfoSchema = z.object({
   address: z.string().default(""),
   phone: z.string().default(""),
   email: z.string().default(""),
-  lat: z.number().default(42.6548),
-  lng: z.number().default(20.3172),
+  lat: z.number().default(Number(process.env.NEXT_PUBLIC_MAP_LAT)),
+  lng: z.number().default(Number(process.env.NEXT_PUBLIC_MAP_LNG)),
 });
 
 export type HeroContent = z.infer<typeof heroSchema>;

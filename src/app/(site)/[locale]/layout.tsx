@@ -88,7 +88,10 @@ export default async function SiteLayout({
 
   return (
     <html lang={locale} className={`${archivo.variable} ${instrumentSerif.variable} h-full`}>
-      <body className="flex min-h-full flex-col">
+      {/* suppressHydrationWarning: browser extensions (Grammarly, etc.) inject
+          attributes onto <body> on the client, which React would otherwise flag
+          as a hydration mismatch. Scoped to this element only. */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <JsonLd
           data={{
             "@context": "https://schema.org",
