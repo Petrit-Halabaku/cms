@@ -1,0 +1,258 @@
+{
+  "note": "Albanian rows pending native-speaker review.",
+  "products": [
+    {
+      "slug": "salamander-bluevolution-82-md",
+      "title": "Salamander bluEvolution 82 MD",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "salamander-bluevolution-92",
+      "title": "Salamander bluEvolution 92",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "salamander-bluevolution-92-entrance-door",
+      "title": "Salamander bluEvolution 92 (entrance door)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "salamander-bluevolution-82-entrance-door",
+      "title": "Salamander bluEvolution 82 (entrance door)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "salamander-evolutiondrive-hst",
+      "title": "Salamander evolutionDrive HST",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "salamander-evolutiondrive-plus",
+      "title": "Salamander evolutionDrive plus",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "salamander-evolutiondrive-60",
+      "title": "Salamander evolutionDrive 60",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "alumil-smartia-s77",
+      "title": "Alumil Smartia S77",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "alumil-smartia-s67",
+      "title": "Alumil Smartia S67",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "feal-termo-85-vs-and-vp",
+      "title": "Feal Termo 85 VS and VP",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "alumil-supreme-s700",
+      "title": "Alumil Supreme S700",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "alumil-smartia-s560",
+      "title": "Alumil Smartia S560",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "alumil-smartia-m7",
+      "title": "Alumil Smartia M7",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "guardian-low-e-glass",
+      "title": "Guardian Low-E glass",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "guardian-solar-control-glass",
+      "title": "Guardian Solar Control glass",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "guardian-laminated-glass",
+      "title": "Guardian Laminated glass",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "maco-protect-door-lock",
+      "title": "MACO Protect cylinder-operated door lock",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "maco-multi-matic-iq",
+      "title": "MACO Multi Matic IQ (Turn-Tilt)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "maco-multi-power",
+      "title": "MACO Multi Power (Turn-Tilt, concealed)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "maco-multi-mammut",
+      "title": "MACO Multi Mammut (Turn-Tilt, heavy-duty)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "somfy-j4-wt",
+      "title": "Somfy J4 WT motor (external venetian blinds)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "stoma-av-900-and-av-700",
+      "title": "Stoma AV-900 and AV-700 (external venetian blinds)",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    },
+    {
+      "slug": "exte-xt-roller-shutter-boxes",
+      "title": "Exte XT roller-shutter box systems",
+      "fields": [
+        "title",
+        "body",
+        "facts (values)"
+      ],
+      "spec_labels_in_english": [],
+      "note": "SQ title/body translator-authored; confirm with a native speaker. Spec values are shared EN/SQ; listed spec labels fell back to English."
+    }
+  ]
+}

@@ -8,7 +8,6 @@ export type Dictionary = {
     services: string;
     products: string;
     contact: string;
-    getQuote: string;
   };
   header: { menuLabel: string };
   footer: {
@@ -61,7 +60,6 @@ const en: Dictionary = {
     services: "Services",
     products: "Products",
     contact: "Contact",
-    getQuote: "Get a Quote",
   },
   header: { menuLabel: "Menu" },
   footer: {
@@ -114,7 +112,6 @@ const sq: Dictionary = {
     services: "Shërbimet",
     products: "Produktet",
     contact: "Kontakti",
-    getQuote: "Kërko Ofertë",
   },
   header: { menuLabel: "Menyja" },
   footer: {

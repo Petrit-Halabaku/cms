@@ -92,11 +92,25 @@ export default async function SiteLayout({
         <JsonLd
           data={{
             "@context": "https://schema.org",
-            "@type": "LocalBusiness",
+            "@type": "Organization",
+            "@id": `${SITE_URL}/#organization`,
             name: SITE_NAME,
             url: SITE_URL,
+            logo: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
+          }}
+        />
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "@id": `${SITE_URL}/#localbusiness`,
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
+            image: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
             telephone: info.phone || undefined,
             email: info.email || undefined,
+            areaServed: "Kosovo",
             address: {
               "@type": "PostalAddress",
               addressLocality: "Pejë",
@@ -118,6 +132,7 @@ export default async function SiteLayout({
           routes={routes}
           locale={locale}
           slugPairs={slugPairs}
+          phone={info.phone || undefined}
         />
         <main id="main" className="flex-1">{children}</main>
         <Footer

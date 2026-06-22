@@ -7,7 +7,7 @@ export const metadata = { title: "Dashboard — Gergoci Admin" };
 export default async function AdminDashboard() {
   const { supabase } = await requireEditor();
 
-  const [products, published, categories, media, unread] = await Promise.all([
+  const [products, published, categories, media] = await Promise.all([
     supabase.from("projects").select("*", { count: "exact", head: true }),
     supabase
       .from("projects")
@@ -15,18 +15,12 @@ export default async function AdminDashboard() {
       .eq("published", true),
     supabase.from("project_categories").select("*", { count: "exact", head: true }),
     supabase.from("media").select("*", { count: "exact", head: true }),
-    supabase
-      .from("form_submissions")
-      .select("*", { count: "exact", head: true })
-      .eq("is_read", false)
-      .eq("is_archived", false),
   ]);
 
   const cards = [
     { label: "Products", value: products.count ?? 0, sub: `${published.count ?? 0} published`, href: "/admin/products" },
     { label: "Categories", value: categories.count ?? 0, sub: "product categories", href: "/admin/categories" },
     { label: "Media files", value: media.count ?? 0, sub: "in the library", href: "/admin/media" },
-    { label: "Unread submissions", value: unread.count ?? 0, sub: "contact & quote forms", href: "/admin/submissions" },
   ];
 
   return (
@@ -47,8 +41,8 @@ export default async function AdminDashboard() {
       </div>
       <p className="mt-8 max-w-xl text-sm text-slate-500">
         Content edits are published to the live site immediately after saving.
-        Use the navigation on the left to manage products, page content, media
-        and incoming form submissions.
+        Use the navigation on the left to manage products, page content,
+        media, partners and FAQs.
       </p>
     </div>
   );

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { ContactView } from "@/components/pages/ContactView";
 import { ProductsView } from "@/components/pages/ProductsView";
-import { QuoteView } from "@/components/pages/QuoteView";
 import { SimplePageView } from "@/components/pages/SimplePageView";
 import type { Locale } from "@/lib/database.types";
 import {
@@ -50,8 +49,6 @@ export default async function TopLevelPage({ params }: Props) {
       return <ProductsView locale={locale} />;
     case "contact":
       return <ContactView locale={locale} />;
-    case "get-quote":
-      return <QuoteView locale={locale} />;
     default:
       notFound();
   }

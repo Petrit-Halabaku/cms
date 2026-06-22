@@ -16,7 +16,7 @@ import {
 } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
-import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import { ROUTE_SLUGS, SITE_URL, storageUrl } from "@/lib/site";
 
 export async function ProductView({
   locale,
@@ -46,6 +46,12 @@ export async function ProductView({
     .map((image) => image.media)
     .filter((media): media is NonNullable<typeof media> => media !== null);
   const categoryHref = `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`;
+  const productUrl = `${SITE_URL}${categoryHref}/${product.slug}`;
+  const schemaImages = galleryMedia.length
+    ? galleryMedia.map((m) => storageUrl("media", m.storage_path))
+    : featured
+      ? [storageUrl("media", featured.storage_path)]
+      : undefined;
 
   return (
     <>
@@ -53,13 +59,25 @@ export async function ProductView({
         data={{
           "@context": "https://schema.org",
           "@type": "Product",
+          "@id": `${productUrl}#product`,
           name: product.title,
           description: product.seoDescription ?? product.body?.slice(0, 200) ?? undefined,
           category: category.name,
-          ...(featured && {
-            image: storageUrl("media", featured.storage_path),
-          }),
-          brand: { "@type": "Organization", name: "Gergoci" },
+          url: productUrl,
+          ...(schemaImages && { image: schemaImages }),
+          ...(product.brand && { brand: { "@type": "Brand", name: product.brand } }),
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: dict.nav.home, item: `${SITE_URL}${basePath}/` },
+            { "@type": "ListItem", position: 2, name: dict.nav.products, item: `${SITE_URL}${basePath}/${ROUTE_SLUGS[locale].products}` },
+            { "@type": "ListItem", position: 3, name: category.name, item: `${SITE_URL}${categoryHref}` },
+            { "@type": "ListItem", position: 4, name: product.title, item: productUrl },
+          ],
         }}
       />
       <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">

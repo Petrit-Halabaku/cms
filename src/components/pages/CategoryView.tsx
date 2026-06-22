@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 
-import { Reveal } from "@/components/motion/Reveal";
 import { PageHero } from "@/components/PageHero";
-import { ProductGrid } from "@/components/ProductCard";
+import { ProductFilter } from "@/components/ProductFilter";
 import type { Locale } from "@/lib/database.types";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
@@ -32,15 +31,11 @@ export async function CategoryView({
       />
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         {products.length > 0 ? (
-          <Reveal stagger={0.08}>
-            <ProductGrid
-              products={products}
-              locale={locale}
-              hrefFor={(p) =>
-                `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}/${p.slug}`
-              }
-            />
-          </Reveal>
+          <ProductFilter
+            products={products}
+            locale={locale}
+            hrefBase={`${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`}
+          />
         ) : (
           <p className="text-slate-600">{dict.product.noProducts}</p>
         )}

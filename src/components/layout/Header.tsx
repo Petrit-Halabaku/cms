@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { Menu, Phone, X } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { gsap, prefersReducedMotion, useGSAP } from "@/components/motion/gsap";
@@ -22,24 +22,27 @@ type Props = {
     services: string;
     products: string;
     contact: string;
-    getQuote: string;
   };
   locale: Locale;
   slugPairs: SlugPair[];
+  /** Business phone for the click-to-call CTA. */
+  phone?: string;
 };
 
 function Wordmark({ basePath }: { basePath: string }) {
   return (
     <Link href={`${basePath}/`} className="group flex items-center gap-2.5">
-      <span className="grid h-8 w-8 place-items-center bg-brand-700 font-display text-base text-white transition-colors group-hover:bg-brand-800">
-        G
-      </span>
+      <span
+        aria-hidden
+        className="h-8 w-8 bg-contain bg-center bg-no-repeat transition-transform group-hover:scale-105"
+        style={{ backgroundImage: "url(/brand/gergoci-symbol-color.svg)" }}
+      />
       <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
     </Link>
   );
 }
 
-export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props) {
+export function Header({ dict, basePath = "", routes, locale, slugPairs, phone }: Props) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -95,7 +98,7 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
     <>
     <header
       className={`sticky top-0 z-40 border-b transition-all duration-300 ${
-        scrolled ? "border-line bg-paper/90 shadow-[0_1px_0_0_rgba(23,43,102,0.04)] backdrop-blur-md" : "border-transparent"
+        scrolled ? "border-line bg-paper/90 shadow-[0_1px_0_0_rgba(1,38,83,0.07)] backdrop-blur-md" : "border-transparent"
       }`}
     >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -113,16 +116,15 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
               {item.label}
             </Link>
           ))}
-          <Link
-            href={`${basePath}/${routes.getQuote}`}
-            className="group inline-flex items-center gap-1.5 rounded-full bg-brand-700 py-2 pr-3.5 pl-4.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
-          >
-            {dict.nav.getQuote}
-            <ArrowUpRight
-              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden
-            />
-          </Link>
+          {phone && (
+            <a
+              href={`tel:${phone.replace(/\s/g, "")}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-brand-700 py-2 pr-4.5 pl-4 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+            >
+              <Phone className="h-4 w-4" aria-hidden />
+              {dict.common.callNow}
+            </a>
+          )}
           <LanguageSwitcher locale={locale} slugPairs={slugPairs} />
         </nav>
 
@@ -156,9 +158,11 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
 
           <div className="flex h-18 items-center justify-between px-4 sm:px-6">
             <Link href={`${basePath}/`} onClick={() => setOpen(false)} className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center bg-white font-display text-base text-brand-800">
-                G
-              </span>
+              <span
+                aria-hidden
+                className="h-8 w-8 bg-contain bg-center bg-no-repeat"
+                style={{ backgroundImage: "url(/brand/gergoci-symbol-white.webp)" }}
+              />
               <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
             </Link>
             <button
@@ -191,14 +195,16 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
           </nav>
 
           <div data-menu-foot className="border-t border-white/10 px-6 py-6">
-            <Link
-              href={`${basePath}/${routes.getQuote}`}
-              className="flex w-full items-center justify-between rounded-full bg-white px-6 py-3.5 font-display text-base text-brand-800"
-              onClick={() => setOpen(false)}
-            >
-              {dict.nav.getQuote}
-              <ArrowUpRight className="h-5 w-5" aria-hidden />
-            </Link>
+            {phone && (
+              <a
+                href={`tel:${phone.replace(/\s/g, "")}`}
+                className="flex w-full items-center justify-between rounded-full bg-white px-6 py-3.5 font-display text-base text-brand-800"
+                onClick={() => setOpen(false)}
+              >
+                {dict.common.callNow}
+                <Phone className="h-5 w-5" aria-hidden />
+              </a>
+            )}
             <LanguageSwitcher
               locale={locale}
               slugPairs={slugPairs}

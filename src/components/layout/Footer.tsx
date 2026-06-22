@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME } from "@/lib/site";
@@ -12,7 +12,6 @@ type Props = {
     services: string;
     products: string;
     contact: string;
-    getQuote: string;
   };
   contact: { address: string; phone: string; email: string };
 };
@@ -32,30 +31,31 @@ export function Footer({ dict, basePath = "", routes, contact }: Props) {
         <span className="absolute left-1/4 top-0 h-full w-px bg-white/4" />
         <span className="absolute left-2/4 top-0 h-full w-px bg-white/4" />
         <span className="absolute left-3/4 top-0 h-full w-px bg-white/4" />
-        <div className="absolute -top-32 right-0 h-64 w-2/3 bg-[radial-gradient(closest-side,rgba(29,78,216,0.25),transparent)]" />
+        <div className="absolute -top-32 right-0 h-64 w-2/3 bg-[radial-gradient(closest-side,rgba(0,64,255,0.28),transparent)]" />
       </div>
 
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 pt-20 pb-16 sm:px-6 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-5">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 place-items-center bg-white font-display text-lg text-brand-800">
-              G
-            </span>
+            <span
+              aria-hidden
+              className="h-9 w-9 bg-contain bg-center bg-no-repeat"
+              style={{ backgroundImage: "url(/brand/gergoci-symbol-white.webp)" }}
+            />
             <span className="font-display text-xl tracking-tight">{SITE_NAME.toUpperCase()}</span>
           </div>
           <p className="mt-5 max-w-xs font-serif text-xl italic text-brand-100/80">
             {dict.footer.tagline}
           </p>
-          <Link
-            href={`${basePath}/${routes.getQuote}`}
-            className="group mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-white hover:bg-white hover:text-brand-900"
-          >
-            {dict.nav.getQuote}
-            <ArrowUpRight
-              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden
-            />
-          </Link>
+          {contact.phone && (
+            <a
+              href={`tel:${contact.phone.replace(/\s/g, "")}`}
+              className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-white hover:bg-white hover:text-brand-900"
+            >
+              <Phone className="h-4 w-4" aria-hidden />
+              {dict.common.callNow}
+            </a>
+          )}
         </div>
 
         <nav aria-label={dict.footer.quickLinks} className="lg:col-span-3">

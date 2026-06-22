@@ -36,6 +36,8 @@ type Ctx = {
   locale: Locale;
   basePath: string;
   dict: Dictionary;
+  /** Business phone for click-to-call CTAs. */
+  phone?: string;
 };
 
 /** Renders one page_sections row by its `type`. Unknown types render nothing. */
@@ -125,7 +127,7 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
       <MullionLines />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-48 -left-48 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(219,230,246,0.8),transparent)]"
+        className="pointer-events-none absolute -top-48 -left-48 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.5),transparent)]"
       />
 
       <Container className="relative grid gap-16 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:py-28">
@@ -251,7 +253,7 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
   const faqs = await getFaqs(ctx.locale);
   if (faqs.length === 0) return null;
   return (
-    <section className="py-20 sm:py-28">
+    <section className="bg-mist py-20 sm:py-28">
       <Container className="grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
@@ -306,7 +308,7 @@ function Counters({ section }: { section: PageSection }) {
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/5" />
-        <div className="absolute -bottom-32 left-0 h-64 w-1/2 bg-[radial-gradient(closest-side,rgba(29,78,216,0.2),transparent)]" />
+        <div className="absolute -bottom-32 left-0 h-64 w-1/2 bg-[radial-gradient(closest-side,rgba(0,64,255,0.22),transparent)]" />
       </div>
       <Container className="relative">
         {content.heading && (
@@ -328,7 +330,7 @@ function Counters({ section }: { section: PageSection }) {
                 value={item.value}
                 className="font-display text-5xl text-white sm:text-6xl"
               />
-              <p className="mt-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-brand-100/70 uppercase">
+              <p className="mt-3 text-[0.6875rem] font-semibold tracking-[0.24em] text-accent/80 uppercase">
                 {item.label}
               </p>
             </div>
@@ -416,16 +418,26 @@ function QuoteCta({ section, ctx }: { section: PageSection; ctx: Ctx }) {
           </Reveal>
         )}
         <Reveal delay={0.3} y={20}>
-          <Link
-            href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].getQuote}`}
-            className="group mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
-          >
-            {content.cta_label || ctx.dict.nav.getQuote}
-            <ArrowUpRight
-              className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden
-            />
-          </Link>
+          {ctx.phone ? (
+            <a
+              href={`tel:${ctx.phone.replace(/\s/g, "")}`}
+              className="mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
+            >
+              <Phone className="h-5 w-5" aria-hidden />
+              {content.cta_label || ctx.dict.common.callNow}
+            </a>
+          ) : (
+            <Link
+              href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].contact}`}
+              className="group mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
+            >
+              {ctx.dict.nav.contact}
+              <ArrowUpRight
+                className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden
+              />
+            </Link>
+          )}
         </Reveal>
       </Container>
     </section>

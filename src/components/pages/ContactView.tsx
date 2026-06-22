@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-import { ContactForm } from "@/components/forms/ContactForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { PageHero } from "@/components/PageHero";
 import type { Locale } from "@/lib/database.types";
@@ -50,8 +49,6 @@ export async function ContactView({ locale }: { locale: Locale }) {
               </a>
             </li>
           </ul>
-
-          <ContactForm locale={locale} dict={dict} />
         </Reveal>
 
         <Reveal delay={0.15}>

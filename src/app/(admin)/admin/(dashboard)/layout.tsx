@@ -5,7 +5,6 @@ import {
   FolderTree,
   HelpCircle,
   Image as ImageIcon,
-  Inbox,
   Handshake,
   LayoutDashboard,
   LogOut,
@@ -28,7 +27,6 @@ const NAV = [
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/pages", label: "Pages", icon: FileText },
   { href: "/admin/media", label: "Media", icon: ImageIcon },
-  { href: "/admin/submissions", label: "Submissions", icon: Inbox },
   { href: "/admin/partners", label: "Partners", icon: Handshake },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
 ];
@@ -38,13 +36,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { supabase, user } = await requireEditor();
-
-  const { count: unread } = await supabase
-    .from("form_submissions")
-    .select("*", { count: "exact", head: true })
-    .eq("is_read", false)
-    .eq("is_archived", false);
+  const { user } = await requireEditor();
 
   return (
     <div className="flex min-h-screen">
@@ -66,11 +58,6 @@ export default async function DashboardLayout({
                 <item.icon className="h-4 w-4" aria-hidden />
                 {item.label}
               </span>
-              {item.href === "/admin/submissions" && (unread ?? 0) > 0 && (
-                <span className="rounded-full bg-brand-700 px-2 py-0.5 text-xs font-semibold text-white">
-                  {unread}
-                </span>
-              )}
             </Link>
           ))}
         </nav>

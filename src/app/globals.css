@@ -1,16 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand: white base, one deep blue accent, dark slate text — hues unchanged,
-     range extended with a deep navy ink for dark bands. */
-  --color-brand-50: #eff4fb;
-  --color-brand-100: #dbe6f6;
-  --color-brand-200: #c3d5ef;
-  --color-brand-600: #1d4ed8;
-  --color-brand-700: #1e40af;
-  --color-brand-800: #1e3a8a;
-  --color-brand-900: #172b66;
-  --color-brand-950: #0c142e;
+  /* GERGOCI brand palette (canonical). The three official hex from the brand
+     guide, plus the Navy surface and Mist the guide omits. Contrast: white text
+     on Primary/Navy/Ink only — never on Accent; dark text on Accent/Mist. */
+  --color-primary: #0040ff; /* GERGOCI Blue — CTAs, links, accents */
+  --color-accent: #8dd7f7; /* Light Blue — dark text only on it */
+  --color-ink: #3f3f41; /* Dark Grey — body text */
+  --color-navy: #012653; /* Deep Navy — hero, footer, dark surfaces */
+  --color-mist: #ebedec; /* light section background */
+
+  /* Brand ramp re-anchored to the GERGOCI hues so the existing brand-* utilities
+     adopt the palette automatically: 700 = GERGOCI Blue, 900/950 = Deep Navy. */
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #cfe0ff;
+  --color-brand-200: #aecbff;
+  --color-brand-600: #1e54ff;
+  --color-brand-700: #0040ff;
+  --color-brand-800: #0033cc;
+  --color-brand-900: #012653;
+  --color-brand-950: #01173a;
 
   /* Surfaces & hairlines */
   --color-paper: #fafbfd;
@@ -53,7 +62,7 @@
 }
 
 body {
-  @apply bg-paper text-slate-800 font-sans antialiased;
+  @apply bg-paper text-ink font-sans antialiased;
 }
 
 ::selection {
