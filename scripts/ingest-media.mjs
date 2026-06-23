@@ -1,7 +1,10 @@
 /**
  * Ingest curated product images into the Supabase `media` bucket + project_images.
  *
- * Drop files as:  media-import/<product-slug>/NN.ext   (NN = order; 01 = featured)
+ * Drop files anywhere under  media-import/<product-slug>/...  — top-level files
+ * (e.g. a `<slug>-header.*`) become the featured image; everything in nested
+ * folders (e.g. `gallery/`, `gallery/diagrams/`) is pulled in too, in folder order,
+ * with its relative path preserved under products/<slug>/... in storage.
  * Re-runnable: media rows upsert by storage_path; a product's project_images are
  * rebuilt from its folder each run, so adding files just extends the gallery.
  *
@@ -13,7 +16,7 @@
  * Reads NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from .env.local.
  */
 import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
-import { resolve, join } from "node:path";
+import { resolve, join, relative } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { imageSize, mimeFromExt } from "./lib/image-dimensions.mjs";
 
@@ -23,6 +26,26 @@ const onlySlug = process.argv.find((a) => a.startsWith("--slug="))?.split("=")[1
   ?? (process.argv.includes("--slug") ? process.argv[process.argv.indexOf("--slug") + 1] : null);
 const IMPORT_DIR = join(ROOT, "media-import");
 const IMG_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
+
+// Recursively collects image files under `dir`, returning paths relative to `dir`
+// (posix-separated), ordered root-first so a top-level header file sorts before
+// anything in a subfolder like gallery/ — that file becomes the featured image.
+function walkImages(dir, base = dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    if (entry.startsWith(".")) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) {
+      out.push(...walkImages(full, base));
+    } else if (IMG_RE.test(entry)) {
+      out.push(relative(base, full).split("\\").join("/"));
+    }
+  }
+  return out.sort((a, b) => {
+    const depthDiff = a.split("/").length - b.split("/").length;
+    return depthDiff !== 0 ? depthDiff : a.localeCompare(b);
+  });
+}
 
 function loadEnvLocal() {
   const env = {};
@@ -49,7 +72,7 @@ const slugs = (onlySlug ? [onlySlug] : readdirSync(IMPORT_DIR))
 let uploaded = 0, linkedProducts = 0, emptyFolders = 0;
 for (const slug of slugs) {
   const folder = join(IMPORT_DIR, slug);
-  const files = readdirSync(folder).filter((f) => IMG_RE.test(f)).sort();
+  const files = walkImages(folder);
   if (!files.length) { emptyFolders++; continue; }
 
   const { data: trs, error: trErr } = await supabase
