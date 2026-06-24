@@ -1,5 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, MapPin, Phone, Plus } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Layers,
+  MapPin,
+  PanelTop,
+  Phone,
+  RefreshCw,
+  Settings,
+  Wrench,
+} from "lucide-react";
 
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { MediaImage } from "@/components/MediaImage";
@@ -502,29 +512,85 @@ function RichText({ section }: { section: PageSection }) {
   );
 }
 
+const MAINTENANCE_ICONS = [Wrench, RefreshCw, Settings, Layers, PanelTop] as const;
+
 function ListSection({ section }: { section: PageSection }) {
   const content = parseContent(listSchema, section.content);
   if (content.items.length === 0) return null;
+
+  const isProcess = section.key === "installation";
+
+  if (isProcess) {
+    return (
+      <section className="relative bg-paper py-20 sm:py-28">
+        <MullionLines />
+        <Container className="relative grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-4">
+            {content.heading && (
+              <div className="lg:sticky lg:top-28">
+                <SectionHeading heading={content.heading} />
+              </div>
+            )}
+          </div>
+          <Reveal stagger={0.08} className="lg:col-span-8">
+            <ol className="relative border-l border-line pl-8 sm:pl-10">
+              {content.items.map((item, i) => (
+                <li
+                  key={i}
+                  className="relative pb-10 last:pb-0"
+                >
+                  <span
+                    aria-hidden
+                    className="absolute -left-8 flex h-6 w-6 -translate-x-1/2 items-center justify-center bg-brand-700 sm:-left-10 sm:h-7 sm:w-7"
+                  >
+                    <span className="font-serif text-[0.625rem] font-medium text-white sm:text-xs">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </span>
+                  <p className="font-display text-lg leading-snug text-slate-900 sm:text-xl">
+                    {item}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+        </Container>
+      </section>
+    );
+  }
+
   return (
-    <section className="py-14">
-      <Container>
-        {content.heading && (
-          <SplitHeading
-            text={content.heading}
-            as="h2"
-            className="font-display text-2xl text-slate-900 sm:text-3xl"
-          />
-        )}
-        <Reveal stagger={0.06} className="mt-8 grid max-w-4xl gap-x-12 sm:grid-cols-2">
-          {content.items.map((item, i) => (
-            <p
-              key={i}
-              className="flex items-start gap-3 border-t border-line py-4 text-slate-600"
-            >
-              <Plus className="mt-1 h-4 w-4 shrink-0 text-brand-700" aria-hidden />
-              {item}
-            </p>
-          ))}
+    <section className="border-y border-line bg-white py-20 sm:py-28">
+      <Container className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="lg:col-span-4">
+          {content.heading && (
+            <div className="lg:sticky lg:top-28">
+              <SectionHeading heading={content.heading} />
+            </div>
+          )}
+        </div>
+        <Reveal
+          stagger={0.07}
+          className="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:col-span-8"
+        >
+          {content.items.map((item, i) => {
+            const Icon = MAINTENANCE_ICONS[i % MAINTENANCE_ICONS.length];
+            return (
+              <div
+                key={i}
+                className="group relative border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/50 sm:p-8"
+              >
+                <span
+                  aria-hidden
+                  className="absolute top-0 left-0 h-0.5 w-0 bg-brand-700 transition-all duration-500 group-hover:w-full"
+                />
+                <Icon className="h-5 w-5 text-brand-700" aria-hidden />
+                <p className="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
+                  {item}
+                </p>
+              </div>
+            );
+          })}
         </Reveal>
       </Container>
     </section>
