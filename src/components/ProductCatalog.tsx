@@ -123,12 +123,13 @@ export function ProductCatalog({
 
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((p) => (
+            {filtered.map((p, index) => (
               <ProductCard
                 key={p.id}
                 product={p}
                 locale={locale}
                 href={`${hrefBase}/${p.categorySlug}/${p.slug}`}
+                priority={index === 0}
               />
             ))}
           </div>

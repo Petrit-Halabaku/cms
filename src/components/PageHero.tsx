@@ -30,6 +30,7 @@ export function PageHero({ kicker, title, intro, image, imageAlt = "" }: Props) 
             alt={imageAlt}
             fill
             priority
+            loading="eager"
             sizes="100vw"
             // Center the photo so the GERGOCI logo on the building stays in frame.
             className="object-cover object-top"

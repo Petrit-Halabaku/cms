@@ -44,7 +44,8 @@ export async function ProductView({
     product.images.find((i) => i.is_featured)?.media ?? product.images[0]?.media ?? null;
   const galleryMedia = product.images
     .map((image) => image.media)
-    .filter((media): media is NonNullable<typeof media> => media !== null);
+    .filter((media): media is NonNullable<typeof media> => media !== null)
+    .filter((media) => media.id !== featured?.id);
   const categoryHref = `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`;
   const productUrl = `${SITE_URL}${categoryHref}/${product.slug}`;
   const schemaImages = galleryMedia.length
@@ -95,27 +96,25 @@ export async function ProductView({
 
       <article className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <Reveal y={24}>
-            <div className="relative">
-              <div
-                aria-hidden
-                className="absolute -top-4 -left-4 h-full w-full border border-brand-200 bg-brand-50"
-              />
-              <div className="relative flex aspect-4/3 items-center justify-center overflow-hidden border border-line bg-brand-50">
-                {featured ? (
-                  <MediaImage
-                    media={featured}
-                    locale={locale}
-                    className="h-full w-full object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                  />
-                ) : (
-                  <ImageOff className="h-14 w-14 text-brand-200" aria-hidden />
-                )}
-              </div>
+          <div className="relative">
+            <div
+              aria-hidden
+              className="absolute -top-4 -left-4 h-full w-full border border-brand-200 bg-brand-50"
+            />
+            <div className="relative flex aspect-4/3 items-center justify-center overflow-hidden border border-line bg-brand-50">
+              {featured ? (
+                <MediaImage
+                  media={featured}
+                  locale={locale}
+                  className="h-full w-full object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                />
+              ) : (
+                <ImageOff className="h-14 w-14 text-brand-200" aria-hidden />
+              )}
             </div>
-          </Reveal>
+          </div>
 
           <div>
             <p className="kicker">{category.name}</p>

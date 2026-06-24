@@ -19,6 +19,7 @@ type Props = {
 export function MediaImage({ media, locale, className, sizes, priority }: Props) {
   const src = storageUrl("media", media.storage_path);
   const alt = (locale === "sq" ? media.alt_sq : media.alt_en) ?? "";
+  const loading = priority ? "eager" : undefined;
 
   if (media.width && media.height) {
     return (
@@ -30,11 +31,20 @@ export function MediaImage({ media, locale, className, sizes, priority }: Props)
         className={className}
         sizes={sizes}
         priority={priority}
+        loading={loading}
       />
     );
   }
 
   return (
-    <Image src={src} alt={alt} fill className={className} sizes={sizes} priority={priority} />
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={className}
+      sizes={sizes}
+      priority={priority}
+      loading={loading}
+    />
   );
 }

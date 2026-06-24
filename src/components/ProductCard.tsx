@@ -9,9 +9,10 @@ type Props = {
   product: ProductListItem;
   href: string;
   locale: Locale;
+  priority?: boolean;
 };
 
-export function ProductCard({ product, href, locale }: Props) {
+export function ProductCard({ product, href, locale, priority }: Props) {
   return (
     <Link
       href={href}
@@ -24,6 +25,7 @@ export function ProductCard({ product, href, locale }: Props) {
             locale={locale}
             className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
           />
         ) : (
           <ImageOff className="h-10 w-10 text-brand-200" aria-hidden />
@@ -52,8 +54,14 @@ export function ProductGrid({
 }) {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} href={hrefFor(product)} locale={locale} />
+      {products.map((product, index) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          href={hrefFor(product)}
+          locale={locale}
+          priority={index === 0}
+        />
       ))}
     </div>
   );
