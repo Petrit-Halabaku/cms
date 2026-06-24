@@ -30,7 +30,7 @@ export async function ProductsView({ locale }: { locale: Locale }) {
       {page.sections.map((section) => (
         <SectionRenderer key={section.id} section={section} ctx={ctx} />
       ))}
-      <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
         <ProductCatalog
           products={products}
           locale={locale}

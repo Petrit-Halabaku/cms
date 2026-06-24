@@ -81,7 +81,7 @@ export async function ProductView({
           ],
         }}
       />
-      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
         <Link
           href={categoryHref}
           className="group inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-brand-700"
@@ -94,7 +94,7 @@ export async function ProductView({
         </Link>
       </div>
 
-      <article className="mx-auto max-w-7xl px-4 pt-8 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+      <article className="mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6 sm:pb-16 lg:px-8">
         <div className="grid gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="relative">
             <div
@@ -145,7 +145,7 @@ export async function ProductView({
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-10 inline-flex items-center gap-2.5 rounded-full border border-brand-700 px-6 py-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-700 hover:text-white"
+                  className="mt-8 inline-flex items-center gap-2.5 rounded-full border border-brand-700 px-6 py-3 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-700 hover:text-white"
                 >
                   <FileDown className="h-4 w-4" aria-hidden />
                   {dict.product.downloadBrochure}
@@ -158,7 +158,7 @@ export async function ProductView({
         {product.facts.length > 0 && (
           <Reveal y={18}>
             <section
-              className="mt-16 border-t border-line pt-14 sm:mt-24 sm:pt-16"
+              className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12"
               aria-label={dict.product.specs}
             >
               <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
@@ -169,7 +169,7 @@ export async function ProductView({
                   fact. One readable column on phones; flows into 2–3 columns from
                   sm up (CSS columns) so long lists stay tight. Long values wrap to
                   their own line under the label instead of crowding. */}
-              <dl className="mt-8 columns-1 gap-x-10 sm:mt-10 sm:columns-2 lg:columns-3">
+              <dl className="mt-6 columns-1 gap-x-10 sm:mt-8 sm:columns-2 lg:columns-3">
                 {product.facts.map((fact) => (
                   <div
                     key={fact.id}
@@ -185,13 +185,13 @@ export async function ProductView({
         )}
 
         {galleryMedia.length > 1 && (
-          <div className="mt-16 border-t border-line pt-14 sm:mt-24 sm:pt-16">
+          <div className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12">
             <ProductGallery images={galleryMedia} locale={locale} heading={dict.product.gallery} />
           </div>
         )}
 
         {related.length > 0 && (
-          <section className="mt-16 border-t border-line pt-14 sm:mt-24 sm:pt-16" aria-label={dict.product.related}>
+          <section className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12" aria-label={dict.product.related}>
             <SplitHeading
               text={dict.product.related}
               className="font-display text-2xl text-slate-900 sm:text-3xl"

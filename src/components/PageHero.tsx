@@ -48,7 +48,7 @@ export function PageHero({ kicker, title, intro, image, imageAlt = "" }: Props) 
             <div className="absolute -top-40 -left-40 h-112 w-md rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.45),transparent)]" />
           </div>
       )}
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {kicker && (
           <Reveal y={12}>
             <p className={`kicker ${hasImage ? "text-brand-100" : ""}`}>{kicker}</p>

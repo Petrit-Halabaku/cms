@@ -25,7 +25,7 @@ export async function ContactView({ locale }: { locale: Locale }) {
         imageAlt={page.title}
       />
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-8">
         <Reveal>
           <h2 className="flex items-center gap-3 font-display text-xl text-slate-900">
             <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />

@@ -143,7 +143,7 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
         className="pointer-events-none absolute -top-48 -left-48 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.5),transparent)]"
       />
 
-      <Container className="relative grid gap-16 py-20 sm:py-24 lg:grid-cols-12 lg:items-center lg:py-28">
+      <Container className="relative grid gap-12 py-12 sm:py-16 lg:grid-cols-12 lg:items-center lg:py-20">
         <div className="lg:col-span-7">
           <Reveal y={14}>
             <p className="kicker">{ctx.dict.footer.tagline}</p>
@@ -163,7 +163,7 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
               </p>
             </Reveal>
           )}
-          <Reveal delay={0.65} y={20} className="mt-10 flex flex-wrap items-center gap-4">
+          <Reveal delay={0.65} y={20} className="mt-8 flex flex-wrap items-center gap-4">
             {content.phone && (
               <a
                 href={`tel:${content.phone.replace(/\s/g, "")}`}
@@ -199,12 +199,12 @@ function Cards({ section, columns }: { section: PageSection; columns: 3 | 4 }) {
   if (content.items.length === 0) return null;
   const cols = columns === 3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4";
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-12 sm:py-16">
       <Container>
         {content.heading && <SectionHeading heading={content.heading} />}
         <Reveal
           stagger={0.1}
-          className={`mt-12 grid grid-cols-1 border-t border-l border-line ${cols}`}
+          className={`mt-8 grid grid-cols-1 border-t border-l border-line ${cols}`}
         >
           {content.items.map((item, i) => (
             <div key={item.title} className="group relative border-r border-b border-line bg-paper p-8 transition-colors duration-300 hover:bg-brand-50/60">
@@ -230,7 +230,7 @@ async function FeaturedProducts({ section, ctx }: { section: PageSection; ctx: C
   const products = await getFeaturedProducts(ctx.locale, 6);
   if (products.length === 0) return null;
   return (
-    <section className="border-y border-line bg-white py-20 sm:py-28">
+    <section className="border-y border-line bg-white py-12 sm:py-16">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading heading={content.heading} />
@@ -245,7 +245,7 @@ async function FeaturedProducts({ section, ctx }: { section: PageSection; ctx: C
             />
           </Link>
         </div>
-        <div className="mt-12">
+        <div className="mt-8">
           <ProductGrid
             products={products}
             locale={ctx.locale}
@@ -266,7 +266,7 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
   const faqs = await getFaqs(ctx.locale);
   if (faqs.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-20 sm:py-28">
+    <section className="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
@@ -321,7 +321,7 @@ function Counters({ section }: { section: PageSection }) {
   const content = parseContent(countersSchema, section.content);
   if (content.items.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-20 sm:py-24">
+    <section className="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
@@ -337,7 +337,7 @@ function Counters({ section }: { section: PageSection }) {
         )}
         <Reveal
           stagger={0.12}
-          className="mt-14 grid grid-cols-2 gap-y-12 lg:grid-cols-4"
+          className="mt-8 grid grid-cols-2 gap-y-12 lg:grid-cols-4"
         >
           {content.items.map((item) => (
             <div
@@ -362,10 +362,10 @@ function Counters({ section }: { section: PageSection }) {
 function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const content = parseContent(locationSchema, section.content);
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-12 sm:py-16">
       <Container>
         <SectionHeading heading={content.heading} />
-        <Reveal className="mt-12 grid border-t border-l border-line sm:grid-cols-2">
+        <Reveal className="mt-8 grid border-t border-l border-line sm:grid-cols-2">
           <div className="space-y-5 border-r border-b border-line bg-paper p-8 sm:p-10">
             <p className="flex items-start gap-3 text-slate-600">
               <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden />
@@ -436,7 +436,7 @@ function QuoteCta({ section, ctx }: { section: PageSection; ctx: Ctx }) {
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/8" />
         <div className="absolute -top-24 right-0 h-72 w-2/3 bg-[radial-gradient(closest-side,rgba(255,255,255,0.12),transparent)]" />
       </div>
-      <Container className="relative py-24 sm:py-32">
+      <Container className="relative py-16 sm:py-20">
         <SplitHeading
           text={content.heading}
           className="max-w-3xl font-display text-4xl leading-[0.95] text-white sm:text-5xl lg:text-6xl"
@@ -450,7 +450,7 @@ function QuoteCta({ section, ctx }: { section: PageSection; ctx: Ctx }) {
           {ctx.phone ? (
             <a
               href={`tel:${ctx.phone.replace(/\s/g, "")}`}
-              className="mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
+              className="mt-8 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
             >
               <Phone className="h-5 w-5" aria-hidden />
               {content.cta_label || ctx.dict.common.callNow}
@@ -458,7 +458,7 @@ function QuoteCta({ section, ctx }: { section: PageSection; ctx: Ctx }) {
           ) : (
             <Link
               href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].contact}`}
-              className="group mt-10 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
+              className="group mt-8 inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 font-display text-base text-brand-800 transition-transform duration-300 hover:scale-[1.03]"
             >
               {ctx.dict.nav.contact}
               <ArrowUpRight
@@ -477,12 +477,12 @@ function RichText({ section }: { section: PageSection }) {
   const content = parseContent(richTextSchema, section.content);
   const paragraphs = content.body.split("\n\n").filter(Boolean);
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28">
+    <section className="relative overflow-hidden pt-10 pb-12 sm:pt-14 sm:pb-16">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 right-0 h-[26rem] w-[26rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.28),transparent)]"
       />
-      <Container className="relative grid gap-12 border-t border-line pt-12 lg:grid-cols-12 lg:gap-16">
+      <Container className="relative grid gap-x-12 gap-y-8 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
           {content.heading && (
             <div className="lg:sticky lg:top-28">
@@ -522,7 +522,7 @@ function ListSection({ section }: { section: PageSection }) {
 
   if (isProcess) {
     return (
-      <section className="relative bg-paper py-20 sm:py-28">
+      <section className="relative bg-paper py-12 sm:py-16">
         <MullionLines />
         <Container className="relative grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
@@ -560,7 +560,7 @@ function ListSection({ section }: { section: PageSection }) {
   }
 
   return (
-    <section className="border-y border-line bg-white py-20 sm:py-28">
+    <section className="border-y border-line bg-white py-12 sm:py-16">
       <Container className="grid gap-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
           {content.heading && (
@@ -602,10 +602,10 @@ async function GallerySection({ section, ctx }: { section: PageSection; ctx: Ctx
   const media = await getMediaByIds(content.media_ids);
   if (media.length === 0) return null;
   return (
-    <section className="py-20 sm:py-28">
+    <section className="py-12 sm:py-16">
       <Container>
         {content.heading && <SectionHeading heading={content.heading} />}
-        <Reveal stagger={0.08} className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <Reveal stagger={0.08} className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {media.map((item) => (
             <div key={item.id} className="group relative aspect-square overflow-hidden bg-brand-50">
               <MediaImage
