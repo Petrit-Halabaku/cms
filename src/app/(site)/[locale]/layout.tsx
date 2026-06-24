@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import type { Locale } from "@/lib/database.types";
-import { getPage, getSlugMap } from "@/lib/db/content";
+import { getCategories, getPage, getSlugMap } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
@@ -79,9 +79,10 @@ export default async function SiteLayout({
   const basePath = basePathFor(locale);
 
   // Footer contact details + language-switcher slug map.
-  const [contactPage, slugPairs] = await Promise.all([
+  const [contactPage, slugPairs, categories] = await Promise.all([
     getPage(locale, "contact"),
     getSlugMap(),
+    getCategories(locale),
   ]);
   const infoSection = contactPage?.sections.find((s) => s.type === "contact-info");
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
@@ -136,6 +137,7 @@ export default async function SiteLayout({
           locale={locale}
           slugPairs={slugPairs}
           phone={info.phone || undefined}
+          categories={categories.map(({ name, slug }) => ({ name, slug }))}
         />
         <main id="main" className="flex-1">{children}</main>
         <Footer

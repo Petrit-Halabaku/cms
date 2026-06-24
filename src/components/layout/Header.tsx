@@ -12,6 +12,8 @@ import type { SlugPair } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME } from "@/lib/site";
 
+type NavCategory = { name: string; slug: string };
+
 type Props = {
   dict: Dictionary;
   /** Locale-prefixed base path, "" for en, "/sq" for sq. */
@@ -27,7 +29,60 @@ type Props = {
   slugPairs: SlugPair[];
   /** Business phone for the click-to-call CTA. */
   phone?: string;
+  categories?: NavCategory[];
 };
+
+const navLinkClass = (active: boolean) =>
+  `relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-brand-700 after:transition-transform after:duration-300 hover:text-brand-700 hover:after:origin-left hover:after:scale-x-100 ${
+    active ? "text-brand-700 after:scale-x-100" : "text-slate-700"
+  }`;
+
+function ProductsNavItem({
+  href,
+  label,
+  active,
+  categories,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  categories: NavCategory[];
+}) {
+  if (categories.length === 0) {
+    return (
+      <Link href={href} className={navLinkClass(active)}>
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="group/products relative">
+      <Link href={href} className={navLinkClass(active)} aria-haspopup="true">
+        {label}
+      </Link>
+      <div className="pointer-events-none absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-200 group-hover/products:pointer-events-auto group-hover/products:opacity-100 group-focus-within/products:pointer-events-auto group-focus-within/products:opacity-100">
+        <ul
+          role="menu"
+          aria-label={label}
+          className="overflow-hidden rounded-lg border border-line bg-paper py-1 shadow-[0_8px_30px_rgba(1,38,83,0.12)]"
+        >
+          {categories.map((category) => (
+            <li key={category.slug} role="none">
+              <Link
+                href={`${href}/${category.slug}`}
+                role="menuitem"
+                className="block px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
+              >
+                {category.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 function Wordmark({ basePath }: { basePath: string }) {
   return (
@@ -42,17 +97,19 @@ function Wordmark({ basePath }: { basePath: string }) {
   );
 }
 
-export function Header({ dict, basePath = "", routes, locale, slugPairs, phone }: Props) {
+export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, categories = [] }: Props) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement>(null);
 
+  const productsHref = `${basePath}/${routes.products}`;
+
   const items = [
     { href: `${basePath}/`, label: dict.nav.home },
     { href: `${basePath}/${routes.about}`, label: dict.nav.about },
     { href: `${basePath}/${routes.services}`, label: dict.nav.services },
-    { href: `${basePath}/${routes.products}`, label: dict.nav.products },
+    { href: productsHref, label: dict.nav.products, categories },
     { href: `${basePath}/${routes.contact}`, label: dict.nav.contact },
   ];
 
@@ -105,17 +162,21 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs, phone }
         <Wordmark basePath={basePath} />
 
         <nav className="hidden items-center gap-7 md:flex" aria-label={dict.header.menuLabel}>
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-brand-700 after:transition-transform after:duration-300 hover:text-brand-700 hover:after:origin-left hover:after:scale-x-100 ${
-                isActive(item.href) ? "text-brand-700 after:scale-x-100" : "text-slate-700"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {items.map((item) =>
+            item.categories ? (
+              <ProductsNavItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                active={isActive(item.href)}
+                categories={item.categories}
+              />
+            ) : (
+              <Link key={item.href} href={item.href} className={navLinkClass(isActive(item.href))}>
+                {item.label}
+              </Link>
+            ),
+          )}
           {phone && (
             <a
               href={`tel:${phone.replace(/\s/g, "")}`}
@@ -177,20 +238,36 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs, phone }
 
           <nav className="flex flex-1 flex-col justify-center gap-1 px-6" aria-label={dict.header.menuLabel}>
             {items.map((item, i) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                data-menu-item
-                className={`flex items-baseline gap-4 py-2.5 font-display text-4xl tracking-tight transition-colors ${
-                  isActive(item.href) ? "text-white" : "text-white/55 hover:text-white"
-                }`}
-                onClick={() => setOpen(false)}
-              >
-                <span className="font-serif text-sm font-normal italic text-brand-100/60">
-                  0{i + 1}
-                </span>
-                {item.label}
-              </Link>
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  data-menu-item
+                  className={`flex items-baseline gap-4 py-2.5 font-display text-4xl tracking-tight transition-colors ${
+                    isActive(item.href) ? "text-white" : "text-white/55 hover:text-white"
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  <span className="font-serif text-sm font-normal italic text-brand-100/60">
+                    0{i + 1}
+                  </span>
+                  {item.label}
+                </Link>
+                {item.categories && item.categories.length > 0 && (
+                  <ul className="mb-2 ml-10 space-y-1 border-l border-white/10 pl-4">
+                    {item.categories.map((category) => (
+                      <li key={category.slug}>
+                        <Link
+                          href={`${item.href}/${category.slug}`}
+                          className="block py-1.5 text-base text-white/45 transition-colors hover:text-white"
+                          onClick={() => setOpen(false)}
+                        >
+                          {category.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             ))}
           </nav>
 

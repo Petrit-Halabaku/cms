@@ -11,6 +11,9 @@ export async function uploadFile(
   bucket: "media" | "brochures",
   file: File,
 ): Promise<{ path: string } | { error: string }> {
+  if (bucket === "media" && file.type !== "image/webp") {
+    return { error: "Only WebP images are allowed." };
+  }
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "bin";
   const safeBase = file.name
     .replace(/\.[^.]+$/, "")
