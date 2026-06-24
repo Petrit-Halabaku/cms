@@ -27,7 +27,7 @@ const ROOT = process.cwd();
 const APPLY = process.argv.includes("--apply");
 const onlySlug = process.argv.find((a) => a.startsWith("--slug="))?.split("=")[1]
   ?? (process.argv.includes("--slug") ? process.argv[process.argv.indexOf("--slug") + 1] : null);
-const IMG_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
+const IMG_RE = /\.webp$/i;
 
 function loadEnvLocal() {
   const env = {};

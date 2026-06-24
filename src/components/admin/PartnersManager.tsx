@@ -102,7 +102,7 @@ export function PartnersManager({ partners }: { partners: PartnerRow[] }) {
               <Upload className="h-3.5 w-3.5" aria-hidden /> Logo
               <input
                 type="file"
-                accept="image/*"
+                accept="image/webp,.webp"
                 className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0];

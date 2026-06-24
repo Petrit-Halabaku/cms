@@ -2,7 +2,7 @@
  * Ingest About-page gallery photos into the Supabase `media` bucket and set the
  * about gallery section's media_ids (so GallerySection renders them).
  *
- * Drop files in:  media-import/_about-gallery/*.(webp|jpg|png)
+ * Drop files in:  media-import/_about-gallery/*.webp
  * Re-runnable: media rows upsert by storage_path; section media_ids are rebuilt
  * from the folder each run (order = filename sort).
  *
@@ -21,7 +21,7 @@ const ROOT = process.cwd();
 const APPLY = process.argv.includes("--apply");
 const FOLDER = join(ROOT, "media-import", "_about-gallery");
 const GALLERY_SECTION = "d0000000-0000-4000-8000-000000000203";
-const IMG_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
+const IMG_RE = /\.webp$/i;
 
 function loadEnvLocal() {
   const env = {};

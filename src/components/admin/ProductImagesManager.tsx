@@ -117,7 +117,7 @@ export function ProductImagesManager({ productId, images }: Props) {
           {uploading ? "Uploading…" : "Upload images"}
           <input
             type="file"
-            accept="image/*"
+            accept="image/webp,.webp"
             multiple
             onChange={onUpload}
             disabled={uploading}

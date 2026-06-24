@@ -26,7 +26,7 @@ import { mimeFromExt } from "./lib/image-dimensions.mjs";
 const ROOT = process.cwd();
 const APPLY = process.argv.includes("--apply");
 const DIR = join(ROOT, "media-import", "_hero");
-const IMG_RE = /\.(webp|jpe?g|png|avif)$/i;
+const IMG_RE = /\.webp$/i;
 
 function loadEnvLocal() {
   const env = {};
