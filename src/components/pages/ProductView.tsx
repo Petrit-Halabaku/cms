@@ -81,7 +81,7 @@ export async function ProductView({
           ],
         }}
       />
-      <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-10 lg:px-8">
         <Link
           href={categoryHref}
           className="group inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-brand-700"
@@ -94,8 +94,8 @@ export async function ProductView({
         </Link>
       </div>
 
-      <article className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <article className="mx-auto max-w-7xl px-4 pt-8 pb-20 sm:px-6 sm:pb-28 lg:px-8">
+        <div className="grid gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="relative">
             <div
               aria-hidden
@@ -135,27 +135,6 @@ export async function ProductView({
               </Reveal>
             )}
 
-            {product.facts.length > 0 && (
-              <Reveal delay={0.4} y={18}>
-                <section className="mt-10" aria-label={dict.product.specs}>
-                  <h2 className="flex items-center gap-3 font-display text-lg text-slate-900">
-                    <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
-                    {dict.product.specs}
-                  </h2>
-                  <table className="mt-5 w-full text-sm">
-                    <tbody>
-                      {product.facts.map((fact) => (
-                        <tr key={fact.id} className="border-b border-line">
-                          <td className="py-3 pr-4 font-semibold text-slate-900">{fact.label}</td>
-                          <td className="py-3 text-slate-600">{fact.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-              </Reveal>
-            )}
-
             {product.brochureUrl && (
               <Reveal delay={0.5} y={14}>
                 <a
@@ -176,14 +155,43 @@ export async function ProductView({
           </div>
         </div>
 
+        {product.facts.length > 0 && (
+          <Reveal y={18}>
+            <section
+              className="mt-16 border-t border-line pt-14 sm:mt-24 sm:pt-16"
+              aria-label={dict.product.specs}
+            >
+              <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
+                <span aria-hidden className="block h-3 w-3 bg-brand-700" />
+                {dict.product.specs}
+              </h2>
+              {/* Mobile-first spec sheet: a clean, scannable label → value row per
+                  fact. One readable column on phones; flows into 2–3 columns from
+                  sm up (CSS columns) so long lists stay tight. Long values wrap to
+                  their own line under the label instead of crowding. */}
+              <dl className="mt-8 columns-1 gap-x-10 sm:mt-10 sm:columns-2 lg:columns-3">
+                {product.facts.map((fact) => (
+                  <div
+                    key={fact.id}
+                    className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5 break-inside-avoid border-b border-line py-3.5"
+                  >
+                    <dt className="text-sm text-slate-500">{fact.label}</dt>
+                    <dd className="text-sm font-semibold text-slate-900">{fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          </Reveal>
+        )}
+
         {galleryMedia.length > 1 && (
-          <div className="mt-20">
+          <div className="mt-16 border-t border-line pt-14 sm:mt-24 sm:pt-16">
             <ProductGallery images={galleryMedia} locale={locale} heading={dict.product.gallery} />
           </div>
         )}
 
         {related.length > 0 && (
-          <section className="mt-20 border-t border-line pt-14" aria-label={dict.product.related}>
+          <section className="mt-16 border-t border-line pt-14 sm:mt-24 sm:pt-16" aria-label={dict.product.related}>
             <SplitHeading
               text={dict.product.related}
               className="font-display text-2xl text-slate-900 sm:text-3xl"
