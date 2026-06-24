@@ -48,6 +48,13 @@ function ProductsNavItem({
   active: boolean;
   categories: NavCategory[];
 }) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [pathname]);
+
   if (categories.length === 0) {
     return (
       <Link href={href} className={navLinkClass(active)}>
@@ -56,12 +63,32 @@ function ProductsNavItem({
     );
   }
 
+  const closeDropdown = () => setDropdownOpen(false);
+
   return (
-    <div className="group/products relative">
-      <Link href={href} className={navLinkClass(active)} aria-haspopup="true">
+    <div
+      className="relative"
+      onMouseEnter={() => setDropdownOpen(true)}
+      onMouseLeave={closeDropdown}
+      onFocus={() => setDropdownOpen(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) closeDropdown();
+      }}
+    >
+      <Link
+        href={href}
+        className={navLinkClass(active)}
+        aria-haspopup="true"
+        aria-expanded={dropdownOpen}
+        onClick={closeDropdown}
+      >
         {label}
       </Link>
-      <div className="pointer-events-none absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 opacity-0 transition-opacity duration-200 group-hover/products:pointer-events-auto group-hover/products:opacity-100 group-focus-within/products:pointer-events-auto group-focus-within/products:opacity-100">
+      <div
+        className={`absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 transition-opacity duration-200 ${
+          dropdownOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
         <ul
           role="menu"
           aria-label={label}
@@ -73,6 +100,7 @@ function ProductsNavItem({
                 href={`${href}/${category.slug}`}
                 role="menuitem"
                 className="block px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
+                onClick={closeDropdown}
               >
                 {category.name}
               </Link>
