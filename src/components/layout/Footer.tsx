@@ -13,7 +13,7 @@ type Props = {
     products: string;
     contact: string;
   };
-  contact: { address: string; phone: string; email: string };
+  contact: { address: string; phone: string; phone2?: string; email: string };
 };
 
 export function Footer({ dict, basePath = "", routes, contact }: Props) {
@@ -90,6 +90,17 @@ export function Footer({ dict, basePath = "", routes, contact }: Props) {
                 {contact.phone}
               </a>
             </li>
+            {contact.phone2 && (
+              <li>
+                <a
+                  href={`tel:${contact.phone2.replace(/\s/g, "")}`}
+                  className="flex items-center gap-2.5 transition-colors hover:text-white"
+                >
+                  <Phone className="h-4 w-4 shrink-0 text-brand-100/60" aria-hidden />
+                  {contact.phone2}
+                </a>
+              </li>
+            )}
             <li>
               <a
                 href={`mailto:${contact.email}`}

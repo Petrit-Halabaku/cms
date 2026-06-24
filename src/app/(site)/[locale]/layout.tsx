@@ -144,7 +144,7 @@ export default async function SiteLayout({
           dict={dict}
           basePath={basePath}
           routes={routes}
-          contact={{ address: info.address, phone: info.phone, email: info.email }}
+          contact={{ address: info.address, phone: info.phone, phone2: info.phone2, email: info.email }}
         />
       </body>
     </html>

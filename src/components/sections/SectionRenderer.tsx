@@ -370,6 +370,17 @@ function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
                 >
                   {content.phone}
                 </a>
+                {content.phone2 && (
+                  <>
+                    <span aria-hidden className="text-slate-300">·</span>
+                    <a
+                      href={`tel:${content.phone2.replace(/\s/g, "")}`}
+                      className="transition-colors hover:text-brand-700"
+                    >
+                      {content.phone2}
+                    </a>
+                  </>
+                )}
               </p>
             )}
             <a

@@ -67,14 +67,18 @@ const COUNTER_NOTE = "TODO: confirm the years-of-experience and projects-complet
 export const SECTIONS = {
   // ---- home --------------------------------------------------------------
   "d0000000-0000-4000-8000-000000000101": {
-    mode: "patch", // preserve heading, cta_label, phone, _note
+    mode: "patch", // preserve heading, cta_label; set real phone, clear TODO note
     en: {
       subheading:
         "Premium PVC and aluminium systems — supplied, fabricated and fitted to measure for homes and businesses across Kosovo.",
+      phone: "+383 45 701 302",
+      _note: "",
     },
     sq: {
       subheading:
         "Sisteme premium nga PVC-ja dhe alumini — të furnizuara, prodhuara dhe montuara sipas masës për shtëpi dhe biznese në mbarë Kosovën.",
+      phone: "+383 45 701 302",
+      _note: "",
     },
   },
   "d0000000-0000-4000-8000-000000000102": {
@@ -337,6 +341,40 @@ export const SECTIONS = {
     sq: {
       heading: "Kërkoni një ofertë",
       body: "Na dërgoni detajet e projektit tuaj dhe ne do t'ju kthehemi me një ofertë të personalizuar, pa detyrime.",
+    },
+  },
+  // ---- home: location & hours (real address + phones; hours/coords kept) ----
+  "d0000000-0000-4000-8000-000000000108": {
+    mode: "patch",
+    en: {
+      address: "Rruga Kombëtarja 2014, No. 33, 30000 Pejë, Kosovo",
+      phone: "+383 45 701 302",
+      phone2: "+383 44 701 299",
+      _note: "",
+    },
+    sq: {
+      address: "Rruga Kombëtarja 2014, Nr. 33, 30000 Pejë, Kosovë",
+      phone: "+383 45 701 302",
+      phone2: "+383 44 701 299",
+      _note: "",
+    },
+  },
+  // ---- contact page: info (real address, phones, email; heading/coords kept) -
+  "d0000000-0000-4000-8000-000000000501": {
+    mode: "patch",
+    en: {
+      address: "Rruga Kombëtarja 2014, No. 33, 30000 Pejë, Kosovo",
+      phone: "+383 45 701 302",
+      phone2: "+383 44 701 299",
+      email: "info@gergoci.eu",
+      _note: "",
+    },
+    sq: {
+      address: "Rruga Kombëtarja 2014, Nr. 33, 30000 Pejë, Kosovë",
+      phone: "+383 45 701 302",
+      phone2: "+383 44 701 299",
+      email: "info@gergoci.eu",
+      _note: "",
     },
   },
 };

@@ -45,6 +45,17 @@ export async function ContactView({ locale }: { locale: Locale }) {
                 {info.phone}
               </a>
             </li>
+            {info.phone2 && (
+              <li className="border-b border-line">
+                <a
+                  href={`tel:${info.phone2.replace(/\s/g, "")}`}
+                  className="flex items-center gap-3.5 py-4 text-slate-600 transition-colors hover:text-brand-700"
+                >
+                  <Phone className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
+                  {info.phone2}
+                </a>
+              </li>
+            )}
             <li className="border-b border-line">
               <a
                 href={`mailto:${info.email}`}
