@@ -33,6 +33,33 @@ export async function getLogoUrl(): Promise<string> {
   return version ? `${base}?v=${Date.parse(version)}` : base;
 }
 
+/**
+ * Image objects in a `media` bucket folder, sorted by filename, returned as
+ * editorial images ({ path, alt }). For bespoke galleries sourced straight from
+ * Storage rather than the media table. Alt text is derived from the filename,
+ * falling back to a generic label when it carries no words.
+ */
+export async function listGalleryImages(
+  folder: string,
+): Promise<{ path: string; alt: string }[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.storage.from("media").list(folder, {
+    limit: 100,
+    sortBy: { column: "name", order: "asc" },
+  });
+  if (error || !data) return [];
+
+  return data
+    .filter((object) => object.id && /\.(webp|jpe?g|png|avif)$/i.test(object.name))
+    .map((object) => {
+      const base = object.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
+      const readable = /[a-z]/i.test(base)
+        ? base.replace(/\b\w/g, (c) => c.toUpperCase())
+        : "Gergoci project photograph";
+      return { path: `${folder}/${object.name}`, alt: readable };
+    });
+}
+
 export type Category = {
   id: string;
   sortOrder: number;

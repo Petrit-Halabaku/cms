@@ -1,3 +1,4 @@
+import { AboutGallery } from "@/components/pages/AboutGallery";
 import { AdvantageTabs } from "@/components/pages/AdvantageTabs";
 import {
   EditorialContainer,
@@ -9,14 +10,16 @@ import { Odometer } from "@/components/motion/Odometer";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Locale } from "@/lib/database.types";
 import { aboutContent } from "@/data/about";
+import { listGalleryImages } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 
 /** Bespoke about page built on the shared editorial system. */
-export function AboutView({ locale }: { locale: Locale }) {
+export async function AboutView({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
   const { hero, experience, intro, stats, advantage } = aboutContent;
+  const gallery = await listGalleryImages("about-us/gallery");
 
   return (
     <>
@@ -127,6 +130,17 @@ export function AboutView({ locale }: { locale: Locale }) {
             <PaneHeading text={advantage.heading} className="max-w-3xl" />
           </Reveal>
           <AdvantageTabs tabs={advantage.tabs} />
+
+          {/* Gallery — framed like windows, click to open the lightbox */}
+          {gallery.length > 0 && (
+            <div className="mt-16 border-t border-line pt-14 sm:mt-20 sm:pt-16">
+              <Reveal y={12} className="flex items-center gap-3">
+                <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-brand-700" />
+                <p className="kicker">Gallery</p>
+              </Reveal>
+              <AboutGallery images={gallery} />
+            </div>
+          )}
         </EditorialContainer>
       </section>
     </>
