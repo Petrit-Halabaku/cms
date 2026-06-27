@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+// import Link from "next/link";
+// import { ArrowUpRight } from "lucide-react";
 
 import { FramedPhoto } from "@/components/pages/editorial";
 import type { AdvantagePanel } from "@/data/about";
@@ -58,6 +58,7 @@ export function AdvantageTabs({
             <h3 className="font-display text-2xl text-slate-900 sm:text-3xl">{panel.heading}</h3>
           </div>
           <p className="mt-5 max-w-xl leading-relaxed text-slate-600">{panel.body}</p>
+          {/* TODO: enable when project links are ready
           <Link
             href={panel.link.href}
             className="group mt-7 inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-700 uppercase transition-colors hover:text-brand-800"
@@ -68,6 +69,7 @@ export function AdvantageTabs({
               aria-hidden
             />
           </Link>
+          */}
         </div>
       </div>
     </div>
