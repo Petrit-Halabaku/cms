@@ -1,5 +1,6 @@
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Json, Locale, Tables } from "@/lib/database.types";
+import { LOGO_PATH, storageUrl } from "@/lib/site";
 
 /**
  * Typed read layer for public content. All functions run server-side with the
@@ -9,6 +10,28 @@ import type { Json, Locale, Tables } from "@/lib/database.types";
  * objects for the locale requested.
  */
 const createClient = async () => createStaticClient();
+
+/**
+ * Public URL for the CMS-managed site logo, with a cache-busting `?v=` token
+ * derived from the Storage object's `updated_at`. Replacing the file in place
+ * (admin Branding) changes the token, so CDN/browser caches pick up the new
+ * logo despite its year-long cache lifetime. Falls back to the bare URL when
+ * the object is missing. Runs only at static-gen / on-demand revalidation.
+ */
+export async function getLogoUrl(): Promise<string> {
+  const base = storageUrl("media", LOGO_PATH);
+  const slash = LOGO_PATH.lastIndexOf("/");
+  const folder = slash === -1 ? "" : LOGO_PATH.slice(0, slash);
+  const name = LOGO_PATH.slice(slash + 1);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.storage.from("media").list(folder, { search: name });
+  if (error || !data) return base;
+
+  const file = data.find((object) => object.name === name);
+  const version = file?.updated_at ?? file?.created_at;
+  return version ? `${base}?v=${Date.parse(version)}` : base;
+}
 
 export type Category = {
   id: string;

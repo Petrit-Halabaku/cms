@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import type { Locale } from "@/lib/database.types";
-import { getCategories, getPage, getSlugMap } from "@/lib/db/content";
+import { getCategories, getLogoUrl, getPage, getSlugMap } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
@@ -79,10 +79,11 @@ export default async function SiteLayout({
   const basePath = basePathFor(locale);
 
   // Footer contact details + language-switcher slug map.
-  const [contactPage, slugPairs, categories] = await Promise.all([
+  const [contactPage, slugPairs, categories, logoUrl] = await Promise.all([
     getPage(locale, "contact"),
     getSlugMap(),
     getCategories(locale),
+    getLogoUrl(),
   ]);
   const infoSection = contactPage?.sections.find((s) => s.type === "contact-info");
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
@@ -93,25 +94,25 @@ export default async function SiteLayout({
           attributes onto <body> on the client, which React would otherwise flag
           as a hydration mismatch. Scoped to this element only. */}
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
-        {/* <JsonLd
+        <JsonLd
           data={{
             "@context": "https://schema.org",
             "@type": "Organization",
             "@id": `${SITE_URL}/#organization`,
             name: SITE_NAME,
             url: SITE_URL,
-            logo: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
+            logo: logoUrl,
           }}
-        /> */}
-        {/* <JsonLd
+        />
+        <JsonLd
           data={{
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
             "@id": `${SITE_URL}/#localbusiness`,
             name: SITE_NAME,
             url: SITE_URL,
-            logo: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
-            image: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
+            logo: logoUrl,
+            image: logoUrl,
             telephone: info.phone || undefined,
             email: info.email || undefined,
             areaServed: "Kosovo",
@@ -123,7 +124,7 @@ export default async function SiteLayout({
             },
             geo: { "@type": "GeoCoordinates", latitude: info.lat, longitude: info.lng },
           }}
-        /> */}
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
@@ -138,6 +139,7 @@ export default async function SiteLayout({
           slugPairs={slugPairs}
           phone={info.phone || undefined}
           categories={categories.map(({ name, slug }) => ({ name, slug }))}
+          logoUrl={logoUrl}
         />
         <main id="main" className="flex-1">{children}</main>
         <Footer
@@ -145,6 +147,7 @@ export default async function SiteLayout({
           basePath={basePath}
           routes={routes}
           contact={{ address: info.address, phone: info.phone, phone2: info.phone2, email: info.email }}
+          logoUrl={logoUrl}
         />
       </body>
     </html>

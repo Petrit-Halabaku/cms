@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 
@@ -14,9 +15,11 @@ type Props = {
     contact: string;
   };
   contact: { address: string; phone: string; phone2?: string; email: string };
+  /** CMS-managed logo URL (cache-busted) from the site layout. */
+  logoUrl: string;
 };
 
-export function Footer({ dict, basePath = "", routes, contact }: Props) {
+export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props) {
   const links = [
     { href: `${basePath}/${routes.about}`, label: dict.nav.about },
     { href: `${basePath}/${routes.services}`, label: dict.nav.services },
@@ -37,10 +40,13 @@ export function Footer({ dict, basePath = "", routes, contact }: Props) {
       <div className="relative mx-auto grid max-w-7xl gap-12 px-4 pt-20 pb-16 sm:px-6 lg:grid-cols-12 lg:px-8">
         <div className="lg:col-span-5">
           <div className="flex items-center gap-2.5">
-            <span
+            <Image
+              src={logoUrl}
+              alt=""
               aria-hidden
-              className="h-9 w-9 bg-contain bg-center bg-no-repeat"
-              style={{ backgroundImage: "url(/brand/gergoci-symbol-white.webp)" }}
+              width={36}
+              height={36}
+              className="h-9 w-9 object-contain"
             />
             <span className="font-display text-xl tracking-tight">{SITE_NAME.toUpperCase()}</span>
           </div>

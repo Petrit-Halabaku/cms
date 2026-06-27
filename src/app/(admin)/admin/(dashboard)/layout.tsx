@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   LogOut,
   Package,
+  Palette,
 } from "lucide-react";
 
 import { requireEditor } from "@/lib/admin/auth";
@@ -29,6 +30,7 @@ const NAV = [
   { href: "/admin/media", label: "Media", icon: ImageIcon },
   { href: "/admin/partners", label: "Partners", icon: Handshake },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
+  { href: "/admin/branding", label: "Branding", icon: Palette },
 ];
 
 export default async function DashboardLayout({

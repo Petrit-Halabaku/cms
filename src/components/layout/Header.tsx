@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -30,6 +31,8 @@ type Props = {
   /** Business phone for the click-to-call CTA. */
   phone?: string;
   categories?: NavCategory[];
+  /** CMS-managed logo URL (cache-busted) from the site layout. */
+  logoUrl: string;
 };
 
 const navLinkClass = (active: boolean) =>
@@ -112,20 +115,23 @@ function ProductsNavItem({
   );
 }
 
-function Wordmark({ basePath }: { basePath: string }) {
+function Wordmark({ basePath, logoUrl }: { basePath: string; logoUrl: string }) {
   return (
     <Link href={`${basePath}/`} className="group flex items-center gap-2.5">
-      <span
+      <Image
+        src={logoUrl}
+        alt=""
         aria-hidden
-        className="h-8 w-8 bg-contain bg-center bg-no-repeat transition-transform group-hover:scale-105"
-        style={{ backgroundImage: "url(/brand/gergoci-symbol-color.svg)" }}
+        width={32}
+        height={32}
+        className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
       />
       <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
     </Link>
   );
 }
 
-export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, categories = [] }: Props) {
+export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, categories = [], logoUrl }: Props) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -187,7 +193,7 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, 
       }`}
     >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Wordmark basePath={basePath} />
+          <Wordmark basePath={basePath} logoUrl={logoUrl} />
 
         <nav className="hidden items-center gap-7 md:flex" aria-label={dict.header.menuLabel}>
           {items.map((item) =>
@@ -247,10 +253,13 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, 
 
           <div className="flex h-18 items-center justify-between px-4 sm:px-6">
             <Link href={`${basePath}/`} onClick={() => setOpen(false)} className="flex items-center gap-2.5">
-              <span
+              <Image
+                src={logoUrl}
+                alt=""
                 aria-hidden
-                className="h-8 w-8 bg-contain bg-center bg-no-repeat"
-                style={{ backgroundImage: "url(/brand/gergoci-symbol-white.webp)" }}
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
               />
               <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
             </Link>

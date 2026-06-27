@@ -27,6 +27,14 @@ export function storageUrl(bucket: "media" | "brochures", path: string): string 
 }
 
 /**
+ * Storage path (in the `media` bucket) of the CMS-managed site logo. The admin
+ * Branding page replaces this exact object in place; every consumer (header,
+ * footer, JSON-LD) reads it through `getLogoUrl()`, which appends a
+ * cache-busting token so the swap is picked up despite the long cache lifetime.
+ */
+export const LOGO_PATH = "icons/gergoci-symbol-color.webp";
+
+/**
  * Homepage hero video — swappable single source of truth.
  *
  * The client's professional video isn't delivered yet, so `enabled` is false and
