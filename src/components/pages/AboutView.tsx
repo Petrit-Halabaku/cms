@@ -5,7 +5,7 @@ import {
   FramedPhoto,
   PaneHeading,
 } from "@/components/pages/editorial";
-import { CountUp } from "@/components/motion/CountUp";
+import { Odometer } from "@/components/motion/Odometer";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Locale } from "@/lib/database.types";
 import { aboutContent } from "@/data/about";
@@ -73,20 +73,45 @@ export function AboutView({ locale }: { locale: Locale }) {
         </EditorialContainer>
       </section>
 
-      {/* Stats */}
-      <section className="bg-brand-950 py-14 text-white sm:py-20">
+      {/* Stats — rolling odometers framed like glazing */}
+      <section className="bg-brand-950 py-16 text-white sm:py-24">
         <EditorialContainer>
-          <Reveal stagger={0.12} className="grid grid-cols-1 border-t border-white/15 sm:grid-cols-3">
-            {stats.map((stat, i) => (
-              <div
-                key={stat.label}
-                className={`py-8 sm:py-10 ${i !== 0 ? "border-t border-white/15 sm:border-t-0 sm:border-l sm:pl-10" : ""}`}
-              >
-                <CountUp
-                  value={stat.value}
-                  className="block font-display text-5xl text-white sm:text-6xl"
-                />
-                <span className="mt-3 block text-sm tracking-wide text-white/70 uppercase">
+          <Reveal y={12} className="flex items-center gap-3">
+            <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-accent" />
+            <p className="kicker text-accent">By the numbers</p>
+          </Reveal>
+
+          <Reveal
+            stagger={0.14}
+            className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-white/12 bg-white/12 sm:grid-cols-3"
+          >
+            {stats.map((stat) => (
+              <div key={stat.label} className="relative bg-brand-950 px-6 py-10 sm:px-8 sm:py-12">
+                {/* Sightline tick rule — the editorial system's measurement motif. */}
+                <div aria-hidden className="flex items-end gap-1.5">
+                  {Array.from({ length: 9 }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="block w-px bg-white/30"
+                      style={{ height: i % 3 === 0 ? "0.7rem" : "0.4rem" }}
+                    />
+                  ))}
+                </div>
+
+                {/* Figure behind a faint pane of glass. */}
+                <div className="relative mt-7">
+                  <Odometer
+                    value={stat.value}
+                    suffix={stat.suffix}
+                    className="font-display text-6xl leading-none text-white sm:text-7xl"
+                  />
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -inset-y-2 inset-x-0 bg-gradient-to-br from-white/10 via-transparent to-transparent"
+                  />
+                </div>
+
+                <span className="mt-6 block text-sm font-medium tracking-[0.18em] text-white/60 uppercase">
                   {stat.label}
                 </span>
               </div>

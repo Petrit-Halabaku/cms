@@ -27,7 +27,7 @@ export type AboutContent = {
     heading: string;
     paragraphs: string[];
   };
-  stats: { value: string; label: string }[];
+  stats: { value: number; suffix?: string; label: string }[];
   advantage: {
     heading: string;
     tabs: { label: string; panel: AdvantagePanel }[];
@@ -75,9 +75,9 @@ export const aboutContent: AboutContent = {
   },
 
   stats: [
-    { value: "22", label: "Years experience" },
-    { value: "1200", label: "Projects completed" },
-    { value: "1000+", label: "Satisfied customers" },
+    { value: 22, label: "Years Experience" },
+    { value: 1200, label: "Projects Completed" },
+    { value: 1000, suffix: "+", label: "Satisfied Customers" },
   ],
 
   advantage: {
