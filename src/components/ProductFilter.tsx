@@ -43,7 +43,7 @@ export function ProductFilter({
       type="button"
       onClick={() => setActive(key)}
       aria-pressed={active === key}
-      className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+      className={`border px-4 py-1.5 text-xs font-semibold tracking-[0.14em] uppercase transition-colors ${
         active === key
           ? "border-brand-700 bg-brand-700 text-white"
           : "border-line text-slate-600 hover:border-brand-700 hover:text-brand-700"

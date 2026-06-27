@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 
-import { PageHero } from "@/components/PageHero";
+import { EditorialHero } from "@/components/pages/editorial";
 import { ProductFilter } from "@/components/ProductFilter";
 import type { Locale } from "@/lib/database.types";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
-import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import { ROUTE_SLUGS } from "@/lib/site";
 
 /** Stable, locale-independent hero key per category (keyed by the fixed UUID),
  *  so EN + SQ share one file at /hero/categories/<key>/hero.webp. */
@@ -34,16 +34,29 @@ export async function CategoryView({
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
   const heroKey = CATEGORY_HERO_KEY[category.id];
-  const heroImage = heroKey ? storageUrl("media", `hero/categories/${heroKey}.webp`) : undefined;
+  const heroPath = heroKey ? `hero/categories/${heroKey}.webp` : "products/products.webp";
+  const brandCount = new Set(
+    products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
+  ).size;
+  const specs = [
+    {
+      value: String(products.length),
+      label: locale === "sq" ? "Produkte" : "Products",
+    },
+    ...(brandCount > 0
+      ? [{ value: String(brandCount), label: locale === "sq" ? "Marka" : "Brands" }]
+      : []),
+  ];
 
   return (
     <>
-      <PageHero
-        kicker={dict.nav.products}
+      <EditorialHero
+        breadcrumbLabel={dict.nav.products}
+        breadcrumbHref={`${basePath}/${ROUTE_SLUGS[locale].products}`}
         title={category.name}
-        intro={category.description ?? undefined}
-        image={heroImage}
-        imageAlt={category.name}
+        subtitle={category.description ?? dict.footer.tagline}
+        image={{ path: heroPath, alt: category.name }}
+        specs={specs}
       />
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         {products.length > 0 ? (

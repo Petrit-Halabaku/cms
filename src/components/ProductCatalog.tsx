@@ -62,7 +62,10 @@ export function ProductCatalog({
   const panel = (
     <div className="space-y-0">
       <div className="flex items-center justify-between pb-4">
-        <p className="font-display text-lg text-slate-900">{L.filters}</p>
+        <p className="flex items-center gap-2.5 font-display text-lg text-slate-900">
+          <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-brand-700" />
+          {L.filters}
+        </p>
         {active > 0 && (
           <button
             type="button"
@@ -122,13 +125,14 @@ export function ProductCatalog({
         <p className="mb-6 hidden text-sm text-slate-500 lg:block">{L.count(filtered.length)}</p>
 
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((p, index) => (
               <ProductCard
                 key={p.id}
                 product={p}
                 locale={locale}
                 href={`${hrefBase}/${p.categorySlug}/${p.slug}`}
+                index={index}
                 priority={index === 0}
               />
             ))}

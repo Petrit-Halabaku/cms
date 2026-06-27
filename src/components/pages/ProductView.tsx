@@ -4,6 +4,7 @@ import { ArrowLeft, FileDown, ImageOff } from "lucide-react";
 
 import { JsonLd } from "@/components/JsonLd";
 import { MediaImage } from "@/components/MediaImage";
+import { WindowFrame } from "@/components/pages/WindowFrame";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { ProductCard } from "@/components/ProductCard";
@@ -94,14 +95,11 @@ export async function ProductView({
         </Link>
       </div>
 
-      <article className="mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6 sm:pb-16 lg:px-8">
+      {/* Hero */}
+      <article className="mx-auto max-w-7xl px-4 pt-6 pb-14 sm:px-6 sm:pb-16 lg:px-8">
         <div className="grid gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="relative">
-            <div
-              aria-hidden
-              className="absolute -top-4 -left-4 h-full w-full border border-brand-200 bg-brand-50"
-            />
-            <div className="relative flex aspect-4/3 items-center justify-center overflow-hidden border border-line bg-brand-50">
+          <Reveal y={20}>
+            <WindowFrame aspect="landscape">
               {featured ? (
                 <MediaImage
                   media={featured}
@@ -111,10 +109,12 @@ export async function ProductView({
                   priority
                 />
               ) : (
-                <ImageOff className="h-14 w-14 text-brand-200" aria-hidden />
+                <span className="grid h-full w-full place-items-center">
+                  <ImageOff className="h-14 w-14 text-brand-200" aria-hidden />
+                </span>
               )}
-            </div>
-          </div>
+            </WindowFrame>
+          </Reveal>
 
           <div>
             <p className="kicker">{category.name}</p>
@@ -125,6 +125,11 @@ export async function ProductView({
               delay={0.1}
               className="mt-4 font-display text-3xl leading-[0.98] text-slate-900 sm:text-5xl"
             />
+            {product.brand && (
+              <p className="mt-3 text-sm font-semibold tracking-[0.18em] text-slate-400 uppercase">
+                {product.brand}
+              </p>
+            )}
             {product.body && (
               <Reveal delay={0.3} y={18} className="mt-7 space-y-4">
                 {product.body.split("\n\n").map((paragraph, i) => (
@@ -154,61 +159,73 @@ export async function ProductView({
             )}
           </div>
         </div>
+      </article>
 
-        {product.facts.length > 0 && (
-          <Reveal y={18}>
-            <section
-              className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12"
-              aria-label={dict.product.specs}
-            >
-              <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
-                <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
-                {dict.product.specs}
-              </h2>
-              {/* Mobile-first spec sheet: a clean, scannable label → value row per
-                  fact. One readable column on phones; flows into 2–3 columns from
-                  sm up (CSS columns) so long lists stay tight. Long values wrap to
-                  their own line under the label instead of crowding. */}
-              <dl className="mt-6 columns-1 gap-x-10 sm:mt-8 sm:columns-2 lg:columns-3">
-                {product.facts.map((fact) => (
-                  <div
-                    key={fact.id}
-                    className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5 break-inside-avoid border-b border-line py-3.5"
-                  >
-                    <dt className="text-sm text-slate-500">{fact.label}</dt>
-                    <dd className="text-sm font-semibold text-slate-900">{fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          </Reveal>
-        )}
+      {/* Technical data — navy precision band */}
+      {product.facts.length > 0 && (
+        <section className="bg-brand-950 py-14 text-white sm:py-20" aria-label={dict.product.specs}>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal y={12} className="flex items-center gap-3">
+              <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-accent" />
+              <h2 className="font-display text-2xl text-white sm:text-3xl">{dict.product.specs}</h2>
+            </Reveal>
+            <div aria-hidden className="mt-6 flex items-end gap-1.5">
+              {Array.from({ length: 24 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="block w-px bg-white/25"
+                  style={{ height: i % 4 === 0 ? "0.7rem" : "0.4rem" }}
+                />
+              ))}
+            </div>
+            <dl className="mt-6 columns-1 gap-x-12 sm:mt-8 sm:columns-2 lg:columns-3">
+              {product.facts.map((fact) => (
+                <div
+                  key={fact.id}
+                  className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5 break-inside-avoid border-b border-white/15 py-3.5"
+                >
+                  <dt className="text-sm text-white/60">{fact.label}</dt>
+                  <dd className="font-display text-sm tracking-wide text-white tabular-nums">
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
 
+      {/* Gallery + related */}
+      <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
         {galleryMedia.length > 1 && (
-          <div className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12">
+          <div className="pt-12 sm:pt-16">
             <ProductGallery images={galleryMedia} locale={locale} heading={dict.product.gallery} />
           </div>
         )}
 
         {related.length > 0 && (
-          <section className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12" aria-label={dict.product.related}>
+          <section
+            className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12"
+            aria-label={dict.product.related}
+          >
             <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
               <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
               {dict.product.related}
             </h2>
-            <Reveal stagger={0.08} className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((p) => (
+            <Reveal stagger={0.08} className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p, i) => (
                 <ProductCard
                   key={p.id}
                   product={p}
                   href={`${categoryHref}/${p.slug}`}
                   locale={locale}
+                  index={i}
                 />
               ))}
             </Reveal>
           </section>
         )}
-      </article>
+      </div>
     </>
   );
 }
