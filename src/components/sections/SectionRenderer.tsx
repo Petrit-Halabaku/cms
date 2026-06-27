@@ -1,15 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Layers,
-  MapPin,
-  PanelTop,
-  Phone,
-  RefreshCw,
-  Settings,
-  Wrench,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { MediaImage } from "@/components/MediaImage";
@@ -28,7 +19,7 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { ROUTE_SLUGS } from "@/lib/site";
+import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
   countersSchema,
@@ -253,8 +244,7 @@ async function FeaturedProducts({ section, ctx }: { section: PageSection; ctx: C
             products={products}
             locale={ctx.locale}
             hrefFor={(p) =>
-              `${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}/${
-                (p as (typeof products)[number]).categorySlug
+              `${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}/${(p as (typeof products)[number]).categorySlug
               }/${p.slug}`
             }
           />
@@ -515,82 +505,63 @@ function RichText({ section }: { section: PageSection }) {
   );
 }
 
-const MAINTENANCE_ICONS = [Wrench, RefreshCw, Settings, Layers, PanelTop] as const;
+// Images from the `services/` folder of the `media` Supabase Storage bucket,
+// shown under each list section's heading.
+const LIST_SECTION_IMAGES: Record<string, string[]> = {
+  installation: ["services/installation.webp"],
+  maintenance: ["services/service-and-repair.webp"],
+};
 
 function ListSection({ section }: { section: PageSection }) {
   const content = parseContent(listSchema, section.content);
   if (content.items.length === 0) return null;
 
-  const isProcess = section.key === "installation";
-
-  if (isProcess) {
-    return (
-      <section className="relative bg-paper py-12 sm:py-16">
-        <MullionLines />
-        <Container className="relative grid gap-8 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-4">
-            {content.heading && (
-              <div className="lg:sticky lg:top-28">
-                <SectionHeading heading={content.heading} />
-              </div>
-            )}
-          </div>
-          <Reveal stagger={0.08} className="lg:col-span-8">
-            <ol className="space-y-3 sm:space-y-4">
-              {content.items.map((item, i) => (
-                <li
-                  key={i}
-                  className="group flex items-center gap-4 border border-line bg-white p-4 transition-colors hover:border-brand-700 sm:gap-5 sm:p-5"
-                >
-                  <span
-                    aria-hidden
-                    className="flex h-10 w-10 shrink-0 items-center justify-center bg-brand-700 font-display text-sm text-white sm:h-12 sm:w-12 sm:text-base"
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <p className="font-display text-base leading-snug text-slate-900 sm:text-lg">
-                    {item}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
-        </Container>
-      </section>
-    );
-  }
+  const images = LIST_SECTION_IMAGES[section.key] ?? [];
 
   return (
     <section className="border-y border-line bg-white py-12 sm:py-16">
       <Container className="grid gap-8 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
-          {content.heading && (
-            <div className="lg:sticky lg:top-28">
-              <SectionHeading heading={content.heading} />
-            </div>
-          )}
+          <div className="lg:sticky lg:top-28">
+            {content.heading && <SectionHeading heading={content.heading} />}
+            {images.length > 0 && (
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                {images.map((image) => (
+                  <div
+                    key={image}
+                    className="relative aspect-[4/3] overflow-hidden border border-line bg-brand-50"
+                  >
+                    <Image
+                      src={storageUrl("media", image)}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <Reveal
           stagger={0.07}
           className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:col-span-8"
         >
-          {content.items.map((item, i) => {
-            const Icon = MAINTENANCE_ICONS[i % MAINTENANCE_ICONS.length];
-            return (
-              <div
-                key={i}
-                className="group flex items-center gap-4 border border-line bg-paper p-4 transition-colors hover:border-brand-700 hover:bg-brand-50/50 sm:p-5"
+          {content.items.map((item, i) => (
+            <div
+              key={i}
+              className="group flex items-center gap-4 border border-line bg-paper p-4 transition-colors hover:border-brand-700 hover:bg-brand-50/50 sm:p-5"
+            >
+              <span
+                aria-hidden
+                className="flex h-10 w-10 shrink-0 items-center justify-center bg-brand-50 font-display text-sm text-brand-700 transition-colors group-hover:bg-brand-700 group-hover:text-white"
               >
-                <span
-                  aria-hidden
-                  className="flex h-10 w-10 shrink-0 items-center justify-center bg-brand-50 text-brand-700 transition-colors group-hover:bg-brand-700 group-hover:text-white"
-                >
-                  <Icon className="h-5 w-5" />
-                </span>
-                <p className="text-sm leading-snug text-slate-700 sm:text-base">{item}</p>
-              </div>
-            );
-          })}
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <p className="text-sm leading-snug text-slate-700 sm:text-base">{item}</p>
+            </div>
+          ))}
         </Reveal>
       </Container>
     </section>
