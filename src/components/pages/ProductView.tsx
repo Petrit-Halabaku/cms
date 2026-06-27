@@ -162,7 +162,7 @@ export async function ProductView({
               aria-label={dict.product.specs}
             >
               <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
-                <span aria-hidden className="block h-3 w-3 bg-brand-700" />
+                <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
                 {dict.product.specs}
               </h2>
               {/* Mobile-first spec sheet: a clean, scannable label → value row per
@@ -192,10 +192,10 @@ export async function ProductView({
 
         {related.length > 0 && (
           <section className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12" aria-label={dict.product.related}>
-            <SplitHeading
-              text={dict.product.related}
-              className="font-display text-2xl text-slate-900 sm:text-3xl"
-            />
+            <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
+              <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
+              {dict.product.related}
+            </h2>
             <Reveal stagger={0.08} className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((p) => (
                 <ProductCard

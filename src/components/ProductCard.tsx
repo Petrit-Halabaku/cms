@@ -16,7 +16,7 @@ export function ProductCard({ product, href, locale, priority }: Props) {
   return (
     <Link
       href={href}
-      className="group block border border-line bg-white transition-colors duration-300 hover:border-brand-600"
+      className="group block border border-line bg-white transition-colors duration-300 hover:border-brand-700"
     >
       <div className="relative flex aspect-4/3 items-center justify-center overflow-hidden bg-brand-50">
         {product.featuredImage ? (

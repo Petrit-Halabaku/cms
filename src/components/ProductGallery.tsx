@@ -38,7 +38,7 @@ export function ProductGallery({ images, locale, heading }: Props) {
 
   return (
     <section aria-label={heading}>
-      <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900">
+      <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
         <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
         {heading}
       </h2>

@@ -207,16 +207,19 @@ function Cards({ section, columns }: { section: PageSection; columns: 3 | 4 }) {
           className={`mt-8 grid grid-cols-1 border-t border-l border-line ${cols}`}
         >
           {content.items.map((item, i) => (
-            <div key={item.title} className="group relative border-r border-b border-line bg-paper p-8 transition-colors duration-300 hover:bg-brand-50/60">
+            <div key={item.title} className="group relative flex flex-col border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/60 sm:p-8">
               <span
                 aria-hidden
                 className="absolute top-0 left-0 h-0.5 w-0 bg-brand-700 transition-all duration-500 group-hover:w-full"
               />
-              <p className="font-serif text-sm italic text-brand-700">
+              <span
+                aria-hidden
+                className="font-serif text-3xl leading-none text-brand-200 italic transition-colors duration-300 group-hover:text-brand-700"
+              >
                 {String(i + 1).padStart(2, "0")}
-              </p>
-              <h3 className="mt-5 font-display text-lg text-slate-900">{item.title}</h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-slate-600">{item.body}</p>
+              </span>
+              <h3 className="mt-4 font-display text-lg text-slate-900 sm:text-xl">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.body}</p>
             </div>
           ))}
         </Reveal>
@@ -491,17 +494,17 @@ function RichText({ section }: { section: PageSection }) {
             </div>
           )}
         </div>
-        <Reveal className="space-y-6 lg:col-span-8 lg:col-start-5">
+        <Reveal className="space-y-5 lg:col-span-8 lg:col-start-5">
           {paragraphs.map((paragraph, i) =>
             i === 0 ? (
               <p
                 key={i}
-                className="border-l-2 border-brand-700 pl-6 font-display text-2xl leading-snug text-justify text-slate-900 sm:text-3xl"
+                className="border-l-2 border-brand-700 pl-5 font-display text-xl leading-snug text-slate-900 sm:pl-6 sm:text-2xl"
               >
                 {paragraph}
               </p>
             ) : (
-              <p key={i} className="max-w-2xl text-lg leading-relaxed text-slate-600">
+              <p key={i} className="max-w-2xl leading-relaxed text-slate-600">
                 {paragraph}
               </p>
             ),
@@ -524,7 +527,7 @@ function ListSection({ section }: { section: PageSection }) {
     return (
       <section className="relative bg-paper py-12 sm:py-16">
         <MullionLines />
-        <Container className="relative grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <Container className="relative grid gap-8 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
             {content.heading && (
               <div className="lg:sticky lg:top-28">
@@ -533,21 +536,19 @@ function ListSection({ section }: { section: PageSection }) {
             )}
           </div>
           <Reveal stagger={0.08} className="lg:col-span-8">
-            <ol className="relative border-l border-line pl-8 sm:pl-10">
+            <ol className="space-y-3 sm:space-y-4">
               {content.items.map((item, i) => (
                 <li
                   key={i}
-                  className="relative pb-10 last:pb-0"
+                  className="group flex items-center gap-4 border border-line bg-white p-4 transition-colors hover:border-brand-700 sm:gap-5 sm:p-5"
                 >
                   <span
                     aria-hidden
-                    className="absolute -left-8 flex h-6 w-6 -translate-x-1/2 items-center justify-center bg-brand-700 sm:-left-10 sm:h-7 sm:w-7"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center bg-brand-700 font-display text-sm text-white sm:h-12 sm:w-12 sm:text-base"
                   >
-                    <span className="font-serif text-[0.625rem] font-medium text-white sm:text-xs">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <p className="font-display text-lg leading-snug text-slate-900 sm:text-xl">
+                  <p className="font-display text-base leading-snug text-slate-900 sm:text-lg">
                     {item}
                   </p>
                 </li>
@@ -561,7 +562,7 @@ function ListSection({ section }: { section: PageSection }) {
 
   return (
     <section className="border-y border-line bg-white py-12 sm:py-16">
-      <Container className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <Container className="grid gap-8 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
           {content.heading && (
             <div className="lg:sticky lg:top-28">
@@ -571,23 +572,22 @@ function ListSection({ section }: { section: PageSection }) {
         </div>
         <Reveal
           stagger={0.07}
-          className="grid grid-cols-1 border-t border-l border-line sm:grid-cols-2 lg:col-span-8"
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:col-span-8"
         >
           {content.items.map((item, i) => {
             const Icon = MAINTENANCE_ICONS[i % MAINTENANCE_ICONS.length];
             return (
               <div
                 key={i}
-                className="group relative border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/50 sm:p-8"
+                className="group flex items-center gap-4 border border-line bg-paper p-4 transition-colors hover:border-brand-700 hover:bg-brand-50/50 sm:p-5"
               >
                 <span
                   aria-hidden
-                  className="absolute top-0 left-0 h-0.5 w-0 bg-brand-700 transition-all duration-500 group-hover:w-full"
-                />
-                <Icon className="h-5 w-5 text-brand-700" aria-hidden />
-                <p className="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
-                  {item}
-                </p>
+                  className="flex h-10 w-10 shrink-0 items-center justify-center bg-brand-50 text-brand-700 transition-colors group-hover:bg-brand-700 group-hover:text-white"
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <p className="text-sm leading-snug text-slate-700 sm:text-base">{item}</p>
               </div>
             );
           })}

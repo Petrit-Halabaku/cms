@@ -203,7 +203,6 @@ function HeroArt() {
         className="absolute inset-y-0 -inset-x-1/3 bg-[linear-gradient(105deg,transparent_42%,rgba(255,255,255,0.7)_50%,transparent_58%)]"
       />
       <div className="absolute right-0 bottom-0 flex h-1/3 w-1/2 flex-col justify-end bg-brand-700 p-4">
-        <p className="font-display text-[10px] tracking-[0.18em] text-brand-100">42.65° N — 20.29° E</p>
         <p className="font-display text-[10px] tracking-[0.18em] text-white">PEJË, KOSOVË</p>
       </div>
     </div>
