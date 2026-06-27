@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { AboutView } from "@/components/pages/AboutView";
 import { ContactView } from "@/components/pages/ContactView";
 import { ProductsView } from "@/components/pages/ProductsView";
 import { ServicesView } from "@/components/pages/ServicesView";
-import { SimplePageView } from "@/components/pages/SimplePageView";
 import type { Locale } from "@/lib/database.types";
 import {
   getPage,
@@ -44,7 +44,7 @@ export default async function TopLevelPage({ params }: Props) {
 
   switch (key) {
     case "about":
-      return <SimplePageView locale={locale} pageKey={key} />;
+      return <AboutView locale={locale} />;
     case "services":
       return <ServicesView locale={locale} />;
     case "products":

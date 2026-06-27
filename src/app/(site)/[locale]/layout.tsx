@@ -93,7 +93,7 @@ export default async function SiteLayout({
           attributes onto <body> on the client, which React would otherwise flag
           as a hydration mismatch. Scoped to this element only. */}
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
-        <JsonLd
+        {/* <JsonLd
           data={{
             "@context": "https://schema.org",
             "@type": "Organization",
@@ -102,8 +102,8 @@ export default async function SiteLayout({
             url: SITE_URL,
             logo: `${SITE_URL}/brand/gergoci-logo-vertical-color.png`,
           }}
-        />
-        <JsonLd
+        /> */}
+        {/* <JsonLd
           data={{
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
@@ -123,7 +123,7 @@ export default async function SiteLayout({
             },
             geo: { "@type": "GeoCoordinates", latitude: info.lat, longitude: info.lng },
           }}
-        />
+        /> */}
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"

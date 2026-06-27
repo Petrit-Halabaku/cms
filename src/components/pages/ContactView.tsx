@@ -2,27 +2,30 @@ import { notFound } from "next/navigation";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { EditorialHero } from "@/components/pages/editorial";
 import type { Locale } from "@/lib/database.types";
 import { getPage } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
+import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
-import { storageUrl } from "@/lib/site";
 
 export async function ContactView({ locale }: { locale: Locale }) {
   const page = await getPage(locale, "contact");
   if (!page) notFound();
   const dict = getDictionary(locale);
+  const basePath = basePathFor(locale);
   const infoSection = page.sections.find((s) => s.type === "contact-info");
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
 
   return (
     <>
-      <PageHero
-        kicker={dict.footer.tagline}
+      <EditorialHero
+        breadcrumbLabel={dict.nav.home}
+        breadcrumbHref={basePath || "/"}
         title={page.title}
-        image={storageUrl("media", "hero/contact.webp")}
-        imageAlt={page.title}
+        subtitle={dict.footer.tagline}
+        image={{ path: "hero/contact.webp", alt: page.title }}
+        specs={[]}
       />
 
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-8">
