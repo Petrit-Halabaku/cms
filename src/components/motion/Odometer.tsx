@@ -29,40 +29,46 @@ export function Odometer({
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
+
       const cols = gsap.utils.toArray<HTMLElement>("[data-col]", ref.current!);
-      // Roll from the first cycle's "0" (y:0) up to each strip's resting
-      // transform; the ones place settles last for an odometer-like cascade.
-      gsap.from(cols, {
-        y: 0,
-        duration: 1.6,
-        ease: "power4.out",
-        stagger: 0.14,
-        scrollTrigger: { trigger: ref.current, start: "top 85%", once: true },
-      });
+
+      gsap.fromTo(
+        cols,
+        { y: "0em", immediateRender: false },
+        {
+          y: (_, el) => `-${(el as HTMLElement).dataset.target}em`,
+          duration: 1.6,
+          ease: "power4.out",
+          stagger: 0.14,
+          scrollTrigger: {
+            trigger: ref.current,
+            start: "top 85%",
+            once: true,
+          },
+        },
+      );
     },
     { scope: ref },
   );
 
   return (
-    <span ref={ref} className={`inline-flex items-baseline ${className ?? ""}`}>
+    <span ref={ref} className={`inline-flex items-baseline leading-none ${className ?? ""}`}>
       {digits.map((d, i) => {
-        // Index of the settled digit within the last cycle of the strip.
         const target = ROLLS * 10 + Number(d);
         return (
           <span
-            key={i}
+            key={`${i}-${d}`}
             aria-hidden
-            className="relative inline-block h-[1em] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_22%,#000_78%,transparent)]"
+            className="relative inline-block h-[1em] w-[1ch] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_22%,#000_78%,transparent)]"
           >
-            {/* Invisible spacer sizes the slot to this digit's natural width. */}
-            <span className="invisible block tabular-nums">{d}</span>
             <span
               data-col
-              className="absolute inset-x-0 top-0 flex flex-col tabular-nums"
+              data-target={String(target)}
+              className="absolute inset-x-0 top-0 flex flex-col tabular-nums leading-none"
               style={{ transform: `translateY(-${target}em)` }}
             >
               {Array.from({ length: (ROLLS + 1) * 10 }).map((_, n) => (
-                <span key={n} className="block h-[1em] text-center leading-[1em]">
+                <span key={n} className="flex h-[1em] items-center justify-center">
                   {n % 10}
                 </span>
               ))}
