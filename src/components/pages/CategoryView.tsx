@@ -34,7 +34,8 @@ export async function CategoryView({
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
   const heroKey = CATEGORY_HERO_KEY[category.id];
-  const heroPath = heroKey ? `hero/categories/${heroKey}.webp` : "products/products.webp";
+  const heroPath = "products/products.webp";
+  // const heroPath = heroKey ? `hero/categories/${heroKey}.webp` : "products/products.webp";
   const brandCount = new Set(
     products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
   ).size;
