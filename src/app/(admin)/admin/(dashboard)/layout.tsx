@@ -1,19 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  FileText,
-  FolderTree,
-  HelpCircle,
-  Image as ImageIcon,
-  Handshake,
-  LayoutDashboard,
-  LogOut,
-  Package,
-  Palette,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 
 import { requireEditor } from "@/lib/admin/auth";
+import { getLogoUrl } from "@/lib/db/content";
+import { SITE_NAME } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
+
+import { SidebarNav } from "./SidebarNav";
 
 async function signOut() {
   "use server";
@@ -22,63 +17,65 @@ async function signOut() {
   redirect("/admin/login");
 }
 
-const NAV = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/categories", label: "Categories", icon: FolderTree },
-  { href: "/admin/pages", label: "Pages", icon: FileText },
-  { href: "/admin/media", label: "Media", icon: ImageIcon },
-  { href: "/admin/partners", label: "Partners", icon: Handshake },
-  { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
-  { href: "/admin/branding", label: "Branding", icon: Palette },
-];
-
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await requireEditor();
+  const [{ user }, logoUrl] = await Promise.all([requireEditor(), getLogoUrl()]);
+
+  const initial = (user.email ?? "?").charAt(0).toUpperCase();
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="flex w-56 shrink-0 flex-col border-r border-slate-200 bg-white">
-        <div className="border-b border-slate-200 px-5 py-4">
-          <Link href="/admin" className="text-lg font-bold tracking-tight text-brand-800">
-            GERGOCI
+    <div className="flex min-h-screen bg-slate-50">
+      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col bg-brand-950 text-white">
+        <div className="flex items-center gap-2.5 border-b border-white/10 px-5 py-4">
+          <Image
+            src={logoUrl}
+            alt=""
+            aria-hidden
+            width={32}
+            height={32}
+            unoptimized
+            className="h-8 w-8 object-contain"
+          />
+          <Link href="/admin" className="leading-tight">
+            <span className="block font-display text-lg tracking-tight">
+              {SITE_NAME.toUpperCase()}
+            </span>
+            <span className="block text-[0.625rem] font-semibold uppercase tracking-[0.24em] text-brand-100/50">
+              Admin
+            </span>
           </Link>
-          <p className="text-xs text-slate-500">Admin</p>
         </div>
-        <nav className="flex-1 space-y-0.5 p-3">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-brand-700"
+
+        <SidebarNav />
+
+        <div className="border-t border-white/10 p-3">
+          <div className="flex items-center gap-2.5 px-1 pb-2">
+            <span
+              aria-hidden
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xs font-semibold text-white"
             >
-              <span className="flex items-center gap-2.5">
-                <item.icon className="h-4 w-4" aria-hidden />
-                {item.label}
-              </span>
-            </Link>
-          ))}
-        </nav>
-        <div className="border-t border-slate-200 p-3">
-          <p className="truncate px-3 pb-2 text-xs text-slate-500" title={user.email ?? ""}>
-            {user.email}
-          </p>
+              {initial}
+            </span>
+            <p className="truncate text-xs text-white/50" title={user.email ?? ""}>
+              {user.email}
+            </p>
+          </div>
           <form action={signOut}>
             <button
               type="submit"
-              className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/55 transition-colors hover:bg-white/5 hover:text-white"
             >
-              <LogOut className="h-4 w-4" aria-hidden />
+              <LogOut className="h-4 w-4 text-white/40" aria-hidden />
               Sign out
             </button>
           </form>
         </div>
       </aside>
-      <main className="flex-1 overflow-x-auto p-8">{children}</main>
+
+      <main className="min-w-0 flex-1 overflow-x-auto p-6 lg:p-10">{children}</main>
     </div>
   );
 }
