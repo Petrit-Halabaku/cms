@@ -37,8 +37,8 @@ export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props)
         <div className="absolute -top-32 right-0 h-64 w-2/3 bg-[radial-gradient(closest-side,rgba(0,64,255,0.28),transparent)]" />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-4 pt-20 pb-16 sm:px-6 lg:grid-cols-12 lg:px-8">
-        <div className="lg:col-span-5">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 min-[376px]:grid-cols-2 min-[376px]:max-md:grid-cols-[1fr_3fr] gap-x-6 gap-y-10 px-4 pt-14 pb-12 sm:gap-x-12 sm:gap-y-12 sm:px-6 sm:pt-20 sm:pb-16 lg:grid-cols-12 lg:px-8">
+        <div className="min-[376px]:col-span-2 lg:col-span-5">
           <div className="flex items-center gap-2.5">
             <Image
               src={logoUrl}
@@ -56,7 +56,7 @@ export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props)
           {contact.phone && (
             <a
               href={`tel:${contact.phone.replace(/\s/g, "")}`}
-              className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-white hover:bg-white hover:text-brand-900"
+              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 px-5 py-3 text-sm font-semibold transition-colors hover:border-white hover:bg-white hover:text-brand-900 sm:w-auto sm:justify-start sm:py-2.5"
             >
               <Phone className="h-4 w-4" aria-hidden />
               {dict.common.callNow}
@@ -128,7 +128,7 @@ export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props)
       </div>
 
       <div className="relative border-t border-white/10 py-5">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 text-xs text-white/45 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-1.5 px-4 text-xs text-white/45 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-2 sm:px-6 lg:px-8">
           <p>
             © {new Date().getFullYear()} {SITE_NAME}. {dict.footer.rights}
           </p>
