@@ -40,6 +40,11 @@ const navLinkClass = (active: boolean) =>
     active ? "text-brand-700 after:scale-x-100" : "text-slate-700"
   }`;
 
+const isCategoryActive = (productsHref: string, categorySlug: string, pathname: string) => {
+  const categoryPath = `${productsHref}/${categorySlug}`;
+  return pathname === categoryPath || pathname.startsWith(`${categoryPath}/`);
+};
+
 function ProductsNavItem({
   href,
   label,
@@ -97,18 +102,26 @@ function ProductsNavItem({
           aria-label={label}
           className="overflow-hidden rounded-lg border border-line bg-paper py-1 shadow-[0_8px_30px_rgba(1,38,83,0.12)]"
         >
-          {categories.map((category) => (
-            <li key={category.slug} role="none">
-              <Link
-                href={`${href}/${category.slug}`}
-                role="menuitem"
-                className="block px-4 py-2.5 text-sm text-slate-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                onClick={closeDropdown}
-              >
-                {category.name}
-              </Link>
-            </li>
-          ))}
+          {categories.map((category) => {
+            const active = isCategoryActive(href, category.slug, pathname);
+            return (
+              <li key={category.slug} role="none">
+                <Link
+                  href={`${href}/${category.slug}`}
+                  role="menuitem"
+                  aria-current={active ? "page" : undefined}
+                  className={`block px-4 py-2.5 text-sm transition-colors ${
+                    active
+                      ? "bg-brand-50 font-medium text-brand-700"
+                      : "text-slate-700 hover:bg-brand-50 hover:text-brand-700"
+                  }`}
+                  onClick={closeDropdown}
+                >
+                  {category.name}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
@@ -124,6 +137,7 @@ function Wordmark({ basePath, logoUrl }: { basePath: string; logoUrl: string }) 
         aria-hidden
         width={32}
         height={32}
+        unoptimized
         className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
       />
       <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
@@ -259,6 +273,7 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, 
                 aria-hidden
                 width={32}
                 height={32}
+                unoptimized
                 className="h-8 w-8 object-contain"
               />
               <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
@@ -291,17 +306,23 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, 
                 </Link>
                 {item.categories && item.categories.length > 0 && (
                   <ul className="mb-2 ml-10 space-y-1 border-l border-white/10 pl-4">
-                    {item.categories.map((category) => (
-                      <li key={category.slug}>
-                        <Link
-                          href={`${item.href}/${category.slug}`}
-                          className="block py-1.5 text-base text-white/45 transition-colors hover:text-white"
-                          onClick={() => setOpen(false)}
-                        >
-                          {category.name}
-                        </Link>
-                      </li>
-                    ))}
+                    {item.categories.map((category) => {
+                      const categoryActive = isCategoryActive(item.href, category.slug, pathname);
+                      return (
+                        <li key={category.slug}>
+                          <Link
+                            href={`${item.href}/${category.slug}`}
+                            aria-current={categoryActive ? "page" : undefined}
+                            className={`block py-1.5 text-base transition-colors ${
+                              categoryActive ? "font-medium text-white" : "text-white/45 hover:text-white"
+                            }`}
+                            onClick={() => setOpen(false)}
+                          >
+                            {category.name}
+                          </Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </div>

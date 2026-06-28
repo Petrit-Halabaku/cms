@@ -46,6 +46,7 @@ export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props)
               aria-hidden
               width={36}
               height={36}
+              unoptimized
               className="h-9 w-9 object-contain"
             />
             <span className="font-display text-xl tracking-tight">{SITE_NAME.toUpperCase()}</span>
