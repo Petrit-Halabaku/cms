@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Menu, Phone, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, X } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { gsap, prefersReducedMotion, useGSAP } from "@/components/motion/gsap";
@@ -75,7 +75,7 @@ function ProductsNavItem({
 
   return (
     <div
-      className="relative"
+      className="group relative"
       onMouseEnter={() => setDropdownOpen(true)}
       onMouseLeave={closeDropdown}
       onFocus={() => setDropdownOpen(true)}
@@ -85,12 +85,18 @@ function ProductsNavItem({
     >
       <Link
         href={href}
-        className={navLinkClass(active)}
+        className={`${navLinkClass(active)} inline-flex items-center gap-1`}
         aria-haspopup="true"
         aria-expanded={dropdownOpen}
         onClick={closeDropdown}
       >
         {label}
+        <ChevronDown
+          aria-hidden
+          className={`h-3.5 w-3.5 transition-transform duration-300 ease-expo group-hover:rotate-180 ${
+            dropdownOpen ? "rotate-180" : ""
+          }`}
+        />
       </Link>
       <div
         className={`absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 transition-opacity duration-200 ${

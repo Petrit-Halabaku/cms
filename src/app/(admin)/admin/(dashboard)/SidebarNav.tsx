@@ -11,10 +11,11 @@ import {
   LayoutDashboard,
   Package,
   Palette,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
-type NavItem = { href: string; label: string; icon: LucideIcon };
+type NavItem = { href: string; label: string; icon: LucideIcon; adminOnly?: boolean };
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -25,17 +26,20 @@ const NAV: NavItem[] = [
   { href: "/admin/partners", label: "Partners", icon: Handshake },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { href: "/admin/branding", label: "Branding", icon: Palette },
+  { href: "/admin/users", label: "Users", icon: Users, adminOnly: true },
 ];
 
-export function SidebarNav() {
+export function SidebarNav({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
 
   const isActive = (href: string) =>
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
 
+  const items = NAV.filter((item) => !item.adminOnly || isAdmin);
+
   return (
     <nav className="flex-1 space-y-1 p-3" aria-label="Admin sections">
-      {NAV.map((item) => {
+      {items.map((item) => {
         const active = isActive(item.href);
         return (
           <Link

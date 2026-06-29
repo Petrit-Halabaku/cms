@@ -22,7 +22,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [{ user }, logoUrl] = await Promise.all([requireEditor(), getLogoUrl()]);
+  const [{ user, role }, logoUrl] = await Promise.all([requireEditor(), getLogoUrl()]);
 
   const initial = (user.email ?? "?").charAt(0).toUpperCase();
 
@@ -49,7 +49,7 @@ export default async function DashboardLayout({
           </Link>
         </div>
 
-        <SidebarNav />
+        <SidebarNav isAdmin={role === "admin"} />
 
         <div className="border-t border-white/10 p-3">
           <div className="flex items-center gap-2.5 px-1 pb-2">
