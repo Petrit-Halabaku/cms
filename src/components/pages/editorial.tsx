@@ -92,10 +92,13 @@ export function EditorialHero({
         src={storageUrl("media", image.path)}
         alt={image.alt}
         fill
+        quality={100}
+        objectPosition="top"
+        objectFit="cover"
         priority
         loading="eager"
         sizes="100vw"
-        className="object-cover"
+        // className="object-cover object-top"
       />
       <div
         aria-hidden
