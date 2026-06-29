@@ -17,16 +17,20 @@ export function WindowFrame({
   children,
   index,
   aspect = "landscape",
+  aspectClassName,
   className = "",
 }: {
   children: React.ReactNode;
   index?: number;
   aspect?: Aspect;
+  /** Override the aspect ratio with explicit (optionally responsive) classes,
+   *  e.g. "aspect-[4/3] sm:aspect-[3/4]". Takes precedence over `aspect`. */
+  aspectClassName?: string;
   className?: string;
 }) {
   return (
     <div
-      className={`group relative ${RATIO[aspect]} overflow-hidden border border-line bg-brand-50 ${className}`}
+      className={`group relative ${aspectClassName ?? RATIO[aspect]} overflow-hidden border border-line bg-brand-50 ${className}`}
     >
       {children}
 

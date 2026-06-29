@@ -48,7 +48,7 @@ export function AdvantageTabs({
         role="tabpanel"
         id="advantage-panel"
         aria-labelledby={`advantage-tab-${active}`}
-        className="mt-8 grid items-center gap-10 lg:grid-cols-2 lg:gap-16"
+        className="mt-8 grid items-center gap-6 lg:grid-cols-2 lg:gap-16"
       >
         <FramedPhoto key={panel.image.path + active} image={panel.image} />
 
@@ -57,7 +57,7 @@ export function AdvantageTabs({
             <span aria-hidden className="mt-2.5 block h-3.5 w-3.5 shrink-0 bg-brand-700 sm:mt-3.5" />
             <h3 className="font-display text-2xl text-slate-900 sm:text-3xl">{panel.heading}</h3>
           </div>
-          <p className="mt-5 max-w-xl leading-relaxed text-slate-600">{panel.body}</p>
+          <p className="mt-4 max-w-xl leading-relaxed text-slate-600 sm:mt-5">{panel.body}</p>
           {/* TODO: enable when project links are ready
           <Link
             href={panel.link.href}

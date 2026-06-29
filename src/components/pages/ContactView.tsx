@@ -28,7 +28,7 @@ export async function ContactView({ locale }: { locale: Locale }) {
         specs={[]}
       />
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:gap-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-8">
         <Reveal>
           <h2 className="flex items-center gap-3 font-display text-xl text-slate-900">
             <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
@@ -75,13 +75,13 @@ export async function ContactView({ locale }: { locale: Locale }) {
           <div className="relative h-full">
             <div
               aria-hidden
-              className="absolute -top-4 -right-4 h-full w-full border border-brand-200 bg-brand-50"
+              className="absolute -top-3 -right-3 h-full w-full border border-brand-200 bg-brand-50 sm:-top-4 sm:-right-4"
             />
             <div className="relative h-full overflow-hidden border border-line bg-brand-50">
               <iframe
                 title={info.heading}
                 src={`https://www.google.com/maps?q=${info.lat},${info.lng}&z=15&output=embed`}
-                className="h-full min-h-[420px] w-full border-0"
+                className="h-full min-h-[320px] w-full border-0 sm:min-h-[420px]"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
