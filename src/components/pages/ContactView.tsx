@@ -9,6 +9,10 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
 
+/** External Google Maps listing opened when the embedded map is clicked. */
+const MAPS_URL =
+  "https://www.google.com/maps?ll=42.654657,20.317722&z=19&t=h&hl=en-US&gl=US&mapclient=embed&cid=8132120818804921462";
+
 export async function ContactView({ locale }: { locale: Locale }) {
   const page = await getPage(locale, "contact");
   if (!page) notFound();
@@ -85,6 +89,13 @@ export async function ContactView({ locale }: { locale: Locale }) {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
+              />
+              <a
+                href={MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${info.heading} — open in Google Maps`}
+                className="absolute inset-0 z-10"
               />
             </div>
           </div>
