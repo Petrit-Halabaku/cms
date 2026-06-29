@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { ArrowDown, ArrowUp, Trash2, Wand2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { AlertTriangle, ArrowDown, ArrowUp, Trash2, Wand2 } from "lucide-react";
 
 import {
   CountedInput,
@@ -12,6 +12,10 @@ import {
   inputClass,
   slugify,
 } from "@/components/admin/ui";
+import {
+  ProductEditorProvider,
+  type CommitResult,
+} from "@/components/admin/product-editor-context";
 import {
   deleteProduct,
   saveProduct,
@@ -51,7 +55,54 @@ export function ProductForm({ categories, initial, children }: Props) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [locale, setLocale] = useState<"en" | "sq">("en");
+
+  // Deferred commits registered by child managers (images, brochure). They run
+  // on Save, after the product fields persist — nothing hits Supabase before.
+  const commits = useRef(new Map<string, () => Promise<CommitResult>>());
+
+  const markDirty = useCallback(() => {
+    setDirty(true);
+    setSaved(false);
+  }, []);
+  const registerCommit = useCallback((key: string, fn: () => Promise<CommitResult>) => {
+    commits.current.set(key, fn);
+  }, []);
+  const unregisterCommit = useCallback((key: string) => {
+    commits.current.delete(key);
+  }, []);
+  const editorCtx = useMemo(
+    () => ({ markDirty, registerCommit, unregisterCommit, pending }),
+    [markDirty, registerCommit, unregisterCommit, pending],
+  );
+
+  // Warn before leaving with unsaved changes — full unloads (reload/close) and
+  // in-app link clicks (sidebar, back link). Cleared once saved.
+  useEffect(() => {
+    if (!dirty) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    const onClickCapture = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
+      const anchor = (e.target as HTMLElement).closest?.("a");
+      const href = anchor?.getAttribute("href");
+      if (!anchor || !href || href.startsWith("#") || anchor.target === "_blank") return;
+      if (anchor.hasAttribute("download")) return;
+      if (!window.confirm("You have unsaved changes. Leave without saving?")) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("click", onClickCapture, true);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("click", onClickCapture, true);
+    };
+  }, [dirty]);
 
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? categories[0]?.id ?? "");
   const [sortOrder, setSortOrder] = useState(initial?.sortOrder ?? 0);
@@ -66,12 +117,16 @@ export function ProductForm({ categories, initial, children }: Props) {
   });
 
   const t = translations[locale];
-  const setT = (patch: Partial<Translation>) =>
+  const setT = (patch: Partial<Translation>) => {
     setTranslations((prev) => ({ ...prev, [locale]: { ...prev[locale], ...patch } }));
+    markDirty();
+  };
 
   const localeFacts = facts[locale];
-  const setLocaleFacts = (next: Fact[]) =>
+  const setLocaleFacts = (next: Fact[]) => {
     setFacts((prev) => ({ ...prev, [locale]: next }));
+    markDirty();
+  };
 
   const moveFact = (index: number, delta: number) => {
     const next = [...localeFacts];
@@ -85,6 +140,7 @@ export function ProductForm({ categories, initial, children }: Props) {
     setError(null);
     setSaved(false);
     startTransition(async () => {
+      // 1) Product fields first.
       const result = await saveProduct({
         id: initial?.id,
         categoryId,
@@ -98,7 +154,19 @@ export function ProductForm({ categories, initial, children }: Props) {
         setError(result.error);
         return;
       }
+      // 2) Then the deferred commits (images, brochure). Fields are already
+      // saved; a commit failure is reported so the editor can retry.
+      for (const run of commits.current.values()) {
+        const committed = await run();
+        if (!committed.ok) {
+          // Fields saved, but image/brochure changes aren't — stay dirty so the
+          // editor is still warned about leaving, and can retry Save.
+          setError(committed.error);
+          return;
+        }
+      }
       setSaved(true);
+      setDirty(false);
       if (!initial) {
         router.push(`/admin/products/${result.id}`);
       } else {
@@ -109,6 +177,7 @@ export function ProductForm({ categories, initial, children }: Props) {
 
   function remove() {
     if (!initial) return;
+    setDirty(false); // intentional navigation — skip the unsaved-changes prompt
     startTransition(async () => {
       const result = await deleteProduct(initial.id);
       if (!result.ok) {
@@ -120,7 +189,18 @@ export function ProductForm({ categories, initial, children }: Props) {
   }
 
   return (
-    <div className="max-w-3xl space-y-8">
+    <ProductEditorProvider value={editorCtx}>
+    <div
+      className={`max-w-3xl space-y-8 rounded-xl transition-shadow ${
+        dirty ? "ring-2 ring-amber-400 ring-offset-4 ring-offset-slate-50" : ""
+      }`}
+    >
+      {dirty && (
+        <div className="sticky top-4 z-20 flex items-center gap-2.5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 shadow-sm">
+          <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
+          Draft — you have unsaved changes. They’ll be lost if you leave without saving.
+        </div>
+      )}
       <div className="rounded-lg border border-slate-200 bg-white p-6">
         <div className="flex items-center justify-between gap-4">
           <LocaleTabs locale={locale} onChange={setLocale} />
@@ -128,7 +208,10 @@ export function ProductForm({ categories, initial, children }: Props) {
             <input
               type="checkbox"
               checked={published}
-              onChange={(e) => setPublished(e.target.checked)}
+              onChange={(e) => {
+                setPublished(e.target.checked);
+                markDirty();
+              }}
               className="h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-brand-600"
             />
             Published
@@ -179,7 +262,10 @@ export function ProductForm({ categories, initial, children }: Props) {
             <Field label="Category">
               <select
                 value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
+                onChange={(e) => {
+                  setCategoryId(e.target.value);
+                  markDirty();
+                }}
                 className={`${inputClass} bg-white`}
               >
                 {categories.map((category) => (
@@ -193,7 +279,10 @@ export function ProductForm({ categories, initial, children }: Props) {
               <input
                 type="number"
                 value={sortOrder}
-                onChange={(e) => setSortOrder(Number(e.target.value))}
+                onChange={(e) => {
+                  setSortOrder(Number(e.target.value));
+                  markDirty();
+                }}
                 className={inputClass}
               />
             </Field>
@@ -287,13 +376,20 @@ export function ProductForm({ categories, initial, children }: Props) {
         <button
           type="button"
           onClick={submit}
-          disabled={pending}
+          disabled={pending || (!!initial && !dirty)}
           className="rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
         >
-          {pending ? "Saving…" : initial ? "Save changes" : "Create product"}
+          {pending
+            ? "Saving…"
+            : initial
+              ? dirty
+                ? "Save changes"
+                : "Saved"
+              : "Create product"}
         </button>
         {initial && <ConfirmButton onConfirm={remove}>Delete product</ConfirmButton>}
       </div>
     </div>
+    </ProductEditorProvider>
   );
 }

@@ -159,6 +159,96 @@ export async function deleteProduct(id: string): Promise<ActionResult> {
 
 // --- product images --------------------------------------------------------
 
+const imageItemSchema = z.union([
+  z.object({ type: z.literal("existing"), id: z.string().uuid() }),
+  z.object({
+    type: z.literal("new"),
+    storagePath: z.string().min(1),
+    width: z.number().int().positive().nullable(),
+    height: z.number().int().positive().nullable(),
+    mimeType: z.string().min(1),
+  }),
+]);
+
+const saveImagesSchema = z.object({
+  productId: z.string().uuid(),
+  /** Final desired image list, in display order. */
+  items: z.array(imageItemSchema),
+  /** Index of the featured image within `items`, or -1 for none. */
+  featuredIndex: z.number().int().min(-1),
+});
+
+export type SaveProductImagesPayload = z.infer<typeof saveImagesSchema>;
+
+/**
+ * Reconcile a product's images to a desired final state in one call: removes
+ * images no longer present, registers media rows for newly uploaded files, and
+ * applies order + the featured flag. Files are uploaded to Storage client-side
+ * first; this only persists the database side. Used by the deferred (save-time)
+ * commit so nothing is written until the editor clicks Save.
+ */
+export async function saveProductImages(
+  payload: SaveProductImagesPayload,
+): Promise<ActionResult> {
+  const { supabase } = await requireEditor();
+  const parsed = saveImagesSchema.safeParse(payload);
+  if (!parsed.success) return { ok: false, error: "Invalid image data" };
+  const { productId, items, featuredIndex } = parsed.data;
+
+  // Delete any existing rows the editor dropped from the list.
+  const { data: existing, error: exError } = await supabase
+    .from("project_images")
+    .select("id")
+    .eq("project_id", productId);
+  if (exError) return { ok: false, error: exError.message };
+
+  const keptIds = new Set(items.filter((i) => i.type === "existing").map((i) => i.id));
+  const toRemove = (existing ?? []).filter((row) => !keptIds.has(row.id)).map((row) => row.id);
+  if (toRemove.length > 0) {
+    const { error } = await supabase.from("project_images").delete().in("id", toRemove);
+    if (error) return { ok: false, error: error.message };
+  }
+
+  // Apply order + featured for each item; insert media + link rows for new ones.
+  for (const [index, item] of items.entries()) {
+    const isFeatured = index === featuredIndex;
+    if (item.type === "existing") {
+      const { error } = await supabase
+        .from("project_images")
+        .update({ sort_order: index + 1, is_featured: isFeatured })
+        .eq("id", item.id);
+      if (error) return { ok: false, error: error.message };
+    } else {
+      const { data: media, error: mediaError } = await supabase
+        .from("media")
+        .insert({
+          storage_path: item.storagePath,
+          width: item.width,
+          height: item.height,
+          mime_type: item.mimeType,
+        })
+        .select("id")
+        .single();
+      if (mediaError) return { ok: false, error: mediaError.message };
+      const { error } = await supabase.from("project_images").insert({
+        project_id: productId,
+        media_id: media.id,
+        sort_order: index + 1,
+        is_featured: isFeatured,
+      });
+      if (error) return { ok: false, error: error.message };
+    }
+  }
+
+  const { data: row } = await supabase
+    .from("projects")
+    .select("category_id")
+    .eq("id", productId)
+    .single();
+  if (row) await productRevalidation(supabase, productId, row.category_id);
+  return { ok: true, id: productId };
+}
+
 export async function addProductImage(productId: string, mediaId: string): Promise<ActionResult> {
   const { supabase } = await requireEditor();
   const { count } = await supabase

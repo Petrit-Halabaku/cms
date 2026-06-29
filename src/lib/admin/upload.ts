@@ -10,6 +10,8 @@ import { createClient } from "@/lib/supabase/client";
 export async function uploadFile(
   bucket: "media" | "brochures",
   file: File,
+  /** Optional folder prefix within the bucket, e.g. "products/<slug>/gallery". */
+  folder?: string,
 ): Promise<{ path: string } | { error: string }> {
   if (bucket === "media" && file.type !== "image/webp") {
     return { error: "Only WebP images are allowed." };
@@ -20,7 +22,9 @@ export async function uploadFile(
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .slice(0, 40);
-  const path = `${safeBase}-${crypto.randomUUID().slice(0, 8)}.${extension}`;
+  const name = `${safeBase}-${crypto.randomUUID().slice(0, 8)}.${extension}`;
+  const prefix = folder?.replace(/^\/+|\/+$/g, "");
+  const path = prefix ? `${prefix}/${name}` : name;
 
   const supabase = createClient();
   const { error } = await supabase.storage.from(bucket).upload(path, file, {

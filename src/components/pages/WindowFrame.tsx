@@ -30,10 +30,12 @@ export function WindowFrame({
     >
       {children}
 
+      {/* Mullion cross — temporarily disabled.
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-white/40 mix-blend-overlay" />
         <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 bg-white/40 mix-blend-overlay" />
       </div>
+      */}
 
       <div className="pointer-events-none absolute top-0 left-0 flex w-full items-center justify-between bg-gradient-to-b from-brand-950/55 to-transparent px-4 pt-3 pb-8">
         <div aria-hidden className="flex items-end gap-1.5">
