@@ -24,7 +24,7 @@ export async function ContactView({ locale }: { locale: Locale }) {
         breadcrumbHref={basePath || "/"}
         title={page.title}
         subtitle={dict.footer.tagline}
-        image={{ path: "hero/contact.webp", alt: page.title }}
+        image={{ path: "hero/contact-image.webp", alt: page.title }}
         specs={[]}
       />
 

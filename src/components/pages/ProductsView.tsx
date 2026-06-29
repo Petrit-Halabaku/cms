@@ -26,7 +26,7 @@ export async function ProductsView({ locale }: { locale: Locale }) {
         breadcrumbHref={basePath || "/"}
         title={page.title}
         subtitle={dict.footer.tagline}
-        image={{ path: "products/products.webp", alt: "GERGOCI headquarters" }}
+        image={{ path: "products/products-image.webp", alt: "GERGOCI headquarters" }}
         specs={[]}
       />
       {page.sections.map((section) => (

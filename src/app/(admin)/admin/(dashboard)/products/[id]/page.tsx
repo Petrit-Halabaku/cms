@@ -70,7 +70,11 @@ export default async function EditProductPage({ params }: Props) {
           }))}
           initial={initial}
         >
-          <ProductImagesManager productId={product.id} images={images} />
+          <ProductImagesManager
+            productId={product.id}
+            slug={translationFor("en").slug}
+            images={images}
+          />
           <BrochureManager productId={product.id} brochureUrl={product.brochure_url} />
         </ProductForm>
       </div>

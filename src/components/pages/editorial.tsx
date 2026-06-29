@@ -99,7 +99,7 @@ export function EditorialHero({
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/70 to-brand-950/35"
+        className="absolute inset-0 bg-linear-to-t from-brand-950 via-brand-950/50 to-brand-950/20"
       />
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/8" />
