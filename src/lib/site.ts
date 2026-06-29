@@ -34,6 +34,9 @@ export function storageUrl(bucket: "media" | "brochures", path: string): string 
  */
 export const LOGO_PATH = "icons/gergoci-symbol-color.webp";
 
+/** White GERGOCI symbol on the hero shutter overlay (`media` bucket). */
+export const HERO_SYMBOL_PATH = "icons/gergoci-symbol-white.webp";
+
 /**
  * Homepage hero video — swappable single source of truth.
  *

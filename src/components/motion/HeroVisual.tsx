@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 
-import { HERO_INTRO_FLAG, HERO_MEDIA } from "@/lib/site";
+import { HERO_INTRO_FLAG, HERO_MEDIA, HERO_SYMBOL_PATH, storageUrl } from "@/lib/site";
 import { gsap, prefersReducedMotion, useGSAP } from "./gsap";
 
 /**
@@ -164,7 +164,7 @@ export function HeroVisual({ className = "" }: { className?: string }) {
           <div
             data-hero-logo
             className="absolute inset-0 bg-center bg-no-repeat"
-            style={{ backgroundImage: "url(/brand/gergoci-symbol-white.webp)", backgroundSize: "40%" }}
+            style={{ backgroundImage: `url(${storageUrl("media", HERO_SYMBOL_PATH)})`, backgroundSize: "40%" }}
           />
         </div>
 

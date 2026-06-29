@@ -24,6 +24,10 @@ export type Dictionary = {
     backToCategory: string;
     noProducts: string;
   };
+  projects: {
+    heading: string;
+    subheading: string;
+  };
   form: {
     name: string;
     phone: string;
@@ -76,6 +80,10 @@ const en: Dictionary = {
     backToCategory: "Back to",
     noProducts: "No products in this category yet.",
   },
+  projects: {
+    heading: "Our projects",
+    subheading: "A selection of windows, doors and glass systems we've installed across Kosovo.",
+  },
   form: {
     name: "Name",
     phone: "Phone",
@@ -127,6 +135,10 @@ const sq: Dictionary = {
     related: "Produkte të ngjashme",
     backToCategory: "Kthehu te",
     noProducts: "Ende nuk ka produkte në këtë kategori.",
+  },
+  projects: {
+    heading: "Projektet tona",
+    subheading: "Një përzgjedhje e dritareve, dyerve dhe sistemeve të xhamit që kemi instaluar në Kosovë.",
   },
   form: {
     name: "Emri",

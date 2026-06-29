@@ -1,3 +1,6 @@
+import { Fragment } from "react";
+
+import { ProjectsShowcase } from "@/components/pages/ProjectsShowcase";
 import { SectionRenderer } from "@/components/sections/SectionRenderer";
 import type { Locale } from "@/lib/database.types";
 import { getPage } from "@/lib/db/content";
@@ -24,7 +27,11 @@ export async function HomeView({ locale }: { locale: Locale }) {
   return (
     <>
       {page?.sections.map((section) => (
-        <SectionRenderer key={section.id} section={section} ctx={ctx} />
+        <Fragment key={section.id}>
+          <SectionRenderer section={section} ctx={ctx} />
+          {/* Projects gallery sits directly under the "What we offer" grid. */}
+          {section.key === "offer-grid" && <ProjectsShowcase locale={locale} />}
+        </Fragment>
       ))}
     </>
   );
