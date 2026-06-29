@@ -87,7 +87,7 @@ export function EditorialHero({
   specs: SpecItem[];
 }) {
   return (
-    <header className="relative flex min-h-[80vh] flex-col justify-end overflow-hidden border-b border-line bg-brand-950 text-white sm:min-h-[90vh]">
+    <header className="relative flex min-h-[50vh] flex-col justify-end overflow-hidden border-b border-line bg-brand-950 text-white sm:min-h-[90vh]">
       <Image
         src={storageUrl("media", image.path)}
         alt={image.alt}

@@ -56,7 +56,7 @@ export function ProductFilter({
   return (
     <div>
       <div
-        className="mb-10 flex flex-wrap items-center gap-2.5"
+        className="mb-8 flex flex-wrap items-center gap-2.5 sm:mb-10"
         role="group"
         aria-label={locale === "sq" ? "Filtro sipas markës" : "Filter by brand"}
       >

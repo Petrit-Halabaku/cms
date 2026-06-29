@@ -96,8 +96,8 @@ export async function ProductView({
       </div>
 
       {/* Hero */}
-      <article className="mx-auto max-w-7xl px-4 pt-6 pb-14 sm:px-6 sm:pb-16 lg:px-8">
-        <div className="grid gap-10 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+      <article className="mx-auto max-w-7xl px-4 pt-6 pb-10 sm:px-6 sm:pb-16 lg:px-8">
+        <div className="grid gap-6 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <Reveal y={20}>
             <WindowFrame aspect="landscape">
               {featured ? (
@@ -163,7 +163,7 @@ export async function ProductView({
 
       {/* Technical data — navy precision band */}
       {product.facts.length > 0 && (
-        <section className="bg-brand-950 py-14 text-white sm:py-20" aria-label={dict.product.specs}>
+        <section className="bg-brand-950 py-10 text-white sm:py-20" aria-label={dict.product.specs}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal y={12} className="flex items-center gap-3">
               <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-accent" />
@@ -198,14 +198,14 @@ export async function ProductView({
       {/* Gallery + related */}
       <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
         {galleryMedia.length > 1 && (
-          <div className="pt-12 sm:pt-16">
+          <div className="pt-10 sm:pt-16">
             <ProductGallery images={galleryMedia} locale={locale} heading={dict.product.gallery} />
           </div>
         )}
 
         {related.length > 0 && (
           <section
-            className="mt-12 border-t border-line pt-10 sm:mt-16 sm:pt-12"
+            className="mt-10 border-t border-line pt-8 sm:mt-16 sm:pt-12"
             aria-label={dict.product.related}
           >
             <h2 className="flex items-center gap-3 font-display text-2xl text-slate-900 sm:text-3xl">
