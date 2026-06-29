@@ -39,7 +39,7 @@ export function ServicesView({ locale }: { locale: Locale }) {
           <Reveal>
             <PaneHeading text={featureCards.heading} split accent light />
           </Reveal>
-          <Reveal stagger={0.1} className="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-5">
+          <Reveal stagger={0.1} className="mt-8 grid grid-cols-1 gap-4 sm:mt-10 sm:grid-cols-3 sm:gap-5">
             {featureCards.cards.map((card) => (
               <FeatureCard key={card.title} title={card.title} image={card.image} />
             ))}
@@ -60,8 +60,8 @@ function ServiceBlock({
   flip: boolean;
 }) {
   return (
-    <section className="border-b border-line py-14 sm:py-20">
-      <EditorialContainer className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <section className="border-b border-line py-10 sm:py-20">
+      <EditorialContainer className="grid items-center gap-6 lg:grid-cols-2 lg:gap-16">
         <Reveal className={flip ? "lg:order-2" : ""}>
           <FramedPhoto image={section.image} index={index} />
         </Reveal>
@@ -70,19 +70,19 @@ function ServiceBlock({
           <PaneHeading text={section.heading} />
 
           {section.subheading && (
-            <p className="mt-5 max-w-xl text-lg leading-relaxed font-medium text-slate-800">
+            <p className="mt-4 max-w-xl text-base leading-relaxed font-medium text-slate-800 sm:mt-5 sm:text-lg">
               {section.subheading}
             </p>
           )}
           {section.body && (
-            <p className="mt-4 max-w-xl leading-relaxed text-slate-600">{section.body}</p>
+            <p className="mt-3 max-w-xl leading-relaxed text-slate-600 sm:mt-4">{section.body}</p>
           )}
 
-          <ul className="mt-7 space-y-px border-t border-line">
+          <ul className="mt-6 space-y-px border-t border-line sm:mt-7">
             {section.items.map((item) => (
               <li
                 key={item}
-                className="group flex items-start gap-4 border-b border-line py-3.5 transition-colors hover:bg-brand-50/50"
+                className="group flex items-start gap-3 border-b border-line py-3 transition-colors hover:bg-brand-50/50 sm:gap-4 sm:py-3.5"
               >
                 <span
                   aria-hidden

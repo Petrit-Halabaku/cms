@@ -87,18 +87,16 @@ export function EditorialHero({
   specs: SpecItem[];
 }) {
   return (
-    <header className="relative flex min-h-[90vh] flex-col justify-end overflow-hidden border-b border-line bg-brand-950 text-white">
+    <header className="relative flex min-h-[80vh] flex-col justify-end overflow-hidden border-b border-line bg-brand-950 text-white sm:min-h-[90vh]">
       <Image
         src={storageUrl("media", image.path)}
         alt={image.alt}
         fill
         quality={100}
-        objectPosition="top"
-        objectFit="cover"
         priority
         loading="eager"
         sizes="100vw"
-        // className="object-cover object-top"
+        className="object-cover object-top"
       />
       <div
         aria-hidden
@@ -110,7 +108,7 @@ export function EditorialHero({
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/8" />
       </div>
 
-      <EditorialContainer className="relative pt-28 pb-0 sm:pt-32">
+      <EditorialContainer className="relative pt-24 pb-0 sm:pt-32">
         <Reveal y={12}>
           <nav aria-label="Breadcrumb" className="kicker text-brand-100">
             <Link href={breadcrumbHref} className="transition-colors hover:text-white">
@@ -128,12 +126,12 @@ export function EditorialHero({
           text={title}
           onScroll={false}
           delay={0.12}
-          className="mt-6 max-w-4xl font-display text-5xl leading-[0.95] text-white sm:text-7xl"
+          className="mt-5 max-w-4xl font-display text-[2.5rem] leading-[1.02] text-white sm:mt-6 sm:text-7xl sm:leading-[0.95]"
         />
 
         {subtitle && (
           <Reveal delay={0.4} y={18}>
-            <p className="mt-6 max-w-xl font-serif text-xl text-accent italic sm:text-2xl">
+            <p className="mt-5 max-w-xl font-serif text-lg text-accent italic sm:mt-6 sm:text-2xl">
               {subtitle}
             </p>
           </Reveal>
@@ -142,13 +140,13 @@ export function EditorialHero({
         {specs.length === 0 && (
           // Reserve the spec strip's height so the title/subtitle sit at the
           // same position whether or not a hero has a spec strip.
-          <div aria-hidden className="mt-10 h-[3.75rem] sm:mt-14 sm:h-[4.25rem]" />
+          <div aria-hidden className="mt-8 h-[3.75rem] sm:mt-14 sm:h-[4.25rem]" />
         )}
 
         {specs.length > 0 && (
           <Reveal delay={0.55} y={16}>
             <ul
-              className={`mt-10 grid grid-cols-2 border-t border-white/15 sm:mt-14 ${
+              className={`mt-8 grid grid-cols-2 border-t border-white/15 sm:mt-14 sm:gap-0 ${
                 specs.length === 4
                   ? "sm:grid-cols-4"
                   : specs.length === 2
@@ -159,9 +157,11 @@ export function EditorialHero({
               {specs.map((spec, i) => (
                 <li
                   key={spec.label}
-                  className={`py-5 sm:py-6 ${
+                  className={`py-4 sm:py-6 ${
                     i !== 0 ? "sm:border-l sm:border-white/15 sm:pl-6" : ""
-                  } ${i % 2 === 1 ? "border-l border-white/15 pl-4 sm:pl-6" : ""}`}
+                  } ${i % 2 === 1 ? "border-l border-white/15 pl-4" : ""} ${
+                    i >= 2 ? "border-t border-white/15 sm:border-t-0" : ""
+                  }`}
                 >
                   {spec.value ? (
                     <>
@@ -195,13 +195,16 @@ export function FramedPhoto({
   image,
   index,
   aspect = "landscape",
+  aspectClassName,
 }: {
   image: EditorialImage;
   index?: number;
   aspect?: "landscape" | "portrait";
+  /** Responsive aspect override, e.g. "aspect-[4/3] sm:aspect-[3/4]". */
+  aspectClassName?: string;
 }) {
   return (
-    <WindowFrame index={index} aspect={aspect}>
+    <WindowFrame index={index} aspect={aspect} aspectClassName={aspectClassName}>
       <Image
         src={storageUrl("media", image.path)}
         alt={image.alt}
@@ -224,7 +227,7 @@ export function FeatureCard({
   image: EditorialImage;
 }) {
   return (
-    <article className="group relative aspect-[3/4] overflow-hidden border border-white/10">
+    <article className="group relative aspect-[4/3] overflow-hidden border border-white/10 sm:aspect-[3/4]">
       <Image
         src={storageUrl("media", image.path)}
         alt={image.alt}
