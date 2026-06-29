@@ -89,7 +89,11 @@ export default async function SiteLayout({
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
 
   return (
-    <html lang={locale} className={`${archivo.variable} ${instrumentSerif.variable} h-full`}>
+    <html
+      lang={locale}
+      data-scroll-behavior="smooth"
+      className={`${archivo.variable} ${instrumentSerif.variable} h-full`}
+    >
       {/* suppressHydrationWarning: browser extensions (Grammarly, etc.) inject
           attributes onto <body> on the client, which React would otherwise flag
           as a hydration mismatch. Scoped to this element only. */}
