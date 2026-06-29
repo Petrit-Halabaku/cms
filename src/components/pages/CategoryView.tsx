@@ -59,7 +59,7 @@ export async function CategoryView({
         image={{ path: heroPath, alt: category.name }}
         specs={specs}
       />
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
         {products.length > 0 ? (
           <ProductFilter
             products={products}

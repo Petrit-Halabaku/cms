@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import "../../globals.css";
 
 import { JsonLd } from "@/components/JsonLd";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import type { Locale } from "@/lib/database.types";
@@ -153,6 +154,7 @@ export default async function SiteLayout({
           contact={{ address: info.address, phone: info.phone, phone2: info.phone2, email: info.email }}
           logoUrl={logoUrl}
         />
+        <ScrollToTop label={locale === "sq" ? "Kthehu lart" : "Back to top"} />
       </body>
     </html>
   );
