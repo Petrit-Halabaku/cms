@@ -1,0 +1,931 @@
+{
+  "brand": {
+    "name": "GERGOCI",
+    "logo_files": [
+      "logo_updated.pdf"
+    ],
+    "colors": [
+      {
+        "role": "primary",
+        "name": "GERGOCI Blue",
+        "hex": "#0040FF",
+        "rgb": "0, 64, 255",
+        "cmyk": "85, 71, 0, 0"
+      },
+      {
+        "role": "secondary",
+        "name": "Light Blue",
+        "hex": "#8DD7F7",
+        "rgb": "141, 215, 247",
+        "cmyk": "40, 1, 0, 0"
+      },
+      {
+        "role": "neutral",
+        "name": "Dark Grey",
+        "hex": "#3F3F41",
+        "rgb": "63, 63, 65",
+        "cmyk": "69, 62, 58, 47"
+      }
+    ],
+    "_note": "Brand/theme assets from the 'Logo dhe Kodet e ngjyres' email (COLORS_GERGOCI.pdf). These belong in CMS theme/settings, NOT in the product catalog. Kept as a separate top-level key on purpose. Hex values are converted from the supplied RGB. Delete this whole block if you only want products."
+  },
+  "catalog": {
+    "Windows": [
+      {
+        "name": "Salamander bluEvolution 82 MD",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/windows/bluevolution82_system",
+        "category": "Windows",
+        "material": "PVC",
+        "subcategory": "Windows",
+        "specifications": {
+          "installation_depth_mm": 82,
+          "Uw_W_m2K": "up to ~0.74 (0.73 quoted on page) with triple glazing",
+          "Uf_W_m2K": 0.98,
+          "glazing_thickness_max_mm": 52,
+          "sound_reduction_max_dB": 47,
+          "visible_height_mm": 107,
+          "burglary_resistance": "up to RC 3",
+          "chambers": "5- or 6-chamber profile",
+          "sealing": "central gasket (MD) plus outer rebate gasket",
+          "max_window_size": "2.80 m x 1 m (straight variant)",
+          "profile_variants": "straight, free, flex, curve, curve+",
+          "recyclability": "up to 100% recyclable material",
+          "finishes": "wood-look foils, modern matt colours, optional aluminium cover shells"
+        },
+        "description": "Salamander's 82 mm passive-house-capable PVC window with central-seal (MD) technology, triple glazing up to 52 mm, several face profiles, and strong thermal/acoustic/security performance.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/09f7479d71/modernhouseconceptproevo-nosun-heller-v2-previewa-1.jpg",
+          "https://a.storyblok.com/f/308729/5500x3000/01ee3f8d30/2_hauser-am-wasser_premiumfenster-in-deinem-alltag.png/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/1080x1080/a92ed205c5/8_glas_wohlfuhlen-mit-dem-richtigen-glas.png/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/af7275dc8f/hero-bc3dd902.jpg/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/1071x1097/50c81b8ca5/17_be82-als-passivhaus_fenster.jpg/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/2680x2680/2dae6b23d2/18_be82-als-greta-r-fenster.jpg/m/0x0/filters:quality(90)"
+        ]
+      },
+      {
+        "name": "Salamander bluEvolution 92",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/windows/bluevolution92_system",
+        "category": "Windows",
+        "material": "PVC",
+        "subcategory": "Windows",
+        "specifications": {
+          "installation_depth_mm": 92,
+          "Uw_W_m2K": 0.7,
+          "Uf_W_m2K": 0.9,
+          "glazing_thickness_max_mm": 60,
+          "sound_reduction_max_dB": 47,
+          "visible_height_mm": 118,
+          "burglary_resistance": "up to RC 3",
+          "chambers": "6-chamber profile",
+          "sash_variants": "flex, curve",
+          "max_window_size": "2.50 m x 1 m",
+          "recyclability": "up to 100% recyclable material",
+          "finishes": "wood foils, matt colours, realMaterial (leather/aluminium/copper looks), optional aluminium shells"
+        },
+        "description": "Premium 92 mm, 6-chamber PVC window accepting special glazing up to 60 mm; slim 118 mm face, top thermal and acoustic values, optional realMaterial finishes and aluminium cover shells.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/09f7479d71/modernhouseconceptproevo-nosun-heller-v2-previewa-1.jpg",
+          "https://a.storyblok.com/f/308729/1080x1080/5425013c2e/3_verglasung-fur-jeden-zweck.png/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/1322x1080/e5615b5b77/11_fenster-edel-wie-ein-massanzug.png/m/0x0/filters:quality(90)"
+        ]
+      },
+      {
+        "name": "Alumil Smartia S77",
+        "brand": "Alumil",
+        "source_url": "https://www.alumil.com/international/aluminium-systems/windows-doors-frames/hinged/hinged-insulated-system-smartia-s77",
+        "category": "Windows",
+        "material": "Aluminum",
+        "subcategory": "Windows",
+        "specifications": {
+          "window_type": "Hinged (tilt & turn)",
+          "frame_depth_mm": 77,
+          "sash_weight_max_kg": 180,
+          "min_visible_face_height_mm": 93,
+          "min_visible_face_width_central_mm": 122,
+          "glazing_type": "double - triple",
+          "glazing_thickness_mm": "24 to 72",
+          "mechanism": "Euro-groove, Euro-nut",
+          "sealing": "perimetrical at 3 levels with EPDM & foam EPDM gaskets",
+          "min_threshold_height_mm": 13,
+          "thermal_insulation": "polyamides 40 mm, ALUMIL Energy bar, insulation foam",
+          "Uf_W_m2K": "0.85 to 2.42",
+          "sound_reduction_dB": 42,
+          "water_tightness": "Class E1350",
+          "air_permeability": "Class 4",
+          "wind_load_resistance": "C5/B5",
+          "burglary_resistance": "RC2/RC3",
+          "certificates": "Passive House Institute (PHI) certified; PAS 24, Cradle to Cradle, QB"
+        },
+        "description": "Alumil's advanced thermally broken hinged casement system on a 77 mm frame, Passive-House certified, with high security, sound insulation and wide typology range.",
+        "image_urls": [
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s77/s77_1260x340.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s77/s77_2f_camera.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s77/s77_gwnia_amea0001.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s77/s77_top_tomh_detail00011553713106.jpg"
+        ],
+        "datasheet_pdfs": [
+          "https://www.alumil.com/docs/default-source/brochures-sharepoint/smartia-s77-en.pdf"
+        ],
+        "extraction_note": "Specs verified live from alumil.com via browser session (2026-06-21); they matched the prior ArchiExpo values. Images now sourced directly from Alumil's CDN. Section/gallery files ending '.tmb-fit300x180' are thumbnails; removing that suffix is likely to yield full resolution (verify)."
+      },
+      {
+        "name": "Alumil Smartia S67",
+        "brand": "Alumil",
+        "source_url": "https://www.alumil.com/international/aluminium-systems/windows-doors-frames/hinged/hinged-insulated-system-smartia-s67",
+        "category": "Windows",
+        "material": "Aluminum",
+        "subcategory": "Windows",
+        "specifications": {
+          "window_type": "Hinged (tilt & turn)",
+          "frame_depth_mm": 67,
+          "sash_depth_mm": 75,
+          "sash_weight_max_kg": 180,
+          "min_visible_face_height_mm": 93,
+          "min_visible_face_width_central_mm": 151,
+          "glazing_type": "double - triple",
+          "glazing_thickness_max_mm": 58,
+          "mechanism": "Euro-groove, Euro-nut",
+          "sealing": "perimetrical at 3 levels with EPDM gaskets",
+          "min_threshold_height_mm": 14,
+          "thermal_insulation": "30 mm fibreglass polyamides, PE insulation foam",
+          "Uf_W_m2K": "1.1 to 2.6",
+          "water_tightness": "Class E1200",
+          "air_permeability": "Class 4",
+          "wind_load_resistance": "C5",
+          "sound_reduction_dB": 45,
+          "burglary_resistance": "RC2/RC3",
+          "designs": "flat & curved",
+          "certificates": "PAS 24, Cradle to Cradle, TUV OK Recycled"
+        },
+        "description": "Alumil's complete tilt & turn system on a 67 mm frame combining strong thermal insulation, flat or curved designs, high sash capacity and certified security.",
+        "image_urls": [
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s67/s67-hi.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s67/tomi-s67-ak8-hi-ultra_allages3-_high.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s67/tomi-s67-unj-hi-ultra_allages3_high.png"
+        ],
+        "datasheet_pdfs": [
+          "https://www.alumil.com/docs/default-source/brochures-sharepoint/smartia-s67-en.pdf"
+        ],
+        "extraction_note": "Specs verified live from alumil.com via browser session (2026-06-21). Overrides prior ArchiExpo values: central visible face width 151 mm (was 67), water tightness E1200 (was E1500), min threshold 14 mm (was 13). Wind load C5 confirmed; live page lists Uf (not Uw). Images now from Alumil's CDN; '.tmb-fit300x180' files are thumbnails (strip suffix for full res, verify)."
+      }
+    ],
+    "Doors": [
+      {
+        "name": "Salamander bluEvolution 92 (entrance door)",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/doors#bluevolution92",
+        "category": "Doors",
+        "material": "PVC",
+        "subcategory": "Doors",
+        "specifications": {
+          "Ud_W_m2K": "up to 0.71",
+          "burglary_resistance": "up to RC 2",
+          "panel_thickness_max_mm": 60,
+          "visible_width_mm": 164,
+          "opening": "inward or outward opening leaf",
+          "threshold": "plastic threshold with aluminium step protection; barrier-free adapter profiles",
+          "configurations": "single and double-leaf"
+        },
+        "description": "bluEvolution 92 entrance-door leaf combining security and energy efficiency, taking panels up to 60 mm (triple/functional glazing) with a slim 164 mm face and barrier-free threshold options.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/cdf84dc63d/adobestock_94104978.jpeg/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/8000x3429/58500e57e1/ge_mullion_interior_psdv3_grayjpg.jpg/m/0x0/filters:quality(90)"
+        ],
+        "extraction_note": "Both door models share one page (/productworld/doors); images above are the hero image preceding the bluEvolution92 section plus shared 'more products' tiles."
+      },
+      {
+        "name": "Salamander bluEvolution 82 (entrance door)",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/doors#bluevolution82",
+        "category": "Doors",
+        "material": "PVC",
+        "subcategory": "Doors",
+        "specifications": {
+          "Ud_W_m2K": "up to 0.75",
+          "burglary_resistance": "up to RC 3",
+          "build_depth_mm": 82,
+          "attributes": "high stability, thermal/sound/burglary protection, weather resistance"
+        },
+        "description": "bluEvolution 82 front-door system emphasising stability, thermal insulation, sound and burglary protection, and design flexibility for a building's main entrance.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/85d1e9c4d4/adobestock_596736308-1-kopie_2.jpg/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/2880x1500/2f293673cf/evolutiondrive_kachel-website.png/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/2880x1500/6bfc497fa6/pflege-und-wartung-1.png/m/0x0/filters:quality(90)"
+        ],
+        "extraction_note": "Shares page with bluEvolution92 door; image above is the photo preceding the bluEvolution82 section plus shared footer tiles."
+      },
+      {
+        "name": "Feal Termo 85 VS and VP",
+        "brand": "Feal",
+        "source_url": "https://feal.ba/en/products/window-and-door-systems/aluminum-windows/thermo-85-vs-and-vp/",
+        "category": "Doors",
+        "material": "Aluminum",
+        "subcategory": "Doors",
+        "specifications": {
+          "system_groups": "Termo 85 VS (glass infill, in/outward), Termo 85 VP (panel infill, inward)",
+          "frame_depth_mm": "77 and 85",
+          "sash_depth_mm": "85 and 88.5",
+          "filling_thickness_max_mm": 71,
+          "polyamide_strips_mm": "34 (frame), 26 and 30 (sash)",
+          "max_leaf_weight_kg": 160,
+          "air_permeability": "EN 12207 Class 4",
+          "water_tightness": "EN 12208 Class E750",
+          "wind_resistance": "EN 12210 Class C5/B5",
+          "sound_protection": "DIN 4109 Rw up to 46 dB",
+          "burglary_resistance": "EN 1627 RC2/RC3",
+          "Uw_W_m2K": "≥0.94 (DIN EN ISO 10077-2)",
+          "base_material": "EN AW-6060 aluminium",
+          "seal_material": "EPDM",
+          "surface_treatment": "DIN 17611",
+          "certification": "ISO 9001",
+          "configurations": "single/double-leaf, side fixed parts, transom light, optional XPS 'F' insulation"
+        },
+        "description": "Feal's premium thermally broken aluminium entrance-door/window system in glass (VS) and panel (VP) versions, with polyamide thermal breaks, leaves to 160 kg, and high weather/security ratings.",
+        "image_urls": [
+          "https://feal.ba/wp-content/uploads/2025/08/TERMO-85-VS-TEH-SPEC.png",
+          "https://feal.ba/wp-content/uploads/2025/08/TERMO-85-VP-TEH-SPEC.png",
+          "https://feal.ba/wp-content/uploads/2025/08/TERMO-65-VS-TEH-SPEC.png"
+        ],
+        "extraction_note": "Categorized under Doors to match the source email ('Dere alumini FEAL 85 VS and VP' = aluminium door). Note: the manufacturer markets this as a window-AND-door system, so the same profiles also serve window openings. Last image is the 'similar systems' Termo 65 thumbnail shown on the page. Downloadable catalogue: https://feal.ba/wp-content/uploads/2025/katalozi/aluminijski-prozori-i-vrata/TERMO-85-VS-I-VP-ab.zip"
+      }
+    ],
+    "Sliding Systems": [
+      {
+        "name": "Salamander evolutionDrive HST",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/sliding-systems#hst",
+        "category": "Sliding Systems",
+        "material": "PVC",
+        "subcategory": "Sliding",
+        "specifications": {
+          "type": "lift-and-slide door (HST)",
+          "frame_depth_mm": 194,
+          "sash_depth_mm": 82,
+          "threshold": "levelZer0 near-zero threshold, barrier-free per DIN 18040",
+          "chambers": "6-chamber profile",
+          "glazing_max_mm": 52,
+          "Uw_W_m2K": "from 0.77",
+          "sound_reduction_dB": "up to 45",
+          "max_sash": "up to 3300 mm x 2700 mm",
+          "max_sash_weight_kg": 400,
+          "sealing": "EPDM gaskets, optimised sealing levels"
+        },
+        "description": "Lift-and-slide PVC door for large glazed openings with a barrier-free 'levelZer0' threshold, smooth operation of heavy sashes, and strong thermal/acoustic performance; also available as recycled Greta Fenster.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/4167x5000/d1c0322b46/evolutiondrive_hst_keyvisual-website.png/m/0x0/filters:quality(90)",
+          "https://a.storyblok.com/f/308729/1884x1044/06a3863741/bodenschwelle_barrierearm_nullschwelle_zeichenflache-1-kopie-3.png",
+          "https://a.storyblok.com/f/308729/1535x1080/33433f3ba1/3_schieben-auch-barrierefrei.png",
+          "https://a.storyblok.com/f/308729/3727x2213/50b3fca8d2/hst_innenansicht_seite2-unten_close_pso_uncoated_v3_1.jpg",
+          "https://a.storyblok.com/f/308729/8166x3500/e3826dd82e/13_greta-r-fenster.jpg/m/0x0/filters:quality(90)"
+        ],
+        "extraction_note": "Key visual from sliding-systems overview; remaining images from the dedicated detail page /productworld/sliding-systems/ed_hst. HST numeric dimensions (frame 194 mm, sash 82 mm, Uw from 0.77, Rw 45 dB, 400 kg) sourced from distributor data (e.g. ascowindows.com) as the Salamander page itself lists no numeric table."
+      },
+      {
+        "name": "Salamander evolutionDrive plus",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/sliding-systems#plus",
+        "category": "Sliding Systems",
+        "material": "PVC",
+        "subcategory": "Sliding",
+        "specifications": {
+          "type": "parallel turn-slide system (PSK-style)",
+          "Uw_W_m2K": "up to 0.71",
+          "sound_reduction_dB": "up to 44",
+          "max_frame_size": "up to 4000 mm x 2600 mm",
+          "max_sash_size": "1950 mm width x 2250 mm height",
+          "benefits": "space-saving sliding, parallel sealing for high air/wind tightness, large glazing, concealed fittings",
+          "applications": "patio/balcony doors, upper floors"
+        },
+        "description": "Parallel turn-slide PVC system that seals parallel to the frame for high tightness; lighter and shallower than a classic lift-and-slide, with large glazing and good thermal/acoustic values.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/1600x1600/8b212d2a96/evolutiondriveplus_keyvisual-website.jpg/m/0x0/filters:quality(90)"
+        ],
+        "extraction_note": "source_url corrected to #plus (the named product). The task email's #sixty anchor targets evolutionDrive 60, listed separately below. Overview page shows only the key visual; numeric values (Uw up to 0.71, Rw up to 44 dB, sizes) are from Salamander distributor pages (profilnet.eu, pagen.pl) as the page lists no spec table."
+      },
+      {
+        "name": "Salamander evolutionDrive 60",
+        "brand": "Salamander",
+        "source_url": "https://salamander-windows.com/productworld/sliding-systems#sixty",
+        "category": "Sliding Systems",
+        "material": "PVC",
+        "subcategory": "Sliding",
+        "specifications": {
+          "type": "multi-track sliding window range",
+          "frame_depths_mm": "60 / 74 / 92 / 108"
+        },
+        "description": "Salamander's multi-track PVC sliding window range, offered in frame depths of 60, 74, 92 and 108 mm.",
+        "image_urls": [
+          "https://a.storyblok.com/f/308729/5000x3333/9781e9c475/ed_60-keyvisual-website.png"
+        ],
+        "extraction_note": "Added per request to include both sliding products. This is the product the task email's '#sixty' anchor actually targets, distinct from evolutionDrive plus (#plus). Key visual captured live via browser; numeric specs (Uw, sizes, sash weight) are not on the Salamander page and should be taken from the official datasheet PDF."
+      },
+      {
+        "name": "Alumil Supreme S700",
+        "brand": "Alumil",
+        "source_url": "https://www.alumil.com/international/aluminium-systems/windows-doors-frames/sliding/lift-slide-insulated-system-supreme-s700",
+        "category": "Sliding Systems",
+        "material": "Aluminum",
+        "subcategory": "Sliding Doors",
+        "specifications": {
+          "window_type": "Lift & Slide",
+          "sash_depth_mm": 70,
+          "sash_weight_max_kg": 600,
+          "min_visible_face_height_mm": 91,
+          "min_interlock_face_width_mm": 47,
+          "sash_face_width_mm": 84,
+          "glazing_type": "double - triple",
+          "glazing_thickness_mm": "22 to 50",
+          "mechanism": "lift & slide mechanism",
+          "sealing": "perimetrical EPDM gaskets & tri-fin brushes",
+          "min_threshold_height_mm": 24,
+          "thermal_insulation": "polyamides (24 mm anti-distortion), ALUMIL Energy bar, insulation foam, PVC",
+          "Uw_W_m2K": "1.1",
+          "water_tightness": "Class E900",
+          "air_permeability": "Class 4",
+          "wind_load_resistance": "C4/B4",
+          "sound_reduction_dB": 41,
+          "burglary_resistance": "RC2",
+          "max_door_height_m": 3.0,
+          "special_version": "Supreme S700 Eclipse (concealed bottom frame)"
+        },
+        "description": "Alumil's high-end lift-and-slide system for wide spans and large glass, with very slim 47 mm interlock, sashes to 600 kg, anti-distortion polyamides and optional fully concealed (Eclipse) threshold.",
+        "image_urls": [
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/s700_1260x340.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/s700_photo11.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/s700_nov0005_gwnia_xamhlh.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/s700_5.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/goniaki_2.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/hotel_lobby_detail.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s700/final-tomh-21_04_22.png"
+        ],
+        "datasheet_pdfs": [
+          "https://www.alumil.com/docs/default-source/brochures-sharepoint/supreme-s700-en.pdf"
+        ],
+        "extraction_note": "Specs verified live from alumil.com via browser session (2026-06-21). Overrides prior ArchiExpo value: Uw 1.1 (was 'up to 1.3'). Added from live page: water E900, air Class 4, wind C4/B4, sound 41 dB, burglary RC2. Images now from Alumil's CDN; '.tmb-fit300x180' files are thumbnails (strip suffix for full res, verify)."
+      },
+      {
+        "name": "Alumil Smartia S560",
+        "brand": "Alumil",
+        "source_url": "https://www.alumil.com/international/aluminium-systems/windows-doors-frames/sliding/lift-slide-insulated-system-smartia-s560",
+        "category": "Sliding Systems",
+        "material": "Aluminum",
+        "subcategory": "Sliding Doors",
+        "specifications": {
+          "window_type": "Lift & Slide and regular Sliding",
+          "sash_depth_mm": 56,
+          "sash_weight_max_kg": "up to 300 (lift&slide); up to 180 (sliding)",
+          "min_visible_face_height_mm": 108.5,
+          "min_interlock_face_width_mm": 49,
+          "glazing_type": "double - triple",
+          "glazing_thickness_mm": "22 to 45",
+          "mechanism": "slide / lift & slide",
+          "sealing": "continuous perimetrical tri-fin (2 levels) brush and EPDM gasket",
+          "min_threshold_height_mm": 31,
+          "thermal_insulation": "polyamides 24 & 16 mm, insulation foam, PVC",
+          "Uf_W_m2K": "from 2.3",
+          "water_tightness": "Class E1200",
+          "air_permeability": "Class 4",
+          "wind_load_resistance": "C5/B5",
+          "sound_reduction_dB": 42,
+          "burglary_resistance": "RC2",
+          "low_threshold_version": "Smartia S560 LT"
+        },
+        "description": "Robust thermally insulated Alumil system offering both lift-and-slide and regular sliding with the same profiles, slim 49 mm interlock, low-threshold (LT) option and wide typology range for large openings.",
+        "image_urls": [
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_4f_fillito_hd.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_2.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_top_tomh0012-796585850.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_honeuto_tzami_sita_patzouri_hd.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_top_tomh_detail0002-26435191.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_31367617534.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560-gwniako-enisx-final.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_tzami_sita_rolo_hd.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560-gwniako-final.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560-gwniako-zoom_2-final.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560-gwniako-zoom1-final.png",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/s560/s560_1.png"
+        ],
+        "extraction_note": "Specs verified live from alumil.com via browser session (2026-06-21). Overrides prior ArchiExpo value: sound reduction 42 dB (was 38). No datasheet PDF on the product page (use the SMARTIA range brochure). Images now from Alumil's CDN; '.tmb-fit300x180' files are thumbnails (strip suffix for full res, verify)."
+      }
+    ],
+    "Facades": [
+      {
+        "name": "Alumil Smartia M7",
+        "brand": "Alumil",
+        "source_url": "https://www.alumil.com/international/aluminium-systems/curtain-walls/high-performance-curtain-wall-system-smartia-m7",
+        "category": "Facades",
+        "material": "Aluminum",
+        "subcategory": "Facade",
+        "specifications": {
+          "type": "stick-system curtain wall (high energy efficiency)",
+          "exterior_visible_width_mm": 50,
+          "mullion_depth_mm": "28 to 250",
+          "transom_depth_mm": "16.5 to 257.5",
+          "glazing_holding": "pressure plate or structural silicone (SGG/SSG)",
+          "glazing_thickness_mm": "28 to 50",
+          "Uf_W_m2K": "1.0 to 2.3",
+          "water_tightness": "RE 1200",
+          "air_permeability": "Class AE",
+          "wind_load_security": "design load ± 2 kN/m2",
+          "burglary_resistance": "RC3/RC4",
+          "transoms_max_inertia": 973,
+          "mullion_max_inertia": 2788,
+          "max_weight_kg": 180,
+          "typologies": "fixed, projected, parallel projected; compatible Tilt & Turn vents",
+          "profile_wall_thickness_mm": "1.7 to 2.0 (up to 6 in larger profiles)"
+        },
+        "description": "Alumil's cost-effective high-performance stick curtain wall with 50 mm face width, deep mullion range, structural or pressure-plate glazing, integrated water drainage and high security/thermal ratings.",
+        "image_urls": [
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/m7-header.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/caaejcah.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/ggjdhbih.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/ffhichag.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/ahighcbh.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/caceejbb.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/fhhfdhcc.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/hcdbcajg.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/hedabcbi.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/hedabcbi-xnbak.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/ibjcjfig.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/hhhbgabi.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/jcfaihba.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/jfidgchd.jpg",
+          "https://static.alumil.com/userfiles/images/default-source/product-images/m7/m7_structural-1.png"
+        ],
+        "extraction_note": "Specs verified live from alumil.com via browser session (2026-06-21); added mullion max inertia 2788 (was missing). No datasheet PDF on the product page. Images now from Alumil's CDN; gallery filenames are obfuscated hashes (m7-header and m7_structural-1 are the clearly useful ones); '.tmb-fit300x180' files are thumbnails (strip suffix for full res, verify)."
+      }
+    ],
+    "Glass": [
+      {
+        "name": "Guardian Low-E glass",
+        "brand": "Guardian Glass",
+        "source_url": "https://www.guardianglass.com/eu/en/our-glass/glass-types/low-e-glass",
+        "category": "Glass",
+        "material": null,
+        "subcategory": "Glazing Types",
+        "specifications": {
+          "coating_process": "magnetron sputter coating (multiple near-invisible layers incl. silver)",
+          "U_value_double_W_m2K": "down to 1.0 (vs 2.7 for standard float double glazing)",
+          "U_value_triple_W_m2K": "down to 0.5",
+          "coating_position": "surface #3 (double IGU); surfaces #3 and #5 (triple IGU)",
+          "UV_filtering": "filters up to 78% of UV rays (for a triple IGU with two ClimaGuard Premium2 coated panes); up to 99% combined with laminated glass",
+          "must_be_used_in": "double or triple insulated glass unit (IGU)",
+          "product_solutions": "Guardian ClimaGuard, Guardian Sun"
+        },
+        "description": "Coated low-emissivity glass that reflects interior heat back into the room while admitting daylight, used inside an IGU to cut U-values dramatically and improve year-round comfort.",
+        "image_urls": [
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/low-e-glass/_jcr_content/root/responsivegrid/hero/image.coreimg.jpeg/1683125310646/30402-la-casa-del-desierto.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/low-e-glass/_jcr_content/root/responsivegrid/ggcontainer_1676188574/columnctrl_copy/col1/ggimage.coreimg.jpeg/1683125311447/23871-project-snx5023-ru-astana-astana-expo-sphere.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/low-e-glass/_jcr_content/root/responsivegrid/ggcontainer_1676188574/columnctrl_413878858/col1/ggimage_copy_2143520.coreimg.jpeg/1684161084390/guardiansun-es-seville-priavateowner-33.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/low-e-glass/_jcr_content/root/responsivegrid/ggcontainer_1676188574/columnctrl_413878858/col2/ggimage_copy_2143520.coreimg.jpeg/1684160990867/guardian-sunguard-superneutral-68---pierre-lassonde-pavilion-national-museum-of-fine-art-interior---photo-c-brucedamonte.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/low-e-glass/_jcr_content/root/responsivegrid/ggcontainer_1676188574/columnctrl_915263581/col1/ggimage_copy_2143520.coreimg.jpeg/1684160942841/stock-picture-istock16689-conservatory-orangery.jpeg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/product/global/36467_Norra%20Tornen.jpg.transform/rendition-1280-keep/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/ClimaGuardPremium2_DK_Copenhagen_MaerskTower_02.tif.transform/rendition-1280-keep/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/SN7035ClimaGuardPremium2_ES_Valencia_PuntaDeMar_06.jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/GuardianSun_ES_Seville_PriavateOwner_19.jpg.transform/rendition-730-420/img.jpg"
+        ],
+        "extraction_note": "Site-chrome (logo, social, region flags) and separator-line decorative PNGs omitted; content/product/diagram images captured."
+      },
+      {
+        "name": "Guardian Solar Control glass",
+        "brand": "Guardian Glass",
+        "source_url": "https://www.guardianglass.com/eu/en/our-glass/glass-types/solar-control-glass",
+        "category": "Glass",
+        "material": null,
+        "subcategory": "Glazing Types",
+        "specifications": {
+          "function": "transmits daylight while reflecting a high proportion of solar heat",
+          "solar_factor_g": "measured 0-100%; lower g = better solar heat rejection",
+          "metric": "Solar Factor (g-value) and spectral selectivity",
+          "coating_position": "typically surface #2 for best solar control",
+          "thermal_benefit": "silver-coated products also reflect indoor heat (thermal insulation)",
+          "usage": "double/triple IGU; some products monolithic",
+          "product_solutions": "SunGuard eXtraSelective, SuperNeutral, High Performance, Solar, High Durable",
+          "aesthetics": "neutral or coloured; varied reflectivity levels"
+        },
+        "description": "Coated solar-control (SunGuard) glass that admits natural light while reflecting solar heat to reduce overheating and glare and cut cooling demand, with thermal-insulation benefits when silver-coated.",
+        "image_urls": [
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/hero/image.coreimg.jpeg/1686210993065/dsc04162-pano-solomon.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/ggcontainer/columnctrl_472195575/col1/ggimage.coreimg.jpeg/1686210994029/37636-chadstone-shopping-centre.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/ggimage.coreimg.png/1686210994156/low-e-solar-control-glass-diagram-edited.png",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/ggcontainer_copy_cop/columnctrl_copy_copy/col1/ggimage_copy.coreimg.jpeg/1686210994662/project-hd-diamond66-climaguard-premium2-sn6234-de-berlin-cube-berlin--3-.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/ggcontainer_copy_cop/columnctrl_copy_copy/col2/ggimage_copy.coreimg.jpeg/1686210994744/34980-moa-bogen-stephankiez.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/ggcontainer_copy_cop/columnctrl_copy_copy_1187152567/col1/ggimage_copy.coreimg.jpeg/1686210994862/36807-ing-cedar-office.jpeg",
+          "https://www.guardianglass.com/content/guardianindustriesholdings/europe/eu/en/our-glass/glass-types/solar-control-glass/_jcr_content/root/responsivegrid/ggcontainer_copy_cop/columnctrl_copy_copy_1187152567/col2/ggimage_copy.coreimg.jpeg/1686210063949/hpsilver3526solarsilver10cg10-lux-capellen-westsidevillage-04.jpeg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/usca/Guardian%20SunGuard%20AG%2050%20-%20BU_CILSE%20Full-%20_Keitaro%20Yoshioka.jpg.transform/rendition-1280-keep/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/usca/Guardian%20Glass%20-%2035%20West%2015th%20detail%20-%20c%20David%20Sundberg%20forward%20slash%20Esto.jpg.transform/rendition-1280-keep/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/global/19499_Salesforce%20Tower.jpg.transform/rendition-1280-keep/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/russia-cis/16601_SG-SX-05-H.jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/SN7037_PL_Gdynia_PPNT_04.tif.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/turkey/17678_SG32_HP5032_HP6040_TR_Istanbul_Bat%C4%B1sehir.jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/project_solar-gold20-ultra-clear_fr_bordeaux_la-cite-du-vin%20(14).jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/project-hd-diamond66-climaguard-premium2-sn6234_de_berlin_cube-berlin%20(3).jpg.transform/rendition-730-420/img.jpg"
+        ],
+        "extraction_note": "Site-chrome/social icons and separator PNGs omitted; benefit icons, the solar-control diagram, project photos and product range thumbnails captured."
+      },
+      {
+        "name": "Guardian Laminated glass",
+        "brand": "Guardian Glass",
+        "source_url": "https://www.guardianglass.com/eu/en/our-glass/glass-types/laminated-glass",
+        "category": "Glass",
+        "material": null,
+        "subcategory": "Glazing Types",
+        "specifications": {
+          "construction": "two or more glass lites bonded with one or more PVB polymer interlayers under heat and pressure",
+          "acoustic_metric": "weighted sound reduction index Rw (dB) with C and Ctr correction factors",
+          "UV_protection": "blocks up to 99% of damaging UV rays (combined Low-E/laminated)",
+          "thickness_nomenclature": "e.g. 33.4 = two 3 mm panes + 4 PVB interlayers (0.38 mm each)",
+          "colour_options": "over 3,000 transparent/translucent/opaque PVB colour options",
+          "functions": "safety, security (forced-entry/ballistic/blast), acoustic, UV, structural",
+          "product_ranges": "LamiGlass Acoustic, LamiGlass Color, LamiGlass ExtraClear, LamiGlass UltraClear, Bird1st"
+        },
+        "description": "Glass bonded with PVB interlayers so fragments adhere on breakage, adding safety, security, acoustic and UV-protection benefits; can be coated for thermal or solar performance and offered in many colours.",
+        "image_urls": [
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/collateral/global/picture-illustration_acoustic.jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/project/europe/LamiGlass_LUX_Kehlen_VancevaGreenRailings_04.jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/product/europe/39767_UltraClearLamiNeutral_Saflex_2.jpg.jpg.transform/rendition-730-420/img.jpg",
+          "https://www.guardianglass.com/content/dam/guardianindustriesholdings/product/europe/eu_product_bird1st_lami_range.jpg.transform/rendition-730-420/img.jpg"
+        ],
+        "extraction_note": "Site-chrome/social icons and separator PNGs omitted; hero, benefit icons, the thickness-nomenclature diagram and product range thumbnails captured."
+      }
+    ],
+    "Hardware & Mechanisms": [
+      {
+        "name": "MACO Protect cylinder-operated door lock (asset 760209)",
+        "brand": "MACO",
+        "source_url": "https://www.maco.eu/assets/760209",
+        "category": "Hardware & Mechanisms",
+        "material": null,
+        "subcategory": "Locks",
+        "specifications": {
+          "asset_type": "PDF product leaflet (Order no. 760209, created 04/2025)",
+          "product_family": "MACO Protect cylinder-operated door locks",
+          "materials": "suitable for timber, aluminium and PVC doors",
+          "max_sash_rebate_height_mm": 3100,
+          "burglary_protection": "up to RC 3",
+          "locking_options": "bolts, hooks or security bolts (combinable)",
+          "variants": "MACO Protect Z-TS (triple locking; first door lock on German police anti-burglary list), MACO Protect Z-TF (semi-automatic 3-latch lock, multifunctional latch+hook or up to four security bolts)",
+          "platform": "shared striker-plate platform with other MACO locks",
+          "system_components": "MACO ProDoor hinges, handles, e-openers"
+        },
+        "description": "MACO's cylinder-key-operated multipoint door-lock family (Z-TS triple-locking and Z-TF 3-latch) for timber/aluminium/PVC doors up to 3,100 mm, offering up to RC3 burglary protection and even contact pressure.",
+        "image_urls": [],
+        "extraction_note": "maco.eu/assets/760209 is a downloadable PDF leaflet, not an HTML page; it contains text and stock photography (credited '© AdobeStock, Dasha Petrenko') but no extractable hosted image URLs. Specs above transcribed from the PDF text.",
+        "compatibility": "Specified for the Salamander bluEvolution 82 door system (per source email: 'Kjo brave vendoset te sistemi Dyer Salamander 82')."
+      },
+      {
+        "name": "MACO Multi Matic IQ (Turn-Tilt)",
+        "brand": "MACO",
+        "source_url": "https://www.maco.eu/en-INT/Products-Services/Window-solutions/Turn-Tilt/MACO-Multi-Matic-IQ",
+        "category": "Hardware & Mechanisms",
+        "material": null,
+        "subcategory": "Window Mechanisms",
+        "specifications": {
+          "type": "turn & tilt (inward-opening) hardware platform",
+          "materials": "PVC, timber, aluminium windows",
+          "max_sash_weight_kg": "100-130 (PVCu 100-120 depending on hinge; timber 130)",
+          "sash_width_mm": "220-1630",
+          "sash_height_mm": "470-2250",
+          "security": "self-adjusting i.S. security cam IQ; up to RC2; PAS 24 enhanced-security version",
+          "designs": "square, triangular, round, pitched windows",
+          "warranty": "10-year functional warranty (selected hardware)"
+        },
+        "description": "MACO's comprehensive turn & tilt hardware platform (now with 'IQ' improvements) covering most window designs in PVC/timber/aluminium, with integrated security cams and broad system-component range.",
+        "image_urls": [
+          "https://www.maco.eu/getmedia/0cbfc0eb-095c-4ad4-bdd5-a6f7b64a2b77/Teaser-Multi.jpg",
+          "https://www.maco.eu/getmedia/5ec63f01-669f-400b-9baf-21e93c8ef209/productheader-preview-drehkipp.jpg?width=767&resizemode=force",
+          "https://www.maco.eu/getmedia/2466a893-15db-4f04-82b5-323fa4b1c053/teaser-fenster-drehkipp-multimaticiq.jpg?width=460&resizemode=force"
+        ],
+        "extraction_note": "Confirmed as one of the three MACO Turn-Tilt hardware lines on MACO's live overview (verified via browser 2026-06-21). MACO publishes NO numeric specs on its product pages — the detail page is descriptive only, with figures held in the MACO Multi / Multi-Matic catalogue PDF. The weight/size values here are MACO distributor data (Titon), which typically transcribes MACO's official catalogue numbers. For manufacturer-sourced figures, extract from the MACO Multi catalogue PDF.",
+        "compatibility": "Specified for Salamander bluEvolution 82/92 windows (per source email: 'Keto vendosen te dritaret salamander 82/92')."
+      },
+      {
+        "name": "MACO Multi Power (Turn-Tilt, concealed)",
+        "brand": "MACO",
+        "source_url": "https://www.maco.eu/en-INT/Products-Services/Window-solutions/Turn-Tilt/MACO-Multi-Power",
+        "category": "Hardware & Mechanisms",
+        "material": null,
+        "subcategory": "Window Mechanisms",
+        "specifications": {
+          "type": "fully concealed turn & tilt hardware (invisible when closed)",
+          "max_sash_weight_kg": "150 (up to 180 with accessories)",
+          "sash_width_mm": "370-1400",
+          "sash_height_mm": "370-1400 (per distributor data)",
+          "configurations": "up to three sashes; flush-mounted windows",
+          "benefits": "flush designs, gap-free insulation, smooth operation"
+        },
+        "description": "MACO's premium fully concealed turn & tilt hinge system for flush-surface window designs, carrying 150 kg (180 kg with accessories) and enabling up to three-sash and flush-mounted constructions.",
+        "image_urls": [
+          "https://www.maco.eu/getmedia/4122d704-2b58-4224-abf1-f5ad53846f5e/teaser-fenster-drehkipp-power.jpg?width=460&resizemode=force"
+        ],
+        "extraction_note": "Confirmed as one of the three MACO Turn-Tilt hardware lines on MACO's live overview (verified via browser 2026-06-21). MACO publishes NO numeric specs on its product pages — the detail page is descriptive only, with figures held in the MACO Multi / Multi-Matic catalogue PDF. The weight/size values here are MACO distributor data (Titon), which typically transcribes MACO's official catalogue numbers. For manufacturer-sourced figures, extract from the MACO Multi catalogue PDF.",
+        "compatibility": "Specified for Salamander bluEvolution 82/92 windows (per source email: 'Keto vendosen te dritaret salamander 82/92')."
+      },
+      {
+        "name": "MACO Multi Mammut (Turn-Tilt, heavy-duty)",
+        "brand": "MACO",
+        "source_url": "https://www.maco.eu/en-INT/Products-Services/Window-solutions/Turn-Tilt/MACO-Multi-Mammut",
+        "category": "Hardware & Mechanisms",
+        "material": null,
+        "subcategory": "Window Mechanisms",
+        "specifications": {
+          "type": "heavy-duty turn & tilt hardware for large/heavy sashes",
+          "max_sash_weight_kg": "180 (PVC) / 220 (timber)",
+          "max_sash_area_m2": 3.6,
+          "materials": "PVC and timber windows and casement doors",
+          "security": "i.S. security roller cam as standard (anti-lever burglary protection)",
+          "surface_finish": "Tricoat Evo",
+          "glazing": "triple glazing possible"
+        },
+        "description": "MACO's heavy-duty turn & tilt hardware moving one- or two-sash windows and casement doors up to 180 kg (PVC)/220 kg (timber) and 3.6 m2, with standard anti-burglary security cam and barrier-free PVC casement-door option.",
+        "image_urls": [
+          "https://www.maco.eu/getmedia/4decacfd-96a1-4b37-ac1a-3ac867f74ac4/teaser-fenster-drehkipp-mammut.jpg?width=460&resizemode=force"
+        ],
+        "extraction_note": "Confirmed as one of the three MACO Turn-Tilt hardware lines on MACO's live overview (verified via browser 2026-06-21). MACO publishes NO numeric specs on its product pages — the detail page is descriptive only, with figures held in the MACO Multi / Multi-Matic catalogue PDF. The weight/size values here are MACO distributor data (Titon), which typically transcribes MACO's official catalogue numbers. For manufacturer-sourced figures, extract from the MACO Multi catalogue PDF.",
+        "compatibility": "Specified for Salamander bluEvolution 82/92 windows (per source email: 'Keto vendosen te dritaret salamander 82/92')."
+      }
+    ],
+    "Shading (Blinds+Shutters)": [
+      {
+        "name": "Somfy J4 WT (motor for external venetian blinds)",
+        "brand": "Somfy",
+        "source_url": "https://www.somfy.co.uk/products/1210292/j4-wt",
+        "category": "Shading (Blinds+Shutters)",
+        "material": null,
+        "subcategory": "Venetian Blinds",
+        "specifications": {
+          "reference": "1210292",
+          "application": "external venetian blinds (EVB), type 1 & type 2",
+          "technology": "wired",
+          "protection_index": "IP 54",
+          "power_supply": "AC 230V/50Hz",
+          "consumption_operation_W": 110,
+          "consumption_standby_W": 0,
+          "noise_level_dB": 55,
+          "max_applicable_torque_Nm": 10,
+          "limit_switch_capacity_turns": 120,
+          "carbon_footprint_kgCO2": 52,
+          "safety_class": "Class I",
+          "compatible_headrails": "Schenker (78 x 67 mm), Hunter Douglas (57 x 51 mm), Storen Material (58 x 56 mm), Griesser (67 x 66 mm)",
+          "features": "2D removable mushroom, U or N headrail mounting, safety stop, My function, RTS via Modulis Slim receiver"
+        },
+        "description": "Somfy's short wired electronic motor for motorising external venetian blinds in new build and renovation, with a 2D protective mushroom, safety stop and broad headrail compatibility.",
+        "image_urls": [
+          "https://asset.somfy.com/1200x1200/Image/2d702998-ca3e-483b-8753-628b4e755cda_Somfy_3216.jpg",
+          "https://asset.somfy.com/Image/2d702998-ca3e-483b-8753-628b4e755cda_Somfy_3216.jpg",
+          "https://asset.somfy.com/250x250/Image/2d702998-ca3e-483b-8753-628b4e755cda_Somfy_3216.jpg"
+        ],
+        "extraction_note": "Torque/limit-switch values for the WT type confirmed from the Somfy J4 installation guide; product page itself lists IP54, power, standby and 55 dB. Three size variants of the single product image captured. Headrail compatibility per the Somfy J4 WT catalog."
+      },
+      {
+        "name": "Stoma AV-900 and AV-700 (external venetian blinds)",
+        "brand": "Stoma (Storenmaterial AG)",
+        "source_url": "https://www.stoma.ch",
+        "category": "Shading (Blinds+Shutters)",
+        "material": null,
+        "subcategory": "Venetian Blinds",
+        "specifications": {
+          "manufacturer": "Storenmaterial AG (stoma), Switzerland",
+          "origin": "Swiss made",
+          "product_type": "Compound external venetian blinds for façade sun and weather protection",
+          "standard": "EN 13659",
+          "reference": "AV900.AV700.EN.2024",
+          "slat_width_mm": "AV-900: 90 (z-shaped); AV-700: 70",
+          "slat_profile": "AV-900 bold z-shaped profile (striking façade); AV-700 slimmer profile (discreet façade)",
+          "slat_tilt_range_deg": "approx. 25° to 55°",
+          "min_recess_depth_tn_mm": "AV-900: 130; AV-700: 100",
+          "max_size": "height of opening up to 4250 mm (5500 mm without warranty); construction width up to 5000 mm (6000 mm without warranty)",
+          "min_height_of_opening_mm": 400,
+          "construction_width_min_mm": "crank drive: AV-900 345 / AV-700 330; electric drive: AV-900 480 / AV-700 465",
+          "max_area_single_blind_m2": "6 (crank drive); 10 (motor drive)",
+          "max_area_coupled_system_m2": "6 (crank drive); 24 (electric drive)",
+          "max_coupled_blinds": "3 pieces",
+          "wind_resistance": "AV-900/AV-700 up to class 6 (widths < 2500 mm); AV-940/AV-740 up to class 6+ ; class 6 = 92 km/h (EN 13659)",
+          "guidance_options": "rail guidance; cable guidance (3 mm PA-coated chrome-steel cables, one or both sides); combined wind-resistant rail + cable guidance",
+          "drive_options": "manual crank drive or electric (motorised) drive",
+          "automation_minergie": "electric drive with the corresponding controller meets the Minergie standard",
+          "daylight_zoning": "blind can be split into 2–3 sections with independent slat angles (open upper section for daylight, closed lower section for glare control)",
+          "slat_coating": "textured coating — improved colour retention and weather resistance, reduced dirt adhesion, easy cleaning",
+          "colours": "approx. 28 standard colours (incl. IGP and metallic); 1000+ RAL, NCS and IGP colours available",
+          "slat_hooks": "weatherproof chrome-steel hooks attaching slats to turning cords; allow damaged slats to be replaced later",
+          "guide_bolts": "metal guide bolts for durability and resistance to breakage",
+          "lift_tape_holes": "flanged holes for 8 mm-wide lift tapes (prevent fraying; no delicate plastic lugs)",
+          "turning_cords": "Kevlar-reinforced for precise folding and minimal package height; black cords/tapes available for dark slats",
+          "guidance_cables": "3 mm PA-coated chrome-steel cables (cable-guided models)",
+          "security_end_stop": "bottom-rail end-position stop cannot be raised from outside when closed (anti-break-in)",
+          "thermal_acoustic": "self-supporting system avoids recess mounting — preserves insulation, reduces noise transmission, prevents thermal bridges (Minergie); central reinforcement required for head rail from 2500 mm width",
+          "operation_standard_model": "slats lowered in the closed position; can be adjusted/closed at any height",
+          "operation_business_model": "slats lowered at an angled anti-glare position (approx. 40°); a brief upward movement closes them, a longer movement opens them horizontal",
+          "raising_behaviour": "raised with slats horizontal for maximum light and a gentle lift-tape motion",
+          "installation_types": "on embrasure in recess; self-supporting with cover panel type 1; on façade with cover panel type 8"
+        },
+        "description": "External compound venetian blinds from Swiss manufacturer stoma (Storenmaterial AG) for façade sun, glare and weather protection. The AV-900 uses bold 90 mm z-shaped slats for a striking façade and strong dimming control; the AV-700 uses 70 mm slats and needs only a 100 mm recess for a discreet look. Both offer manual or motorised drive, rail or wind-resistant cable guidance up to wind class 6, a durable textured slat coating, and a self-supporting design that protects the building's insulation.",
+        "compatibility": "Motorised versions pair with the Somfy J4 WT external-blind motor (in this catalog). Variants: AV-930/AV-730 (cable-guided), AV-940/AV-740 (combined cable+rail, wind class 6).",
+        "image_urls": [
+          "../media-import/stoma-av-900-and-av-700/gallery/01-hero-slats-closeup.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/02-colour-range-fan.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/03-colour-range-stack.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/04-detail-self-supporting-bracket.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/05-detail-flanged-holes.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/06-detail-guide-bolts-hooks.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/07-detail-turning-cords.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/08-detail-cable-guidance.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/09-detail-end-position-stop.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/10-operation-lowering-closed.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/11-operation-end-position-angled.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/12-operation-raising-horizontal.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/13-application-facade-1.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/14-application-facade-2.jpg",
+          "../media-import/stoma-av-900-and-av-700/gallery/15-atmospheric-slats.jpg"
+        ],
+        "models": [
+          {
+            "code": "AV-900",
+            "slat_width_mm": 90,
+            "slat_profile": "z-shaped, bold profile",
+            "guidance": "rail"
+          },
+          {
+            "code": "AV-700",
+            "slat_width_mm": 70,
+            "slat_profile": "slim profile",
+            "guidance": "rail"
+          },
+          {
+            "code": "AV-930 / AV-730",
+            "guidance": "cable guidance, one or both sides (3 mm PA-coated chrome-steel cables)"
+          },
+          {
+            "code": "AV-940 / AV-740",
+            "guidance": "combined cable + rail guidance, wind-resistant (up to wind class 6 at larger sizes)"
+          }
+        ],
+        "technical_tables": {
+          "recess_height_hs_by_opening_height_hl_mm": {
+            "note": "Required recess height (hs) for a given height of opening (hl). Add +20 mm with cover panel.",
+            "unit": "mm",
+            "rows": [
+              {
+                "hl_range": "≤ 1750",
+                "hs_av900": 220,
+                "hs_av700": 235
+              },
+              {
+                "hl_range": "1751–2000",
+                "hs_av900": 220,
+                "hs_av700": 255
+              },
+              {
+                "hl_range": "2001–2250",
+                "hs_av900": 235,
+                "hs_av700": 275
+              },
+              {
+                "hl_range": "2251–2500",
+                "hs_av900": 250,
+                "hs_av700": 295
+              },
+              {
+                "hl_range": "2501–2750",
+                "hs_av900": 265,
+                "hs_av700": 315
+              },
+              {
+                "hl_range": "2751–3000",
+                "hs_av900": 280,
+                "hs_av700": 330
+              },
+              {
+                "hl_range": "3001–3250",
+                "hs_av900": 295,
+                "hs_av700": 350
+              },
+              {
+                "hl_range": "3251–3500",
+                "hs_av900": 310,
+                "hs_av700": 370
+              },
+              {
+                "hl_range": "3501–3750",
+                "hs_av900": 330,
+                "hs_av700": 390
+              },
+              {
+                "hl_range": "3751–4000",
+                "hs_av900": 345,
+                "hs_av700": 410
+              },
+              {
+                "hl_range": "4001–4250",
+                "hs_av900": 360,
+                "hs_av700": 430
+              }
+            ],
+            "with_cover_panel_add_mm": 20,
+            "height_of_opening_min_mm": 400,
+            "height_of_opening_max_mm": 4250,
+            "height_of_opening_max_without_warranty_mm": 5500
+          },
+          "construction_width_bk_mm": {
+            "min_with_crank_drive": {
+              "av900": 345,
+              "av700": 330
+            },
+            "min_with_electric_drive": {
+              "av900": 480,
+              "av700": 465
+            },
+            "max": {
+              "av900": 5000,
+              "av700": 5000
+            },
+            "max_without_warranty": {
+              "av900": 6000,
+              "av700": 6000
+            }
+          },
+          "max_area_bk_x_hk_m2": {
+            "single_blind": {
+              "max_with_crank_drive": 6,
+              "max_with_motor_drive": 10
+            },
+            "coupled_system": {
+              "max_with_crank_drive": 6,
+              "max_with_electric_drive": 24,
+              "max_coupled_blinds": 3
+            }
+          },
+          "recess_depth_tn_min_mm": {
+            "av900": 130,
+            "av700": 100
+          },
+          "wind_resistance_class_by_construction_width_en_13659": {
+            "note": "class 6 = 92 km/h; bk = construction width in mm",
+            "av900_av700": {
+              "<1500": "6",
+              "<2000": "6",
+              "<2500": "6",
+              "<3000": "5",
+              "<3500": "5",
+              "<4000": "5",
+              "<4500": "4",
+              "<5000": "3"
+            },
+            "av940_av740": {
+              "<1500": "6+",
+              "<2000": "6+",
+              "<2500": "6+",
+              "<3000": "6",
+              "<3500": "6",
+              "<4000": "6",
+              "<4500": "5",
+              "<5000": "4"
+            }
+          }
+        },
+        "technical_images": [
+          "./av-images/diagrams/diagram-1-installation-embrasure-in-recess.png",
+          "./av-images/diagrams/diagram-2-recess-for-gear-box.png",
+          "./av-images/diagrams/diagram-3-self-supporting-cover-panel-type-1.png",
+          "./av-images/diagrams/diagram-4-crank-drive-for-type-1.png",
+          "./av-images/diagrams/diagram-5-installation-facade-cover-panel-type-8.png",
+          "./av-images/diagrams/diagram-6-crank-drive-for-type-8-and-legend.png",
+          "./av-images/diagrams/17-technical-spec-table.png"
+        ]
+      },
+      {
+        "name": "Exte roller shutter box systems (XT platform)",
+        "brand": "EXTE",
+        "source_url": "https://fensterzubehoer.exte.de/en",
+        "category": "Shading (Blinds+Shutters)",
+        "material": null,
+        "subcategory": "Roller Shutters",
+        "specifications": {
+          "platform": "EXTE XT platform (shared parts across systems)",
+          "box_systems": "EXAKT XT (renovation), EXPERT XT (professional), ELITE XT (premium), NEO XT (new build), ARCA XT (Italy)",
+          "thermal_min_requirement": "USB <= 0.85 W/m2K, fRsi >= 0.70 (per DIN 4108 Supplement 2)",
+          "USB_value_best_W_m2K": "to 0.43 (Expert XT)",
+          "sound_insulation_dB": "38-48 (Elite XT 240x255: 39 dB standard, up to 48 dB with soundproof strip)",
+          "soundproof_strip_dB": 43,
+          "max_window_frame_depth_mm": 92,
+          "box_dimensions_examples": "Elite XT 200x220 and 240x255; Expert XT box depth 220, height from 185",
+          "hanging_types": "roller shutters, screen, venetian blinds (Vento XT)",
+          "fall_protection_option": "VISTA XT (51 mm min install, 12/16 mm VSG glass, to 2800 mm wide)",
+          "finishes": "over 400 decor films, 9 COEX colours",
+          "standards": "EnEV 2014 compliant"
+        },
+        "description": "EXTE's modular XT roller-shutter box platform (Exakt/Expert/Elite/Neo/Arca) with shared parts, strong thermal and acoustic performance, multiple maintenance-opening types, and optional screen/venetian/fall-protection inserts.",
+        "image_urls": [
+          "https://cdn.prod.website-files.com/65bcfdd554a937058b2b8f2d/65eebff6801013e5ceda1a6e_exte_visual_systemwelt_xt_4_ohne4.png",
+          "https://cdn.prod.website-files.com/6540c9221c46c1d54b2d66eb/654d09a0d3fb92ac60001d7a_bauprofil_ohne_schatten.png",
+          "https://cdn.prod.website-files.com/65bcfdd554a937058b2b8f2d/65eebf8c0d5d79ff69684536_exte_profi-plank_web_03.jpg",
+          "https://cdn.prod.website-files.com/6540c9221c46c1d54b2d66eb/654d3ee95704e081b48fc0db_exte_branchenpartner_00002.jpg"
+        ],
+        "extraction_note": "The provided URL is the EXTE homepage (overview), not a single product; it presents the whole XT box platform. Thermal/acoustic figures and box dimensions are drawn from EXTE's own overview/Elite XT/Expert XT pages and news. Decorative association/award logos omitted where possible; content + system-icon images captured."
+      }
+    ]
+  }
+}

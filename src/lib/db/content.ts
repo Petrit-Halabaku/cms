@@ -1,5 +1,6 @@
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Json, Locale, Tables } from "@/lib/database.types";
+import { LOGO_PATH, storageUrl } from "@/lib/site";
 
 /**
  * Typed read layer for public content. All functions run server-side with the
@@ -9,6 +10,55 @@ import type { Json, Locale, Tables } from "@/lib/database.types";
  * objects for the locale requested.
  */
 const createClient = async () => createStaticClient();
+
+/**
+ * Public URL for the CMS-managed site logo, with a cache-busting `?v=` token
+ * derived from the Storage object's `updated_at`. Replacing the file in place
+ * (admin Branding) changes the token, so CDN/browser caches pick up the new
+ * logo despite its year-long cache lifetime. Falls back to the bare URL when
+ * the object is missing. Runs only at static-gen / on-demand revalidation.
+ */
+export async function getLogoUrl(): Promise<string> {
+  const base = storageUrl("media", LOGO_PATH);
+  const slash = LOGO_PATH.lastIndexOf("/");
+  const folder = slash === -1 ? "" : LOGO_PATH.slice(0, slash);
+  const name = LOGO_PATH.slice(slash + 1);
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.storage.from("media").list(folder, { search: name });
+  if (error || !data) return base;
+
+  const file = data.find((object) => object.name === name);
+  const version = file?.updated_at ?? file?.created_at;
+  return version ? `${base}?v=${Date.parse(version)}` : base;
+}
+
+/**
+ * Image objects in a `media` bucket folder, sorted by filename, returned as
+ * editorial images ({ path, alt }). For bespoke galleries sourced straight from
+ * Storage rather than the media table. Alt text is derived from the filename,
+ * falling back to a generic label when it carries no words.
+ */
+export async function listGalleryImages(
+  folder: string,
+): Promise<{ path: string; alt: string }[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.storage.from("media").list(folder, {
+    limit: 100,
+    sortBy: { column: "name", order: "asc" },
+  });
+  if (error || !data) return [];
+
+  return data
+    .filter((object) => object.id && /\.(webp|jpe?g|png|avif)$/i.test(object.name))
+    .map((object) => {
+      const base = object.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
+      const readable = /[a-z]/i.test(base)
+        ? base.replace(/\b\w/g, (c) => c.toUpperCase())
+        : "Gergoci project photograph";
+      return { path: `${folder}/${object.name}`, alt: readable };
+    });
+}
 
 export type Category = {
   id: string;
@@ -28,6 +78,8 @@ export type ProductListItem = {
   slug: string;
   seoTitle: string | null;
   seoDescription: string | null;
+  /** Manufacturer brand (partner name); optional — populated for category lists. */
+  brand?: string | null;
   /** Featured image (falls back to first by sort order), null when none uploaded. */
   featuredImage: Tables<"media"> | null;
 };
@@ -44,6 +96,8 @@ function pickFeatured(images: ImageRow[]): Tables<"media"> | null {
 export type ProductDetail = ProductListItem & {
   body: string | null;
   brochureUrl: string | null;
+  /** Manufacturer brand (partner name), null when unset. */
+  brand: string | null;
   facts: Pick<Tables<"project_facts">, "id" | "label" | "value" | "sort_order">[];
   images: (Pick<Tables<"project_images">, "id" | "sort_order" | "is_featured"> & {
     media: Tables<"media"> | null;
@@ -136,12 +190,21 @@ export async function getProductsByCategory(
   const { data, error } = await supabase
     .from("projects")
     .select(
-      "id, category_id, sort_order, project_translations!inner(title, slug, seo_title, seo_description), project_images(is_featured, sort_order, media(*))",
+      "id, category_id, brand_partner_id, sort_order, project_translations!inner(title, slug, seo_title, seo_description), project_images(is_featured, sort_order, media(*))",
     )
     .eq("category_id", categoryId)
     .eq("project_translations.locale", locale)
     .order("sort_order");
   if (error) throw error;
+
+  const brandIds = [
+    ...new Set(data.map((r) => r.brand_partner_id).filter((id): id is string => Boolean(id))),
+  ];
+  const brandMap = new Map<string, string>();
+  if (brandIds.length > 0) {
+    const { data: partners } = await supabase.from("partners").select("id, name").in("id", brandIds);
+    for (const p of partners ?? []) brandMap.set(p.id, p.name);
+  }
 
   return data.map((row) => {
     const t = row.project_translations[0];
@@ -153,6 +216,7 @@ export async function getProductsByCategory(
       slug: t.slug,
       seoTitle: t.seo_title,
       seoDescription: t.seo_description,
+      brand: row.brand_partner_id ? brandMap.get(row.brand_partner_id) ?? null : null,
       featuredImage: pickFeatured(row.project_images),
     };
   });
@@ -166,7 +230,7 @@ export async function getProductBySlug(
   const { data, error } = await supabase
     .from("project_translations")
     .select(
-      "project_id, title, slug, body, seo_title, seo_description, projects!inner(id, category_id, brochure_url, sort_order)",
+      "project_id, title, slug, body, seo_title, seo_description, projects!inner(id, category_id, brochure_url, sort_order, brand_partner_id)",
     )
     .eq("locale", locale)
     .eq("slug", slug)
@@ -190,8 +254,19 @@ export async function getProductBySlug(
   if (factsRes.error) throw factsRes.error;
   if (imagesRes.error) throw imagesRes.error;
 
+  let brand: string | null = null;
+  if (data.projects.brand_partner_id) {
+    const { data: b } = await supabase
+      .from("partners")
+      .select("name")
+      .eq("id", data.projects.brand_partner_id)
+      .maybeSingle();
+    brand = b?.name ?? null;
+  }
+
   return {
     id: data.project_id,
+    brand,
     categoryId: data.projects.category_id,
     sortOrder: data.projects.sort_order,
     title: data.title,
@@ -209,6 +284,58 @@ export async function getProductBySlug(
       media: img.media,
     })),
   };
+}
+
+export type ProductCatalogItem = ProductListItem & {
+  categorySlug: string;
+  categoryName: string;
+};
+
+/** Every published product with its category + brand, for the filterable catalog. */
+export async function getAllProducts(locale: Locale): Promise<ProductCatalogItem[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("projects")
+    .select(
+      "id, category_id, brand_partner_id, sort_order, project_translations!inner(title, slug), project_images(is_featured, sort_order, media(*)), project_categories!inner(sort_order, project_category_translations!inner(name, slug))",
+    )
+    .eq("project_translations.locale", locale)
+    .eq("project_categories.project_category_translations.locale", locale)
+    .order("sort_order");
+  if (error) throw error;
+
+  const brandIds = [
+    ...new Set(data.map((r) => r.brand_partner_id).filter((id): id is string => Boolean(id))),
+  ];
+  const brandMap = new Map<string, string>();
+  if (brandIds.length > 0) {
+    const { data: partners } = await supabase.from("partners").select("id, name").in("id", brandIds);
+    for (const p of partners ?? []) brandMap.set(p.id, p.name);
+  }
+
+  return data
+    .sort((a, b) => {
+      const ca = a.project_categories.sort_order;
+      const cb = b.project_categories.sort_order;
+      return ca !== cb ? ca - cb : a.sort_order - b.sort_order;
+    })
+    .map((row) => {
+      const t = row.project_translations[0];
+      const cat = row.project_categories.project_category_translations[0];
+      return {
+        id: row.id,
+        categoryId: row.category_id,
+        sortOrder: row.sort_order,
+        title: t.title,
+        slug: t.slug,
+        seoTitle: null,
+        seoDescription: null,
+        brand: row.brand_partner_id ? brandMap.get(row.brand_partner_id) ?? null : null,
+        featuredImage: pickFeatured(row.project_images),
+        categorySlug: cat.slug,
+        categoryName: cat.name,
+      };
+    });
 }
 
 /** First `limit` published products across all categories, in category order. */

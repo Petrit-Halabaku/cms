@@ -164,7 +164,6 @@ insert into public.page_sections (id, page_id, key, type, sort_order) values
   ('d0000000-0000-4000-8000-000000000106', 'c0000000-0000-4000-8000-000000000001', 'partners',          'logo-strip',   6),
   ('d0000000-0000-4000-8000-000000000107', 'c0000000-0000-4000-8000-000000000001', 'counters',          'counters',     7),
   ('d0000000-0000-4000-8000-000000000108', 'c0000000-0000-4000-8000-000000000001', 'location',          'location',     8),
-  ('d0000000-0000-4000-8000-000000000109', 'c0000000-0000-4000-8000-000000000001', 'quote-cta',         'cta',          9),
   -- about
   ('d0000000-0000-4000-8000-000000000201', 'c0000000-0000-4000-8000-000000000002', 'story',    'rich-text', 1),
   ('d0000000-0000-4000-8000-000000000202', 'c0000000-0000-4000-8000-000000000002', 'values',   'cards',     2),
@@ -207,9 +206,6 @@ insert into public.page_section_translations (section_id, locale, content) value
   -- home / location & hours
   ('d0000000-0000-4000-8000-000000000108', 'en', '{"heading": "Visit us", "address": "Pejë, Kosovo", "lat": 42.6548, "lng": 20.3172, "phone": "+383 44 000 000", "hours": [{"days": "Monday – Friday", "hours": "08:00 – 17:00"}, {"days": "Saturday", "hours": "08:00 – 14:00"}], "_note": "TODO: content migration — confirm address, phone and hours"}'),
   ('d0000000-0000-4000-8000-000000000108', 'sq', '{"heading": "Na vizitoni", "address": "Pejë, Kosovë", "lat": 42.6548, "lng": 20.3172, "phone": "+383 44 000 000", "hours": [{"days": "E hënë – E premte", "hours": "08:00 – 17:00"}, {"days": "E shtunë", "hours": "08:00 – 14:00"}], "_note": "TODO: content migration — confirm address, phone and hours"}'),
-  -- home / quote CTA
-  ('d0000000-0000-4000-8000-000000000109', 'en', '{"heading": "Need a quote?", "body": "TODO: content migration", "cta_label": "Get a quote"}'),
-  ('d0000000-0000-4000-8000-000000000109', 'sq', '{"heading": "Ju nevojitet një ofertë?", "body": "TODO: content migration", "cta_label": "Kërko ofertë"}'),
   -- about / story
   ('d0000000-0000-4000-8000-000000000201', 'en', '{"heading": "Our story", "body": "TODO: content migration"}'),
   ('d0000000-0000-4000-8000-000000000201', 'sq', '{"heading": "Historia jonë", "body": "TODO: content migration"}'),

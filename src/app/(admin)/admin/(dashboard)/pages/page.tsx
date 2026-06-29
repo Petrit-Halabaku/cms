@@ -12,7 +12,7 @@ export default async function PagesAdminPage() {
     .select("id, key, page_translations(locale, title), page_sections(id)")
     .order("key");
 
-  const ORDER = ["home", "about", "services", "products", "contact", "get-quote"];
+  const ORDER = ["home", "about", "services", "products", "contact"];
   const sorted = (pages ?? []).sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
 
   return (

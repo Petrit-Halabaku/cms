@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME } from "@/lib/site";
@@ -11,38 +13,66 @@ type Props = {
     services: string;
     products: string;
     contact: string;
-    getQuote: string;
   };
-  contact: { address: string; phone: string; email: string };
+  contact: { address: string; phone: string; phone2?: string; email: string };
+  /** CMS-managed logo URL (cache-busted) from the site layout. */
+  logoUrl: string;
 };
 
-export function Footer({ dict, basePath = "", routes, contact }: Props) {
+export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props) {
   const links = [
     { href: `${basePath}/${routes.about}`, label: dict.nav.about },
     { href: `${basePath}/${routes.services}`, label: dict.nav.services },
     { href: `${basePath}/${routes.products}`, label: dict.nav.products },
     { href: `${basePath}/${routes.contact}`, label: dict.nav.contact },
-    { href: `${basePath}/${routes.getQuote}`, label: dict.nav.getQuote },
   ];
 
   return (
-    <footer className="mt-auto border-t border-slate-100 bg-slate-50">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-8">
-        <div>
-          <p className="text-lg font-bold tracking-tight text-brand-800">
-            {SITE_NAME.toUpperCase()}
+    <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-brand-950 text-white">
+      {/* Mullion hairlines + a faint blue glow up top */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <span className="absolute left-1/4 top-0 h-full w-px bg-white/4" />
+        <span className="absolute left-2/4 top-0 h-full w-px bg-white/4" />
+        <span className="absolute left-3/4 top-0 h-full w-px bg-white/4" />
+        <div className="absolute -top-32 right-0 h-64 w-2/3 bg-[radial-gradient(closest-side,rgba(0,64,255,0.28),transparent)]" />
+      </div>
+
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 min-[376px]:grid-cols-2 min-[376px]:max-md:grid-cols-[1fr_3fr] gap-x-6 gap-y-10 px-4 pt-14 pb-12 sm:gap-x-12 sm:gap-y-12 sm:px-6 sm:pt-20 sm:pb-16 lg:grid-cols-12 lg:px-8">
+        <div className="min-[376px]:col-span-2 lg:col-span-5">
+          <div className="flex items-center gap-2.5">
+            <Image
+              src={logoUrl}
+              alt=""
+              aria-hidden
+              width={36}
+              height={36}
+              unoptimized
+              className="h-9 w-9 object-contain"
+            />
+            <span className="font-display text-xl tracking-tight">{SITE_NAME.toUpperCase()}</span>
+          </div>
+          <p className="mt-5 max-w-xs font-serif text-xl italic text-brand-100/80">
+            {dict.footer.tagline}
           </p>
-          <p className="mt-3 max-w-xs text-sm text-slate-600">{dict.footer.tagline}</p>
+          {contact.phone && (
+            <a
+              href={`tel:${contact.phone.replace(/\s/g, "")}`}
+              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/20 px-5 py-3 text-sm font-semibold transition-colors hover:border-white hover:bg-white hover:text-brand-900 sm:w-auto sm:justify-start sm:py-2.5"
+            >
+              <Phone className="h-4 w-4" aria-hidden />
+              {dict.common.callNow}
+            </a>
+          )}
         </div>
 
-        <nav aria-label={dict.footer.quickLinks}>
-          <p className="text-sm font-semibold text-slate-900">{dict.footer.quickLinks}</p>
-          <ul className="mt-3 space-y-2">
+        <nav aria-label={dict.footer.quickLinks} className="lg:col-span-3">
+          <p className="text-[0.6875rem] font-semibold tracking-[0.24em] uppercase text-brand-100/60">{dict.footer.quickLinks}</p>
+          <ul className="mt-5 space-y-3">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-slate-600 transition-colors hover:text-brand-700"
+                  className="text-sm text-white/70 transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -51,27 +81,60 @@ export function Footer({ dict, basePath = "", routes, contact }: Props) {
           </ul>
         </nav>
 
-        <div>
-          <p className="text-sm font-semibold text-slate-900">{dict.footer.contactTitle}</p>
-          <ul className="mt-3 space-y-2 text-sm text-slate-600">
-            <li>{contact.address}</li>
+        <div className="lg:col-span-4">
+          <p className="text-[0.6875rem] font-semibold tracking-[0.24em] uppercase text-brand-100/60">{dict.footer.contactTitle}</p>
+          <ul className="mt-5 space-y-3 text-sm text-white/70">
+            <li className="flex items-start gap-2.5">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-100/60" aria-hidden />
+              {contact.address}
+            </li>
             <li>
-              <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="hover:text-brand-700">
+              <a
+                href={`tel:${contact.phone.replace(/\s/g, "")}`}
+                className="flex items-center gap-2.5 transition-colors hover:text-white"
+              >
+                <Phone className="h-4 w-4 shrink-0 text-brand-100/60" aria-hidden />
                 {contact.phone}
               </a>
             </li>
+            {contact.phone2 && (
+              <li>
+                <a
+                  href={`tel:${contact.phone2.replace(/\s/g, "")}`}
+                  className="flex items-center gap-2.5 transition-colors hover:text-white"
+                >
+                  <Phone className="h-4 w-4 shrink-0 text-brand-100/60" aria-hidden />
+                  {contact.phone2}
+                </a>
+              </li>
+            )}
             <li>
-              <a href={`mailto:${contact.email}`} className="hover:text-brand-700">
+              <a
+                href={`mailto:${contact.email}`}
+                className="flex items-center gap-2.5 transition-colors hover:text-white"
+              >
+                <Mail className="h-4 w-4 shrink-0 text-brand-100/60" aria-hidden />
                 {contact.email}
               </a>
             </li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-slate-200 py-4">
-        <p className="mx-auto max-w-7xl px-4 text-xs text-slate-500 sm:px-6 lg:px-8">
-          © {new Date().getFullYear()} {SITE_NAME}. {dict.footer.rights}
+
+      {/* Oversized wordmark */}
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-hidden>
+        <p className="select-none font-display text-[clamp(4rem,15.5vw,13rem)] leading-[0.82] tracking-tight text-white/8">
+          {SITE_NAME.toUpperCase()}
         </p>
+      </div>
+
+      <div className="relative border-t border-white/10 py-5">
+        <div className="mx-auto flex max-w-7xl flex-col gap-1.5 px-4 text-xs text-white/45 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-2 sm:px-6 lg:px-8">
+          <p>
+            © {new Date().getFullYear()} {SITE_NAME}. {dict.footer.rights}
+          </p>
+          <p className="font-display tracking-[0.18em]">PEJË · KOSOVË</p>
+        </div>
       </div>
     </footer>
   );

@@ -12,14 +12,12 @@ export const ROUTE_SLUGS = {
     services: "services",
     products: "products",
     contact: "contact",
-    getQuote: "get-quote",
   },
   sq: {
     about: "rreth-nesh",
     services: "sherbimet",
     products: "produktet",
     contact: "kontakti",
-    getQuote: "kerko-oferte",
   },
 } as const;
 
@@ -27,3 +25,35 @@ export const ROUTE_SLUGS = {
 export function storageUrl(bucket: "media" | "brochures", path: string): string {
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 }
+
+/**
+ * Storage path (in the `media` bucket) of the CMS-managed site logo. The admin
+ * Branding page replaces this exact object in place; every consumer (header,
+ * footer, JSON-LD) reads it through `getLogoUrl()`, which appends a
+ * cache-busting token so the swap is picked up despite the long cache lifetime.
+ */
+export const LOGO_PATH = "icons/gergoci-symbol-color.webp";
+
+/** White GERGOCI symbol on the hero shutter overlay (`media` bucket). */
+export const HERO_SYMBOL_PATH = "icons/gergoci-symbol-white.webp";
+
+/**
+ * Homepage hero video — swappable single source of truth.
+ *
+ * The client's professional video isn't delivered yet, so `enabled` is false and
+ * the hero reveals the animated window graphic instead. To go live with the real
+ * video, drop the encoded files in `public/hero/` and flip `enabled` to true:
+ *   public/hero/hero.mp4    — H.264/MP4, compressed (~1080p, a few MB)
+ *   public/hero/hero.webm   — optional VP9/WebM (smaller; served first)
+ *   public/hero/poster.jpg  — still frame shown before play (becomes the LCP)
+ * The mp4/webm/poster values may also point at Supabase storage URLs instead.
+ */
+export const HERO_MEDIA = {
+  enabled: false,
+  webm: "/hero/hero.webm",
+  mp4: "/hero/hero.mp4",
+  poster: "/hero/poster.jpg",
+} as const;
+
+/** localStorage key gating the once-per-cache hero intro. Bump to force replay. */
+export const HERO_INTRO_FLAG = "gergoci_hero_intro_v1";

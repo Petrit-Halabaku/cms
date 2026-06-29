@@ -8,7 +8,6 @@ export type Dictionary = {
     services: string;
     products: string;
     contact: string;
-    getQuote: string;
   };
   header: { menuLabel: string };
   footer: {
@@ -24,6 +23,10 @@ export type Dictionary = {
     related: string;
     backToCategory: string;
     noProducts: string;
+  };
+  projects: {
+    heading: string;
+    subheading: string;
   };
   form: {
     name: string;
@@ -61,7 +64,6 @@ const en: Dictionary = {
     services: "Services",
     products: "Products",
     contact: "Contact",
-    getQuote: "Get a Quote",
   },
   header: { menuLabel: "Menu" },
   footer: {
@@ -77,6 +79,10 @@ const en: Dictionary = {
     related: "Related products",
     backToCategory: "Back to",
     noProducts: "No products in this category yet.",
+  },
+  projects: {
+    heading: "Our projects",
+    subheading: "A selection of windows, doors and glass systems we've installed across Kosovo.",
   },
   form: {
     name: "Name",
@@ -114,7 +120,6 @@ const sq: Dictionary = {
     services: "Shërbimet",
     products: "Produktet",
     contact: "Kontakti",
-    getQuote: "Kërko Ofertë",
   },
   header: { menuLabel: "Menyja" },
   footer: {
@@ -130,6 +135,10 @@ const sq: Dictionary = {
     related: "Produkte të ngjashme",
     backToCategory: "Kthehu te",
     noProducts: "Ende nuk ka produkte në këtë kategori.",
+  },
+  projects: {
+    heading: "Projektet tona",
+    subheading: "Një përzgjedhje e dritareve, dyerve dhe sistemeve të xhamit që kemi instaluar në Kosovë.",
   },
   form: {
     name: "Emri",

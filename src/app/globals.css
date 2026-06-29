@@ -1,17 +1,88 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand: white base, one deep blue accent, dark slate text */
-  --color-brand-50: #eff4fb;
-  --color-brand-100: #dbe6f6;
-  --color-brand-600: #1d4ed8;
-  --color-brand-700: #1e40af;
-  --color-brand-800: #1e3a8a;
-  --color-brand-900: #172b66;
+  /* GERGOCI brand palette (canonical). The three official hex from the brand
+     guide, plus the Navy surface and Mist the guide omits. Contrast: white text
+     on Primary/Navy/Ink only — never on Accent; dark text on Accent/Mist. */
+  --color-primary: #0040ff; /* GERGOCI Blue — CTAs, links, accents */
+  --color-accent: #8dd7f7; /* Light Blue — dark text only on it */
+  --color-ink: #3f3f41; /* Dark Grey — body text */
+  --color-navy: #012653; /* Deep Navy — hero, footer, dark surfaces */
+  --color-mist: #ebedec; /* light section background */
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Brand ramp re-anchored to the GERGOCI hues so the existing brand-* utilities
+     adopt the palette automatically: 700 = GERGOCI Blue, 900/950 = Deep Navy. */
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #cfe0ff;
+  --color-brand-200: #aecbff;
+  --color-brand-600: #1e54ff;
+  --color-brand-700: #0040ff;
+  --color-brand-800: #0033cc;
+  --color-brand-900: #012653;
+  --color-brand-950: #01173a;
+
+  /* Surfaces & hairlines */
+  --color-paper: #fafbfd;
+  --color-line: #e4e9f1;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-accent), Georgia, serif;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee 36s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+/* Architectural display type — slightly expanded, tightly tracked Archivo. */
+@utility font-display {
+  font-stretch: 112%;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+/* Small uppercase label that prefixes sections. */
+@utility kicker {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-brand-700);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
-  @apply bg-white text-slate-800 font-sans antialiased;
+  @apply bg-paper text-ink font-sans antialiased;
+}
+
+::selection {
+  background: var(--color-brand-700);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+}
+
+/* Film grain — a static fixed layer of SVG noise, barely visible but it
+   keeps large flat surfaces from feeling sterile. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }

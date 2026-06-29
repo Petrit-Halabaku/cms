@@ -11,6 +11,8 @@ type Props = {
   /** EN↔SQ slug pairs for pages, categories and products. */
   slugPairs: SlugPair[];
   className?: string;
+  /** "dark" renders white-on-navy (full-screen menu, footer). */
+  variant?: "light" | "dark";
 };
 
 /**
@@ -18,7 +20,7 @@ type Props = {
  * path segment through the slug pairs (unknown segments pass through
  * unchanged — most product slugs are identical in both locales).
  */
-export function LanguageSwitcher({ locale, slugPairs, className = "" }: Props) {
+export function LanguageSwitcher({ locale, slugPairs, className = "", variant = "light" }: Props) {
   const pathname = usePathname();
 
   const map = (from: Locale, to: Locale, segment: string) =>
@@ -42,15 +44,23 @@ export function LanguageSwitcher({ locale, slugPairs, className = "" }: Props) {
     <div className={`flex items-center gap-1 text-sm font-medium ${className}`}>
       {(["en", "sq"] as const).map((target, index) => (
         <span key={target} className="flex items-center gap-1">
-          {index > 0 && <span className="text-slate-300">/</span>}
+          {index > 0 && (
+            <span className={variant === "dark" ? "text-white/25" : "text-slate-300"}>/</span>
+          )}
           <Link
             href={hrefFor(target)}
             hrefLang={target}
             aria-current={target === locale ? "true" : undefined}
             className={
               target === locale
-                ? "cursor-default text-brand-700 underline underline-offset-4"
-                : "text-slate-500 transition-colors hover:text-brand-700"
+                ? `cursor-default underline underline-offset-4 ${
+                    variant === "dark" ? "text-white" : "text-brand-700"
+                  }`
+                : `transition-colors ${
+                    variant === "dark"
+                      ? "text-white/50 hover:text-white"
+                      : "text-slate-500 hover:text-brand-700"
+                  }`
             }
           >
             {target.toUpperCase()}

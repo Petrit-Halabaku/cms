@@ -11,6 +11,9 @@ export async function uploadFile(
   bucket: "media" | "brochures",
   file: File,
 ): Promise<{ path: string } | { error: string }> {
+  if (bucket === "media" && file.type !== "image/webp") {
+    return { error: "Only WebP images are allowed." };
+  }
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "bin";
   const safeBase = file.name
     .replace(/\.[^.]+$/, "")
@@ -23,6 +26,30 @@ export async function uploadFile(
   const { error } = await supabase.storage.from(bucket).upload(path, file, {
     contentType: file.type,
     cacheControl: "31536000",
+  });
+  if (error) return { error: error.message };
+  return { path };
+}
+
+/**
+ * Upload to a fixed path, overwriting any existing object. Used for singleton
+ * brand assets (e.g. the site logo) where the URL must stay stable and callers
+ * cache-bust with a version token instead. Same WebP guard and cache lifetime
+ * as `uploadFile`.
+ */
+export async function uploadToPath(
+  bucket: "media" | "brochures",
+  path: string,
+  file: File,
+): Promise<{ path: string } | { error: string }> {
+  if (bucket === "media" && file.type !== "image/webp") {
+    return { error: "Only WebP images are allowed." };
+  }
+  const supabase = createClient();
+  const { error } = await supabase.storage.from(bucket).upload(path, file, {
+    contentType: file.type,
+    cacheControl: "31536000",
+    upsert: true,
   });
   if (error) return { error: error.message };
   return { path };

@@ -23,3 +23,14 @@ export async function requireEditor() {
 
   return { supabase, user, role: profile.role };
 }
+
+/**
+ * Stricter gate for user-management pages and actions: requires the `admin`
+ * role. Editors have full content access but may not add or remove dashboard
+ * users, so they are bounced back to the dashboard home.
+ */
+export async function requireAdmin() {
+  const ctx = await requireEditor();
+  if (ctx.role !== "admin") redirect("/admin");
+  return ctx;
+}

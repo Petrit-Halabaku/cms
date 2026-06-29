@@ -61,7 +61,7 @@ export function MediaLibrary({ media }: { media: MediaRow[] }) {
         <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800">
           <Upload className="h-4 w-4" aria-hidden />
           {uploading ? "Uploading…" : "Upload images"}
-          <input type="file" accept="image/*" multiple onChange={onUpload} disabled={uploading} className="hidden" />
+          <input type="file" accept="image/webp,.webp" multiple onChange={onUpload} disabled={uploading} className="hidden" />
         </label>
       </div>
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}

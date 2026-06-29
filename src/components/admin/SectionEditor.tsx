@@ -156,12 +156,15 @@ export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptio
               <Field label="Phone">
                 <input type="text" value={str("phone")} onChange={(e) => set("phone", e.target.value)} className={inputClass} />
               </Field>
-              {type === "contact-info" && (
-                <Field label="Email">
-                  <input type="email" value={str("email")} onChange={(e) => set("email", e.target.value)} className={inputClass} />
-                </Field>
-              )}
+              <Field label="Phone 2 (optional)">
+                <input type="text" value={str("phone2")} onChange={(e) => set("phone2", e.target.value)} className={inputClass} />
+              </Field>
             </div>
+            {type === "contact-info" && (
+              <Field label="Email">
+                <input type="email" value={str("email")} onChange={(e) => set("email", e.target.value)} className={inputClass} />
+              </Field>
+            )}
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Map latitude">
                 <input type="number" step="0.0001" value={num("lat")} onChange={(e) => set("lat", Number(e.target.value))} className={inputClass} />

@@ -111,6 +111,7 @@ export type Database = {
         Row: {
           id: string;
           category_id: string;
+          brand_partner_id: string | null;
           brochure_url: string | null;
           sort_order: number;
           published: boolean;
@@ -119,6 +120,7 @@ export type Database = {
         Insert: {
           id?: string;
           category_id: string;
+          brand_partner_id?: string | null;
           brochure_url?: string | null;
           sort_order?: number;
           published?: boolean;
@@ -127,6 +129,7 @@ export type Database = {
         Update: {
           id?: string;
           category_id?: string;
+          brand_partner_id?: string | null;
           brochure_url?: string | null;
           sort_order?: number;
           published?: boolean;
