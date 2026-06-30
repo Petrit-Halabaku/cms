@@ -134,7 +134,7 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
         className="pointer-events-none absolute -top-48 -left-48 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.5),transparent)]"
       />
 
-      <Container className="relative grid gap-12 py-12 sm:py-16 lg:grid-cols-12 lg:items-center lg:py-20">
+      <Container className="relative grid gap-8 py-10 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:items-center lg:py-20">
         <div className="lg:col-span-7">
           <Reveal y={14}>
             <p className="kicker">{ctx.dict.footer.tagline}</p>
@@ -145,11 +145,11 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
             accentLast
             onScroll={false}
             delay={0.15}
-            className="mt-6 max-w-3xl font-display text-5xl leading-[0.95] text-slate-900 sm:text-6xl lg:text-7xl"
+            className="mt-5 max-w-3xl font-display text-[2.5rem] leading-[1.0] text-slate-900 sm:mt-6 sm:text-6xl sm:leading-[0.95] lg:text-7xl"
           />
           {content.subheading && (
             <Reveal delay={0.5} y={20}>
-              <p className="mt-7 max-w-xl text-lg leading-relaxed text-slate-600">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:mt-7 sm:text-lg">
                 {content.subheading}
               </p>
             </Reveal>
@@ -190,7 +190,7 @@ function Cards({ section, columns }: { section: PageSection; columns: 3 | 4 }) {
   if (content.items.length === 0) return null;
   const cols = columns === 3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4";
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-10 sm:py-16">
       <Container>
         {content.heading && <SectionHeading heading={content.heading} />}
         <Reveal
@@ -224,7 +224,7 @@ async function FeaturedProducts({ section, ctx }: { section: PageSection; ctx: C
   const products = await getFeaturedProducts(ctx.locale, 6);
   if (products.length === 0) return null;
   return (
-    <section className="border-y border-line bg-white py-12 sm:py-16">
+    <section className="border-y border-line bg-white py-10 sm:py-16">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading heading={content.heading} />
@@ -259,13 +259,13 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
   const faqs = await getFaqs(ctx.locale);
   if (faqs.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
+    <section className="relative overflow-hidden bg-brand-950 py-10 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/5" />
       </div>
-      <Container className="relative grid gap-12 lg:grid-cols-12">
+      <Container className="relative grid gap-8 sm:gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
             <SectionHeading heading={content.heading} dark />
@@ -284,9 +284,9 @@ async function Partners({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const partners = await getPartners();
   if (partners.length === 0) return null;
   return (
-    <section className="border-y border-line bg-white py-14">
+    <section className="border-y border-line bg-white py-10 sm:py-14">
       {content.heading && (
-        <p className="kicker mb-10 text-center">{content.heading}</p>
+        <p className="kicker mb-8 text-center sm:mb-10">{content.heading}</p>
       )}
       <Marquee>
         {partners.map((partner) => (
@@ -314,7 +314,7 @@ function Counters({ section }: { section: PageSection }) {
   const content = parseContent(countersSchema, section.content);
   if (content.items.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
+    <section className="relative overflow-hidden bg-brand-950 py-10 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
@@ -330,7 +330,7 @@ function Counters({ section }: { section: PageSection }) {
         )}
         <Reveal
           stagger={0.12}
-          className="mt-8 grid grid-cols-2 gap-y-12 lg:grid-cols-4"
+          className="mt-8 grid grid-cols-2 gap-y-10 lg:grid-cols-4"
         >
           {content.items.map((item) => (
             <div
@@ -355,11 +355,11 @@ function Counters({ section }: { section: PageSection }) {
 function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const content = parseContent(locationSchema, section.content);
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-10 sm:py-16">
       <Container>
         <SectionHeading heading={content.heading} />
         <Reveal className="mt-8 grid border-t border-l border-line sm:grid-cols-2">
-          <div className="space-y-5 border-r border-b border-line bg-paper p-8 sm:p-10">
+          <div className="space-y-5 border-r border-b border-line bg-paper p-6 sm:p-10">
             <p className="flex items-start gap-3 text-slate-600">
               <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden />
               {content.address}
@@ -399,7 +399,7 @@ function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
               />
             </a>
           </div>
-          <div className="border-r border-b border-line bg-paper p-8 sm:p-10">
+          <div className="border-r border-b border-line bg-paper p-6 sm:p-10">
             {content.hours.length > 0 && (
               <table className="w-full text-sm">
                 <tbody>
@@ -429,14 +429,14 @@ function QuoteCta({ section, ctx }: { section: PageSection; ctx: Ctx }) {
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/8" />
         <div className="absolute -top-24 right-0 h-72 w-2/3 bg-[radial-gradient(closest-side,rgba(255,255,255,0.12),transparent)]" />
       </div>
-      <Container className="relative py-16 sm:py-20">
+      <Container className="relative py-12 sm:py-20">
         <SplitHeading
           text={content.heading}
           className="max-w-3xl font-display text-4xl leading-[0.95] text-white sm:text-5xl lg:text-6xl"
         />
         {content.body && (
           <Reveal delay={0.2} y={20}>
-            <p className="mt-6 max-w-xl text-lg text-brand-100">{content.body}</p>
+            <p className="mt-6 max-w-xl text-base text-brand-100 sm:text-lg">{content.body}</p>
           </Reveal>
         )}
         <Reveal delay={0.3} y={20}>
@@ -519,7 +519,7 @@ function ListSection({ section }: { section: PageSection }) {
   const images = LIST_SECTION_IMAGES[section.key] ?? [];
 
   return (
-    <section className="border-y border-line bg-white py-12 sm:py-16">
+    <section className="border-y border-line bg-white py-10 sm:py-16">
       <Container className="grid gap-8 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
@@ -573,7 +573,7 @@ async function GallerySection({ section, ctx }: { section: PageSection; ctx: Ctx
   const media = await getMediaByIds(content.media_ids);
   if (media.length === 0) return null;
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-10 sm:py-16">
       <Container>
         {content.heading && <SectionHeading heading={content.heading} />}
         <Reveal stagger={0.08} className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
