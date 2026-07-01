@@ -19,6 +19,10 @@ export const heroSchema = z.object({
   subheading: z.string().default(""),
   cta_label: z.string().default(""),
   phone: z.string().default(""),
+  /** Background media path in the `media` bucket (image or video); shared across locales. */
+  media_path: z.string().default(""),
+  /** Alt text for a background image (ignored for video). */
+  media_alt: z.string().default(""),
 });
 
 export const cardsSchema = z.object({

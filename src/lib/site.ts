@@ -26,6 +26,14 @@ export function storageUrl(bucket: "media" | "brochures", path: string): string 
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 }
 
+/** Folder (within the `media` bucket) where the admin-uploaded homepage hero lives. */
+export const HERO_MEDIA_FOLDER = "homepage";
+
+/** True when a storage path points at a video the hero should render with `<video>`. */
+export function isVideoPath(path: string): boolean {
+  return /\.(mp4|webm|mov)$/i.test(path);
+}
+
 /**
  * Storage path (in the `media` bucket) of the CMS-managed site logo. The admin
  * Branding page replaces this exact object in place; every consumer (header,

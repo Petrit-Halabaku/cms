@@ -7,7 +7,8 @@ import { ArrowDown, ArrowUp, Check, Trash2 } from "lucide-react";
 
 import { Field, LocaleTabs, inputClass } from "@/components/admin/ui";
 import { saveSectionContent } from "@/lib/admin/actions/pages";
-import { storageUrl } from "@/lib/site";
+import { uploadFile } from "@/lib/admin/upload";
+import { HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
 
 /**
  * Friendly editor for one page section's jsonb content, per locale.
@@ -54,6 +55,14 @@ export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptio
   const set = (key: string, value: unknown) => {
     setStatus("idle");
     setContent((prev) => ({ ...prev, [locale]: { ...prev[locale], [key]: value } }));
+  };
+  /** Hero background media is one file for the whole page — set it on both locales. */
+  const setMediaBoth = (path: string) => {
+    setStatus("idle");
+    setContent((prev) => ({
+      en: { ...prev.en, media_path: path },
+      sq: { ...prev.sq, media_path: path },
+    }));
   };
   const str = (key: string) => String((current[key] as string | number | undefined) ?? "");
   const num = (key: string) => Number(current[key] ?? 0);
@@ -105,6 +114,12 @@ export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptio
                 <input type="text" value={str("phone")} onChange={(e) => set("phone", e.target.value)} className={inputClass} />
               </Field>
             </div>
+            <HeroMediaField
+              path={str("media_path")}
+              alt={str("media_alt")}
+              onPath={setMediaBoth}
+              onAlt={(v) => set("media_alt", v)}
+            />
           </>
         )}
 
@@ -335,6 +350,88 @@ function StringListEditor({
       >
         + Add item
       </button>
+    </div>
+  );
+}
+
+/** Upload + preview for the hero background (WebP image now, MP4/WebM video later). */
+function HeroMediaField({
+  path,
+  alt,
+  onPath,
+  onAlt,
+}: {
+  path: string;
+  alt: string;
+  onPath: (path: string) => void;
+  onAlt: (alt: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isVideo = isVideoPath(path);
+
+  async function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    setError(null);
+    const result = await uploadFile("media", file, HERO_MEDIA_FOLDER, { allowVideo: true });
+    setBusy(false);
+    if ("error" in result) {
+      setError(result.error);
+      return;
+    }
+    onPath(result.path);
+  }
+
+  return (
+    <div>
+      <p className="text-sm font-medium text-slate-900">Background media</p>
+      <p className="text-xs text-slate-400">
+        Shown full-bleed behind the hero text. WebP image now, or an MP4/WebM video later.
+        Remember to click “Save section” after uploading.
+      </p>
+      <div className="mt-2 flex items-start gap-4">
+        <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+          {path ? (
+            isVideo ? (
+              <video
+                src={storageUrl("media", path)}
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={storageUrl("media", path)} alt="" className="h-full w-full object-cover" />
+            )
+          ) : (
+            <span className="grid h-full w-full place-items-center text-xs text-slate-400">
+              No media
+            </span>
+          )}
+        </div>
+        <div>
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-brand-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 aria-disabled:opacity-60">
+            {busy ? "Uploading…" : path ? "Replace media" : "Upload media"}
+            <input
+              type="file"
+              accept="image/webp,video/mp4,video/webm"
+              onChange={onUpload}
+              disabled={busy}
+              className="hidden"
+            />
+          </label>
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        </div>
+      </div>
+      <div className="mt-3">
+        <Field label="Image alt text (accessibility)">
+          <input type="text" value={alt} onChange={(e) => onAlt(e.target.value)} className={inputClass} />
+        </Field>
+      </div>
     </div>
   );
 }

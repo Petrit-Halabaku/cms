@@ -5,10 +5,10 @@ import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { MediaImage } from "@/components/MediaImage";
 import { CountUp } from "@/components/motion/CountUp";
-import { HeroVisual } from "@/components/motion/HeroVisual";
 import { Marquee } from "@/components/motion/Marquee";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
+import { EditorialHero } from "@/components/pages/editorial";
 import { ProductGrid } from "@/components/ProductCard";
 import type { Locale } from "@/lib/database.types";
 import {
@@ -19,7 +19,7 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import { isVideoPath, ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
   countersSchema,
@@ -91,17 +91,6 @@ function Container({
   );
 }
 
-/** Faint vertical hairlines echoing window mullions, used on light bands. */
-function MullionLines() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0">
-      <span className="absolute top-0 left-1/4 h-full w-px bg-line/70" />
-      <span className="absolute top-0 left-2/4 h-full w-px bg-line/70" />
-      <span className="absolute top-0 left-3/4 h-full w-px bg-line/70" />
-    </div>
-  );
-}
-
 /** Section heading marked with a small blue pane. */
 function SectionHeading({
   heading,
@@ -126,62 +115,39 @@ function SectionHeading({
 
 function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const content = parseContent(heroSchema, section.content);
+  const callHref = content.phone ? `tel:${content.phone.replace(/\s/g, "")}` : null;
   return (
-    <section className="relative overflow-hidden border-b border-line bg-paper">
-      <MullionLines />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-48 -left-48 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.5),transparent)]"
-      />
-
-      <Container className="relative grid gap-8 py-10 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:items-center lg:py-20">
-        <div className="lg:col-span-7">
-          <Reveal y={14}>
-            <p className="kicker">{ctx.dict.footer.tagline}</p>
-          </Reveal>
-          <SplitHeading
-            as="h1"
-            text={content.heading}
-            accentLast
-            onScroll={false}
-            delay={0.15}
-            className="mt-5 max-w-3xl font-display text-[2.5rem] leading-[1.0] text-slate-900 sm:mt-6 sm:text-6xl sm:leading-[0.95] lg:text-7xl"
-          />
-          {content.subheading && (
-            <Reveal delay={0.5} y={20}>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:mt-7 sm:text-lg">
-                {content.subheading}
-              </p>
-            </Reveal>
-          )}
-          <Reveal delay={0.65} y={20} className="mt-8 flex flex-wrap items-center gap-4">
-            {content.phone && (
-              <a
-                href={`tel:${content.phone.replace(/\s/g, "")}`}
-                className="inline-flex items-center gap-2.5 rounded-full bg-brand-700 px-7 py-3.5 text-base font-semibold text-white transition-colors hover:bg-brand-800"
-              >
-                <Phone className="h-4.5 w-4.5" aria-hidden />
-                {content.cta_label || ctx.dict.common.callNow}
-              </a>
-            )}
-            <Link
-              href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}`}
-              className="group inline-flex items-center gap-2 rounded-full border border-slate-300 px-7 py-3.5 text-base font-semibold text-slate-900 transition-colors hover:border-brand-700 hover:text-brand-700"
+    <EditorialHero
+      kicker={ctx.dict.footer.tagline}
+      title={content.heading}
+      titleAccentLast
+      subtitle={content.subheading}
+      image={{ path: content.media_path, alt: content.media_alt || content.heading }}
+      mediaType={isVideoPath(content.media_path) ? "video" : "image"}
+      actions={
+        <>
+          {callHref && (
+            <a
+              href={callHref}
+              className="inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-brand-900 transition-colors hover:bg-brand-50"
             >
-              {ctx.dict.nav.products}
-              <ArrowUpRight
-                className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                aria-hidden
-              />
-            </Link>
-          </Reveal>
-        </div>
-
-        <div className="lg:col-span-5">
-          <HeroVisual className="mx-auto w-full max-w-sm pb-6 lg:max-w-none" />
-        </div>
-      </Container>
-    </section>
+              <Phone className="h-4.5 w-4.5" aria-hidden />
+              {content.cta_label || ctx.dict.common.callNow}
+            </a>
+          )}
+          <Link
+            href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}`}
+            className="group inline-flex items-center gap-2 rounded-full border border-white/40 px-7 py-3.5 text-base font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
+          >
+            {ctx.dict.nav.products}
+            <ArrowUpRight
+              className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              aria-hidden
+            />
+          </Link>
+        </>
+      }
+    />
   );
 }
 
