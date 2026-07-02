@@ -183,6 +183,33 @@ export type Database = {
           },
         ];
       };
+      gallery_images: {
+        Row: {
+          id: string;
+          gallery: string;
+          storage_path: string;
+          alt: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          gallery: string;
+          storage_path: string;
+          alt?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          gallery?: string;
+          storage_path?: string;
+          alt?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       product_categories: {
         Row: {
           product_id: string;
