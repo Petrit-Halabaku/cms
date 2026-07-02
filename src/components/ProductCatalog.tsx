@@ -30,30 +30,47 @@ export function ProductCatalog({
       ? { filters: "Filtrat", categories: "Kategoritë", brands: "Markat", clear: "Pastro", none: "Asnjë produkt nuk përputhet me filtrat.", count: (n: number) => `${n} produkte` }
       : { filters: "Filters", categories: "Categories", brands: "Brands", clear: "Clear all", none: "No products match these filters.", count: (n: number) => `${n} ${n === 1 ? "product" : "products"}` };
 
-  const categories = useMemo(() => {
-    const map = new Map<string, FacetValue>();
-    for (const p of products) {
-      for (const c of p.categories) {
-        const existing = map.get(c.slug);
-        if (existing) existing.count += 1;
-        else map.set(c.slug, { value: c.slug, label: c.name, count: 1 });
-      }
-    }
-    return [...map.values()];
-  }, [products]);
-  const brands = useFacet(products, (p) => (p.brand ? [p.brand, p.brand] : null));
-
   const [selCats, setSelCats] = useState<Set<string>>(new Set());
   const [selBrands, setSelBrands] = useState<Set<string>>(new Set());
   const [open, setOpen] = useState(false);
 
+  const matchesCats = (p: ProductCatalogItem) =>
+    selCats.size === 0 || p.categories.some((c) => selCats.has(c.slug));
+  const matchesBrands = (p: ProductCatalogItem) =>
+    selBrands.size === 0 || (p.brand != null && selBrands.has(p.brand));
+
+  // Each group's counts reflect the OTHER group's selection (its own selection is
+  // ignored so multi-select within the group stays possible).
+  const categories = useMemo(() => {
+    const map = new Map<string, FacetValue>();
+    for (const p of products) {
+      const counts = matchesBrands(p);
+      for (const c of p.categories) {
+        const existing = map.get(c.slug);
+        if (existing) existing.count += counts ? 1 : 0;
+        else map.set(c.slug, { value: c.slug, label: c.name, count: counts ? 1 : 0 });
+      }
+    }
+    return [...map.values()];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, selBrands]);
+
+  const brands = useMemo(() => {
+    const map = new Map<string, FacetValue>();
+    for (const p of products) {
+      if (!p.brand) continue;
+      const counts = matchesCats(p);
+      const existing = map.get(p.brand);
+      if (existing) existing.count += counts ? 1 : 0;
+      else map.set(p.brand, { value: p.brand, label: p.brand, count: counts ? 1 : 0 });
+    }
+    return [...map.values()];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, selCats]);
+
   const filtered = useMemo(
-    () =>
-      products.filter(
-        (p) =>
-          (selCats.size === 0 || p.categories.some((c) => selCats.has(c.slug))) &&
-          (selBrands.size === 0 || (p.brand != null && selBrands.has(p.brand))),
-      ),
+    () => products.filter((p) => matchesCats(p) && matchesBrands(p)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [products, selCats, selBrands],
   );
 
@@ -155,25 +172,6 @@ export function ProductCatalog({
   );
 }
 
-/** Distinct facet values with counts, in first-seen order. */
-function useFacet(
-  products: ProductCatalogItem[],
-  pick: (p: ProductCatalogItem) => [string, string] | null,
-): FacetValue[] {
-  return useMemo(() => {
-    const map = new Map<string, FacetValue>();
-    for (const p of products) {
-      const hit = pick(p);
-      if (!hit) continue;
-      const [value, label] = hit;
-      const existing = map.get(value);
-      if (existing) existing.count += 1;
-      else map.set(value, { value, label, count: 1 });
-    }
-    return [...map.values()];
-  }, [products, pick]);
-}
-
 function Group({
   title,
   options,
@@ -189,20 +187,29 @@ function Group({
     <fieldset className="border-t border-line py-6 first:border-t-0 first:pt-0">
       <legend className="kicker mb-4">{title}</legend>
       <ul className="space-y-2.5">
-        {options.map((o) => (
-          <li key={o.value}>
-            <label className="flex cursor-pointer items-center gap-2.5 text-sm text-slate-600 transition-colors hover:text-slate-900">
-              <input
-                type="checkbox"
-                checked={selected.has(o.value)}
-                onChange={() => onToggle(o.value)}
-                className="h-4 w-4 shrink-0 rounded-sm border-line text-brand-700 focus:ring-brand-700"
-              />
-              <span className="flex-1">{o.label}</span>
-              <span className="text-xs text-slate-400">{o.count}</span>
-            </label>
-          </li>
-        ))}
+        {options.map((o) => {
+          const dimmed = o.count === 0 && !selected.has(o.value);
+          return (
+            <li key={o.value}>
+              <label
+                className={`flex cursor-pointer items-center gap-2.5 text-sm transition-colors ${
+                  dimmed ? "text-slate-300 hover:text-slate-500" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.has(o.value)}
+                  onChange={() => onToggle(o.value)}
+                  className="h-4 w-4 shrink-0 rounded-sm border-line text-brand-700 focus:ring-brand-700"
+                />
+                <span className="flex-1">{o.label}</span>
+                <span className={`text-xs ${dimmed ? "text-slate-300" : "text-slate-400"}`}>
+                  {o.count}
+                </span>
+              </label>
+            </li>
+          );
+        })}
       </ul>
     </fieldset>
   );
