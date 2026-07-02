@@ -169,13 +169,20 @@ async function Cards({
   // A card's stable `key` (e.g. "windows") deep-links to the localized category;
   // cards without a key fall back to the full products listing.
   const categories = await getCategories(ctx.locale);
+  const slugById = new Map<string, string>();
   const slugByKey = new Map<string, string>();
   for (const cat of categories) {
+    slugById.set(cat.id, cat.slug);
     const key = CATEGORY_KEY_BY_ID[cat.id];
     if (key) slugByKey.set(key, cat.slug);
   }
-  const hrefFor = (key?: string) =>
-    key && slugByKey.has(key) ? `${productsHref}/${slugByKey.get(key)}` : productsHref;
+  // CMS-set category id wins; fall back to the legacy `key`, then the products list.
+  const hrefFor = (item: { category_id?: string; key?: string }) => {
+    if (item.category_id && slugById.has(item.category_id))
+      return `${productsHref}/${slugById.get(item.category_id)}`;
+    if (item.key && slugByKey.has(item.key)) return `${productsHref}/${slugByKey.get(item.key)}`;
+    return productsHref;
+  };
 
   return (
     <section className="py-10 sm:py-16">
@@ -188,7 +195,7 @@ async function Cards({
           {content.items.map((item) => (
             <Link
               key={item.title}
-              href={hrefFor(item.key)}
+              href={hrefFor(item)}
               className="group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/40 sm:min-h-[15rem] sm:p-8"
             >
               {/* Mullion cross — draws in on hover, framing the card like a window pane. */}

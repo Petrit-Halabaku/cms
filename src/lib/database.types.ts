@@ -183,6 +183,36 @@ export type Database = {
           },
         ];
       };
+      product_categories: {
+        Row: {
+          product_id: string;
+          category_id: string;
+        };
+        Insert: {
+          product_id: string;
+          category_id: string;
+        };
+        Update: {
+          product_id?: string;
+          category_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "product_categories_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "project_categories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       project_facts: {
         Row: {
           id: string;
@@ -314,6 +344,7 @@ export type Database = {
           key: string;
           type: string;
           sort_order: number;
+          active: boolean;
         };
         Insert: {
           id?: string;
@@ -321,6 +352,7 @@ export type Database = {
           key: string;
           type: string;
           sort_order?: number;
+          active?: boolean;
         };
         Update: {
           id?: string;
@@ -328,6 +360,7 @@ export type Database = {
           key?: string;
           type?: string;
           sort_order?: number;
+          active?: boolean;
         };
         Relationships: [
           {

@@ -17,7 +17,7 @@ export default async function EditProductPage({ params }: Props) {
     supabase
       .from("projects")
       .select(
-        "id, category_id, sort_order, published, brochure_url, project_translations(locale, title, slug, body, seo_title, seo_description), project_facts(id, locale, label, value, sort_order), project_images(id, sort_order, is_featured, media(id, storage_path, width, height))",
+        "id, category_id, sort_order, published, brochure_url, project_translations(locale, title, slug, body, seo_title, seo_description), project_facts(id, locale, label, value, sort_order), project_images(id, sort_order, is_featured, media(id, storage_path, width, height)), product_categories(category_id)",
       )
       .eq("id", id)
       .maybeSingle(),
@@ -45,9 +45,14 @@ export default async function EditProductPage({ params }: Props) {
       .sort((a, b) => a.sort_order - b.sort_order)
       .map((fact) => ({ label: fact.label, value: fact.value }));
 
+  const extraCategoryIds = (product.product_categories ?? [])
+    .map((pc) => pc.category_id)
+    .filter((cid) => cid !== product.category_id);
+
   const initial: ProductFormInitial = {
     id: product.id,
     categoryId: product.category_id,
+    extraCategoryIds,
     sortOrder: product.sort_order,
     published: product.published,
     brochureUrl: product.brochure_url,

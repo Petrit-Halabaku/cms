@@ -30,7 +30,17 @@ export function ProductCatalog({
       ? { filters: "Filtrat", categories: "Kategoritë", brands: "Markat", clear: "Pastro", none: "Asnjë produkt nuk përputhet me filtrat.", count: (n: number) => `${n} produkte` }
       : { filters: "Filters", categories: "Categories", brands: "Brands", clear: "Clear all", none: "No products match these filters.", count: (n: number) => `${n} ${n === 1 ? "product" : "products"}` };
 
-  const categories = useFacet(products, (p) => [p.categorySlug, p.categoryName]);
+  const categories = useMemo(() => {
+    const map = new Map<string, FacetValue>();
+    for (const p of products) {
+      for (const c of p.categories) {
+        const existing = map.get(c.slug);
+        if (existing) existing.count += 1;
+        else map.set(c.slug, { value: c.slug, label: c.name, count: 1 });
+      }
+    }
+    return [...map.values()];
+  }, [products]);
   const brands = useFacet(products, (p) => (p.brand ? [p.brand, p.brand] : null));
 
   const [selCats, setSelCats] = useState<Set<string>>(new Set());
@@ -41,7 +51,7 @@ export function ProductCatalog({
     () =>
       products.filter(
         (p) =>
-          (selCats.size === 0 || selCats.has(p.categorySlug)) &&
+          (selCats.size === 0 || p.categories.some((c) => selCats.has(c.slug))) &&
           (selBrands.size === 0 || (p.brand != null && selBrands.has(p.brand))),
       ),
     [products, selCats, selBrands],

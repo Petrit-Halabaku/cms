@@ -14,6 +14,8 @@ const titleBody = z.object({
   body: z.string().default(""),
   /** Optional stable key (e.g. "windows") linking a card to a product category. */
   key: z.string().optional(),
+  /** Product category id this card links to (CMS-editable; wins over `key`). */
+  category_id: z.string().optional(),
 });
 
 export const heroSchema = z.object({

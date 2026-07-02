@@ -36,6 +36,8 @@ const emptyTranslation: Translation = {
 export type ProductFormInitial = {
   id: string;
   categoryId: string;
+  /** Additional categories (excludes the primary) this product also appears under. */
+  extraCategoryIds: string[];
   sortOrder: number;
   published: boolean;
   brochureUrl: string | null;
@@ -105,6 +107,9 @@ export function ProductForm({ categories, initial, children }: Props) {
   }, [dirty]);
 
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? categories[0]?.id ?? "");
+  const [extraCategoryIds, setExtraCategoryIds] = useState<string[]>(
+    initial?.extraCategoryIds ?? [],
+  );
   const [sortOrder, setSortOrder] = useState(initial?.sortOrder ?? 0);
   const [published, setPublished] = useState(initial?.published ?? false);
   const [translations, setTranslations] = useState({
@@ -144,6 +149,7 @@ export function ProductForm({ categories, initial, children }: Props) {
       const result = await saveProduct({
         id: initial?.id,
         categoryId,
+        categoryIds: Array.from(new Set([categoryId, ...extraCategoryIds])),
         sortOrder,
         published,
         brochureUrl: initial?.brochureUrl ?? null,
@@ -285,6 +291,36 @@ export function ProductForm({ categories, initial, children }: Props) {
                 }}
                 className={inputClass}
               />
+            </Field>
+          </div>
+
+          <div className="mt-5">
+            <Field
+              label="Also in categories"
+              hint="Extra categories this product appears under. The Category above stays its primary (URL) category."
+            >
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {categories
+                  .filter((c) => c.id !== categoryId)
+                  .map((c) => (
+                    <label key={c.id} className="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={extraCategoryIds.includes(c.id)}
+                        onChange={() => {
+                          setExtraCategoryIds((prev) =>
+                            prev.includes(c.id)
+                              ? prev.filter((id) => id !== c.id)
+                              : [...prev, c.id],
+                          );
+                          markDirty();
+                        }}
+                        className="h-4 w-4 rounded-sm border-slate-300 text-brand-700 focus:ring-brand-700"
+                      />
+                      {c.name}
+                    </label>
+                  ))}
+              </div>
             </Field>
           </div>
         </div>
