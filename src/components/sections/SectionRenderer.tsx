@@ -12,6 +12,7 @@ import { EditorialHero } from "@/components/pages/editorial";
 import { ProductGrid } from "@/components/ProductCard";
 import type { Locale } from "@/lib/database.types";
 import {
+  getCategories,
   getFaqs,
   getFeaturedProducts,
   getMediaByIds,
@@ -19,7 +20,7 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { isVideoPath, ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import { CATEGORY_KEY_BY_ID, isVideoPath, ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
   countersSchema,
@@ -53,9 +54,9 @@ export async function SectionRenderer({
     case "hero":
       return <Hero section={section} ctx={ctx} />;
     case "cards":
-      return <Cards section={section} columns={3} />;
+      return <Cards section={section} columns={3} ctx={ctx} />;
     case "grid":
-      return <Cards section={section} columns={4} />;
+      return <Cards section={section} columns={4} ctx={ctx} />;
     case "product-grid":
       return <FeaturedProducts section={section} ctx={ctx} />;
     case "faq":
@@ -151,10 +152,31 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   );
 }
 
-function Cards({ section, columns }: { section: PageSection; columns: 3 | 4 }) {
+async function Cards({
+  section,
+  columns,
+  ctx,
+}: {
+  section: PageSection;
+  columns: 3 | 4;
+  ctx: Ctx;
+}) {
   const content = parseContent(cardsSchema, section.content);
   if (content.items.length === 0) return null;
   const cols = columns === 3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4";
+  const productsHref = `${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}`;
+
+  // A card's stable `key` (e.g. "windows") deep-links to the localized category;
+  // cards without a key fall back to the full products listing.
+  const categories = await getCategories(ctx.locale);
+  const slugByKey = new Map<string, string>();
+  for (const cat of categories) {
+    const key = CATEGORY_KEY_BY_ID[cat.id];
+    if (key) slugByKey.set(key, cat.slug);
+  }
+  const hrefFor = (key?: string) =>
+    key && slugByKey.has(key) ? `${productsHref}/${slugByKey.get(key)}` : productsHref;
+
   return (
     <section className="py-10 sm:py-16">
       <Container>
@@ -163,21 +185,42 @@ function Cards({ section, columns }: { section: PageSection; columns: 3 | 4 }) {
           stagger={0.1}
           className={`mt-8 grid grid-cols-1 border-t border-l border-line ${cols}`}
         >
-          {content.items.map((item, i) => (
-            <div key={item.title} className="group relative flex flex-col border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/60 sm:p-8">
-              <span
+          {content.items.map((item) => (
+            <Link
+              key={item.title}
+              href={hrefFor(item.key)}
+              className="group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/40 sm:min-h-[15rem] sm:p-8"
+            >
+              {/* Mullion cross — draws in on hover, framing the card like a window pane. */}
+              <div
                 aria-hidden
-                className="absolute top-0 left-0 h-0.5 w-0 bg-brand-700 transition-all duration-500 group-hover:w-full"
-              />
-              <span
-                aria-hidden
-                className="font-serif text-3xl leading-none text-brand-200 italic transition-colors duration-300 group-hover:text-brand-700"
+                className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-4 font-display text-lg text-slate-900 sm:text-xl">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.body}</p>
-            </div>
+                <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 origin-top scale-y-0 bg-brand-200 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100 motion-reduce:transition-none" />
+                <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 origin-left scale-x-0 bg-brand-200 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 motion-reduce:transition-none" />
+              </div>
+
+              <div className="flex items-start justify-between">
+                <span aria-hidden className="block h-3 w-3 shrink-0 bg-brand-700" />
+                <ArrowUpRight
+                  aria-hidden
+                  className="h-5 w-5 -translate-y-1 translate-x-1 text-brand-700 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
+                />
+              </div>
+
+              <div>
+                <h3 className="font-display text-xl leading-tight text-slate-900 sm:text-2xl">
+                  {item.title}
+                </h3>
+                <span
+                  aria-hidden
+                  className="mt-3 block h-0.5 w-8 bg-brand-700 transition-all duration-500 group-hover:w-14 group-hover:bg-accent"
+                />
+                {item.body && (
+                  <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-600">{item.body}</p>
+                )}
+              </div>
+            </Link>
           ))}
         </Reveal>
       </Container>

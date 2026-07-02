@@ -29,6 +29,22 @@ export function storageUrl(bucket: "media" | "brochures", path: string): string 
 /** Folder (within the `media` bucket) where the admin-uploaded homepage hero lives. */
 export const HERO_MEDIA_FOLDER = "homepage";
 
+/**
+ * Stable product-category UUID → locale-independent key. Lets locale-independent
+ * references (e.g. homepage feature-card `key`s) resolve to the localized category
+ * slug via `getCategories()`. Only the categories referenced by the homepage cards
+ * need entries here.
+ */
+export const CATEGORY_KEY_BY_ID: Record<string, string> = {
+  "a0000000-0000-4000-8000-000000000001": "windows",
+  "a0000000-0000-4000-8000-000000000002": "doors",
+  "a0000000-0000-4000-8000-000000000003": "sliding-systems",
+  "a0000000-0000-4000-8000-000000000004": "aluminium",
+  "a0000000-0000-4000-8000-000000000005": "glass",
+  "a0000000-0000-4000-8000-000000000006": "blinds",
+  "a0000000-0000-4000-8000-000000000007": "roller-shutters",
+};
+
 /** True when a storage path points at a video the hero should render with `<video>`. */
 export function isVideoPath(path: string): boolean {
   return /\.(mp4|webm|mov)$/i.test(path);

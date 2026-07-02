@@ -12,6 +12,8 @@ import type { Json } from "@/lib/database.types";
 const titleBody = z.object({
   title: z.string().default(""),
   body: z.string().default(""),
+  /** Optional stable key (e.g. "windows") linking a card to a product category. */
+  key: z.string().optional(),
 });
 
 export const heroSchema = z.object({
