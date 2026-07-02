@@ -7,14 +7,27 @@ import { createClient } from "@/lib/supabase/client";
  * RLS policies authorize it). Returns the storage path to register via a
  * server action.
  */
+const HERO_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
+
 export async function uploadFile(
   bucket: "media" | "brochures",
   file: File,
   /** Optional folder prefix within the bucket, e.g. "products/<slug>/gallery". */
   folder?: string,
+  /** When `allowVideo`, the `media` bucket also accepts MP4/WebM/MOV (hero media). */
+  options?: { allowVideo?: boolean },
 ): Promise<{ path: string } | { error: string }> {
-  if (bucket === "media" && file.type !== "image/webp") {
-    return { error: "Only WebP images are allowed." };
+  if (bucket === "media") {
+    const ok =
+      file.type === "image/webp" ||
+      (options?.allowVideo === true && HERO_VIDEO_TYPES.includes(file.type));
+    if (!ok) {
+      return {
+        error: options?.allowVideo
+          ? "Allowed: WebP image or MP4/WebM video."
+          : "Only WebP images are allowed.",
+      };
+    }
   }
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "bin";
   const safeBase = file.name

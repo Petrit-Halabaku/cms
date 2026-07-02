@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { storageUrl } from "@/lib/site";
+import { HeroBackdrop } from "./HeroBackdrop";
 import { WindowFrame } from "./WindowFrame";
 
 /**
@@ -69,61 +70,63 @@ export function PaneHeading({
   );
 }
 
-/** Full-bleed photo hero with breadcrumb, oversized title, subtitle and a
- *  divided spec strip. The hero image background is always retained. */
+/** Full-bleed hero with an image or video background, oversized title, subtitle,
+ *  and either a divided spec strip or a custom actions slot (e.g. the homepage
+ *  CTAs). Falls back to solid navy + sightlines when no media is set. */
 export function EditorialHero({
   breadcrumbLabel,
   breadcrumbHref,
+  kicker,
   title,
+  titleAccentLast = false,
   subtitle,
   image,
-  specs,
+  mediaType = "image",
+  specs = [],
+  actions,
 }: {
-  breadcrumbLabel: string;
-  breadcrumbHref: string;
+  breadcrumbLabel?: string;
+  breadcrumbHref?: string;
+  /** Top eyebrow shown when there is no breadcrumb (e.g. homepage tagline). */
+  kicker?: string;
   title: string;
+  titleAccentLast?: boolean;
   subtitle: string;
   image: EditorialImage;
-  specs: SpecItem[];
+  mediaType?: "image" | "video";
+  specs?: SpecItem[];
+  /** Rendered in place of the spec strip (e.g. homepage CTA buttons). */
+  actions?: React.ReactNode;
 }) {
   return (
     <header className="relative flex min-h-[50vh] flex-col justify-end overflow-hidden border-b border-line bg-brand-950 text-white sm:min-h-[90vh]">
-      <Image
-        src={storageUrl("media", image.path)}
-        alt={image.alt}
-        fill
-        quality={100}
-        priority
-        loading="eager"
-        sizes="100vw"
-        className="object-cover object-top"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-linear-to-t from-brand-950 via-brand-950/50 to-brand-950/20"
-      />
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <span className="absolute top-0 left-1/4 h-full w-px bg-white/8" />
-        <span className="absolute top-0 left-2/4 h-full w-px bg-white/8" />
-        <span className="absolute top-0 left-3/4 h-full w-px bg-white/8" />
-      </div>
+      <HeroBackdrop mediaType={mediaType} path={image.path} alt={image.alt} />
 
-      <EditorialContainer className="relative pt-24 pb-0 sm:pt-32">
-        <Reveal y={12}>
-          <nav aria-label="Breadcrumb" className="kicker text-brand-100">
-            <Link href={breadcrumbHref} className="transition-colors hover:text-white">
-              {breadcrumbLabel}
-            </Link>
-            <span aria-hidden className="mx-2 text-white/30">
-              /
-            </span>
-            <span className="text-white/70">{title}</span>
-          </nav>
-        </Reveal>
+      <EditorialContainer
+        className={`relative pt-24 sm:pt-32 ${actions ? "pb-14 sm:pb-20" : "pb-0"}`}
+      >
+        {breadcrumbLabel && breadcrumbHref ? (
+          <Reveal y={12}>
+            <nav aria-label="Breadcrumb" className="kicker text-brand-100">
+              <Link href={breadcrumbHref} className="transition-colors hover:text-white">
+                {breadcrumbLabel}
+              </Link>
+              <span aria-hidden className="mx-2 text-white/30">
+                /
+              </span>
+              <span className="text-white/70">{title}</span>
+            </nav>
+          </Reveal>
+        ) : kicker ? (
+          <Reveal y={12}>
+            <p className="kicker text-brand-100">{kicker}</p>
+          </Reveal>
+        ) : null}
 
         <SplitHeading
           as="h1"
           text={title}
+          accentLast={titleAccentLast}
           onScroll={false}
           delay={0.12}
           className="mt-5 max-w-4xl font-display text-[2.5rem] leading-[1.02] text-white sm:mt-6 sm:text-7xl sm:leading-[0.95]"
@@ -137,11 +140,15 @@ export function EditorialHero({
           </Reveal>
         )}
 
-        {specs.length === 0 && (
+        {actions ? (
+          <Reveal delay={0.5} y={16} className="mt-8 flex flex-wrap items-center gap-4 sm:mt-10">
+            {actions}
+          </Reveal>
+        ) : specs.length === 0 ? (
           // Reserve the spec strip's height so the title/subtitle sit at the
           // same position whether or not a hero has a spec strip.
           <div aria-hidden className="mt-8 h-[3.75rem] sm:mt-14 sm:h-[4.25rem]" />
-        )}
+        ) : null}
 
         {specs.length > 0 && (
           <Reveal delay={0.55} y={16}>

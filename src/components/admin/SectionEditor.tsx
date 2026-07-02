@@ -3,11 +3,12 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { ArrowDown, ArrowUp, Check, Trash2 } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, Check, ChevronDown, Trash2 } from "lucide-react";
 
 import { Field, LocaleTabs, inputClass } from "@/components/admin/ui";
 import { saveSectionContent } from "@/lib/admin/actions/pages";
-import { storageUrl } from "@/lib/site";
+import { uploadFile } from "@/lib/admin/upload";
+import { HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
 
 /**
  * Friendly editor for one page section's jsonb content, per locale.
@@ -24,6 +25,13 @@ type Props = {
   type: string;
   initial: { en: Content; sq: Content };
   mediaOptions: MediaOption[];
+  categoryOptions: { id: string; name: string }[];
+  /** Shown on the live site when true. */
+  active: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
 };
 
 const SECTION_LABELS: Record<string, string> = {
@@ -42,18 +50,45 @@ const SECTION_LABELS: Record<string, string> = {
   "contact-info": "Contact details",
 };
 
-export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptions }: Props) {
+export function SectionEditor({
+  sectionId,
+  sectionKey,
+  type,
+  initial,
+  mediaOptions,
+  categoryOptions,
+  active: initialActive,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp,
+  canMoveDown,
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [locale, setLocale] = useState<Locale>("en");
   const [content, setContent] = useState(initial);
+  const [active, setActive] = useState(initialActive);
+  const [dirty, setDirty] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
+  const markDirty = () => {
+    setDirty(true);
+    setStatus("idle");
+  };
   const current = content[locale];
   const set = (key: string, value: unknown) => {
-    setStatus("idle");
+    markDirty();
     setContent((prev) => ({ ...prev, [locale]: { ...prev[locale], [key]: value } }));
+  };
+  /** Hero background media is one file for the whole page — set it on both locales. */
+  const setMediaBoth = (path: string) => {
+    markDirty();
+    setContent((prev) => ({
+      en: { ...prev.en, media_path: path },
+      sq: { ...prev.sq, media_path: path },
+    }));
   };
   const str = (key: string) => String((current[key] as string | number | undefined) ?? "");
   const num = (key: string) => Number(current[key] ?? 0);
@@ -62,30 +97,94 @@ export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptio
   function save() {
     setError(null);
     startTransition(async () => {
-      const result = await saveSectionContent(sectionId, type, content);
+      const result = await saveSectionContent(sectionId, type, content, { active });
       if (!result.ok) {
         setStatus("error");
         setError(result.error);
         return;
       }
+      setDirty(false);
       setStatus("saved");
       router.refresh();
     });
   }
 
+  function cancel() {
+    setContent(initial);
+    setActive(initialActive);
+    setDirty(false);
+    setError(null);
+    setStatus("idle");
+  }
+
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-6">
+    <div
+      className={`rounded-lg border border-slate-200 bg-white p-6 transition-shadow ${
+        dirty ? "ring-2 ring-amber-400 ring-offset-4 ring-offset-slate-50" : ""
+      }`}
+    >
       <div className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-900">
-            {SECTION_LABELS[type] ?? type}
-          </h2>
-          <p className="text-xs text-slate-400">{sectionKey}</p>
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-expanded={!collapsed}
+          className="flex flex-1 items-center gap-2.5 text-left"
+        >
+          <ChevronDown
+            className={`h-4 w-4 shrink-0 text-slate-400 transition-transform ${collapsed ? "-rotate-90" : ""}`}
+            aria-hidden
+          />
+          <span>
+            <span className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-slate-900">
+                {SECTION_LABELS[type] ?? type}
+              </span>
+              {!active && (
+                <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[0.65rem] font-semibold tracking-wide text-slate-600 uppercase">
+                  Hidden
+                </span>
+              )}
+              {dirty && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[0.65rem] font-semibold tracking-wide text-amber-700 uppercase">
+                  Unsaved
+                </span>
+              )}
+            </span>
+            <span className="block text-xs text-slate-400">{sectionKey}</span>
+          </span>
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onMoveUp}
+            disabled={!canMoveUp}
+            aria-label="Move section up"
+            className="p-1 text-slate-400 hover:text-brand-700 disabled:opacity-30"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={onMoveDown}
+            disabled={!canMoveDown}
+            aria-label="Move section down"
+            className="p-1 text-slate-400 hover:text-brand-700 disabled:opacity-30"
+          >
+            <ArrowDown className="h-4 w-4" />
+          </button>
+          {!collapsed && <LocaleTabs locale={locale} onChange={setLocale} />}
         </div>
-        <LocaleTabs locale={locale} onChange={setLocale} />
       </div>
 
-      <div className="mt-5 space-y-4">
+      {!collapsed && (
+        <>
+          {dirty && (
+            <div className="mt-4 flex items-center gap-2.5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+              <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
+              Draft — you have unsaved changes. They’ll be lost if you cancel or leave without saving.
+            </div>
+          )}
+          <div className="mt-5 space-y-4">
         {"heading" in mergeKeys(type) && (
           <Field label="Heading">
             <input type="text" value={str("heading")} onChange={(e) => set("heading", e.target.value)} className={inputClass} />
@@ -105,18 +204,33 @@ export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptio
                 <input type="text" value={str("phone")} onChange={(e) => set("phone", e.target.value)} className={inputClass} />
               </Field>
             </div>
+            <HeroMediaField
+              path={str("media_path")}
+              alt={str("media_alt")}
+              onPath={setMediaBoth}
+              onAlt={(v) => set("media_alt", v)}
+            />
           </>
         )}
 
         {(type === "cards" || type === "grid") && (
           <ItemListEditor
-            items={items<{ title: string; body: string }>("items")}
+            items={items<{ title: string; body: string; category_id: string }>("items")}
             onChange={(next) => set("items", next)}
             fields={[
               { key: "title", label: "Title" },
               { key: "body", label: "Text", rows: 2 },
+              {
+                key: "category_id",
+                label: "Links to category",
+                type: "select",
+                options: [
+                  { value: "", label: "— Products page —" },
+                  ...categoryOptions.map((c) => ({ value: c.id, label: c.name })),
+                ],
+              },
             ]}
-            newItem={{ title: "", body: "" }}
+            newItem={{ title: "", body: "", category_id: "" }}
           />
         )}
 
@@ -196,24 +310,49 @@ export function SectionEditor({ sectionId, sectionKey, type, initial, mediaOptio
             options={mediaOptions}
           />
         )}
-      </div>
+          </div>
 
-      <div className="mt-5 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={save}
-          disabled={pending}
-          className="rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
-        >
-          {pending ? "Saving…" : "Save section"}
-        </button>
-        {status === "saved" && (
-          <span className="inline-flex items-center gap-1 text-sm text-green-700">
-            <Check className="h-4 w-4" aria-hidden /> Saved
-          </span>
-        )}
-        {status === "error" && error && <span className="text-sm text-red-600">{error}</span>}
-      </div>
+          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-100 pt-4">
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={active}
+                onChange={(e) => {
+                  setActive(e.target.checked);
+                  markDirty();
+                }}
+                className="h-4 w-4 rounded-sm border-slate-300 text-brand-700 focus:ring-brand-700"
+              />
+              Active <span className="text-xs text-slate-400">shown on site</span>
+            </label>
+          </div>
+
+          <div className="mt-4 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={save}
+              disabled={pending}
+              className="rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
+            >
+              {pending ? "Saving…" : "Save section"}
+            </button>
+            <button
+              type="button"
+              onClick={cancel}
+              disabled={pending}
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            {status === "saved" && (
+              <span className="inline-flex items-center gap-1 text-sm text-green-700">
+                <Check className="h-4 w-4" aria-hidden /> Saved
+              </span>
+            )}
+            {status === "error" && error && <span className="text-sm text-red-600">{error}</span>}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -233,7 +372,13 @@ function ItemListEditor<T extends Record<string, string>>({
 }: {
   items: T[];
   onChange: (items: T[]) => void;
-  fields: { key: keyof T & string; label: string; rows?: number }[];
+  fields: {
+    key: keyof T & string;
+    label: string;
+    rows?: number;
+    type?: "select";
+    options?: { value: string; label: string }[];
+  }[];
   newItem: T;
   heading?: string;
 }) {
@@ -264,7 +409,22 @@ function ItemListEditor<T extends Record<string, string>>({
             </div>
             <div className="space-y-2">
               {fields.map((field) =>
-                field.rows ? (
+                field.type === "select" ? (
+                  <select
+                    key={field.key}
+                    value={item[field.key] ?? ""}
+                    onChange={(e) =>
+                      onChange(items.map((it, i) => (i === index ? { ...it, [field.key]: e.target.value } : it)))
+                    }
+                    className={`${inputClass} mt-0 bg-white`}
+                  >
+                    {(field.options ?? []).map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : field.rows ? (
                   <textarea
                     key={field.key}
                     rows={field.rows}
@@ -335,6 +495,88 @@ function StringListEditor({
       >
         + Add item
       </button>
+    </div>
+  );
+}
+
+/** Upload + preview for the hero background (WebP image now, MP4/WebM video later). */
+function HeroMediaField({
+  path,
+  alt,
+  onPath,
+  onAlt,
+}: {
+  path: string;
+  alt: string;
+  onPath: (path: string) => void;
+  onAlt: (alt: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isVideo = isVideoPath(path);
+
+  async function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    setError(null);
+    const result = await uploadFile("media", file, HERO_MEDIA_FOLDER, { allowVideo: true });
+    setBusy(false);
+    if ("error" in result) {
+      setError(result.error);
+      return;
+    }
+    onPath(result.path);
+  }
+
+  return (
+    <div>
+      <p className="text-sm font-medium text-slate-900">Background media</p>
+      <p className="text-xs text-slate-400">
+        Shown full-bleed behind the hero text. WebP image now, or an MP4/WebM video later.
+        Remember to click “Save section” after uploading.
+      </p>
+      <div className="mt-2 flex items-start gap-4">
+        <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+          {path ? (
+            isVideo ? (
+              <video
+                src={storageUrl("media", path)}
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={storageUrl("media", path)} alt="" className="h-full w-full object-cover" />
+            )
+          ) : (
+            <span className="grid h-full w-full place-items-center text-xs text-slate-400">
+              No media
+            </span>
+          )}
+        </div>
+        <div>
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-brand-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 aria-disabled:opacity-60">
+            {busy ? "Uploading…" : path ? "Replace media" : "Upload media"}
+            <input
+              type="file"
+              accept="image/webp,video/mp4,video/webm"
+              onChange={onUpload}
+              disabled={busy}
+              className="hidden"
+            />
+          </label>
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        </div>
+      </div>
+      <div className="mt-3">
+        <Field label="Image alt text (accessibility)">
+          <input type="text" value={alt} onChange={(e) => onAlt(e.target.value)} className={inputClass} />
+        </Field>
+      </div>
     </div>
   );
 }

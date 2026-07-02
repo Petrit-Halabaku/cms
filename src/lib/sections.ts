@@ -12,6 +12,10 @@ import type { Json } from "@/lib/database.types";
 const titleBody = z.object({
   title: z.string().default(""),
   body: z.string().default(""),
+  /** Optional stable key (e.g. "windows") linking a card to a product category. */
+  key: z.string().optional(),
+  /** Product category id this card links to (CMS-editable; wins over `key`). */
+  category_id: z.string().optional(),
 });
 
 export const heroSchema = z.object({
@@ -19,6 +23,10 @@ export const heroSchema = z.object({
   subheading: z.string().default(""),
   cta_label: z.string().default(""),
   phone: z.string().default(""),
+  /** Background media path in the `media` bucket (image or video); shared across locales. */
+  media_path: z.string().default(""),
+  /** Alt text for a background image (ignored for video). */
+  media_alt: z.string().default(""),
 });
 
 export const cardsSchema = z.object({

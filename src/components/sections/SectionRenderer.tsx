@@ -5,13 +5,14 @@ import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { MediaImage } from "@/components/MediaImage";
 import { CountUp } from "@/components/motion/CountUp";
-import { HeroVisual } from "@/components/motion/HeroVisual";
 import { Marquee } from "@/components/motion/Marquee";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
+import { EditorialHero } from "@/components/pages/editorial";
 import { ProductGrid } from "@/components/ProductCard";
 import type { Locale } from "@/lib/database.types";
 import {
+  getCategories,
   getFaqs,
   getFeaturedProducts,
   getMediaByIds,
@@ -19,7 +20,7 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import { CATEGORY_KEY_BY_ID, isVideoPath, ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
   countersSchema,
@@ -53,9 +54,9 @@ export async function SectionRenderer({
     case "hero":
       return <Hero section={section} ctx={ctx} />;
     case "cards":
-      return <Cards section={section} columns={3} />;
+      return <Cards section={section} columns={3} ctx={ctx} />;
     case "grid":
-      return <Cards section={section} columns={4} />;
+      return <Cards section={section} columns={4} ctx={ctx} />;
     case "product-grid":
       return <FeaturedProducts section={section} ctx={ctx} />;
     case "faq":
@@ -91,17 +92,6 @@ function Container({
   );
 }
 
-/** Faint vertical hairlines echoing window mullions, used on light bands. */
-function MullionLines() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0">
-      <span className="absolute top-0 left-1/4 h-full w-px bg-line/70" />
-      <span className="absolute top-0 left-2/4 h-full w-px bg-line/70" />
-      <span className="absolute top-0 left-3/4 h-full w-px bg-line/70" />
-    </div>
-  );
-}
-
 /** Section heading marked with a small blue pane. */
 function SectionHeading({
   heading,
@@ -126,92 +116,118 @@ function SectionHeading({
 
 function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const content = parseContent(heroSchema, section.content);
+  const callHref = content.phone ? `tel:${content.phone.replace(/\s/g, "")}` : null;
   return (
-    <section className="relative overflow-hidden border-b border-line bg-paper">
-      <MullionLines />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-48 -left-48 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgba(141,215,247,0.5),transparent)]"
-      />
-
-      <Container className="relative grid gap-12 py-12 sm:py-16 lg:grid-cols-12 lg:items-center lg:py-20">
-        <div className="lg:col-span-7">
-          <Reveal y={14}>
-            <p className="kicker">{ctx.dict.footer.tagline}</p>
-          </Reveal>
-          <SplitHeading
-            as="h1"
-            text={content.heading}
-            accentLast
-            onScroll={false}
-            delay={0.15}
-            className="mt-6 max-w-3xl font-display text-5xl leading-[0.95] text-slate-900 sm:text-6xl lg:text-7xl"
-          />
-          {content.subheading && (
-            <Reveal delay={0.5} y={20}>
-              <p className="mt-7 max-w-xl text-lg leading-relaxed text-slate-600">
-                {content.subheading}
-              </p>
-            </Reveal>
-          )}
-          <Reveal delay={0.65} y={20} className="mt-8 flex flex-wrap items-center gap-4">
-            {content.phone && (
-              <a
-                href={`tel:${content.phone.replace(/\s/g, "")}`}
-                className="inline-flex items-center gap-2.5 rounded-full bg-brand-700 px-7 py-3.5 text-base font-semibold text-white transition-colors hover:bg-brand-800"
-              >
-                <Phone className="h-4.5 w-4.5" aria-hidden />
-                {content.cta_label || ctx.dict.common.callNow}
-              </a>
-            )}
-            <Link
-              href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}`}
-              className="group inline-flex items-center gap-2 rounded-full border border-slate-300 px-7 py-3.5 text-base font-semibold text-slate-900 transition-colors hover:border-brand-700 hover:text-brand-700"
+    <EditorialHero
+      kicker={ctx.dict.footer.tagline}
+      title={content.heading}
+      titleAccentLast
+      subtitle={content.subheading}
+      image={{ path: content.media_path, alt: content.media_alt || content.heading }}
+      mediaType={isVideoPath(content.media_path) ? "video" : "image"}
+      actions={
+        <>
+          {callHref && (
+            <a
+              href={callHref}
+              className="inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-brand-900 transition-colors hover:bg-brand-50"
             >
-              {ctx.dict.nav.products}
-              <ArrowUpRight
-                className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                aria-hidden
-              />
-            </Link>
-          </Reveal>
-        </div>
-
-        <div className="lg:col-span-5">
-          <HeroVisual className="mx-auto w-full max-w-sm pb-6 lg:max-w-none" />
-        </div>
-      </Container>
-    </section>
+              <Phone className="h-4.5 w-4.5" aria-hidden />
+              {content.cta_label || ctx.dict.common.callNow}
+            </a>
+          )}
+          <Link
+            href={`${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}`}
+            className="group inline-flex items-center gap-2 rounded-full border border-white/40 px-7 py-3.5 text-base font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
+          >
+            {ctx.dict.nav.products}
+            <ArrowUpRight
+              className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              aria-hidden
+            />
+          </Link>
+        </>
+      }
+    />
   );
 }
 
-function Cards({ section, columns }: { section: PageSection; columns: 3 | 4 }) {
+async function Cards({
+  section,
+  columns,
+  ctx,
+}: {
+  section: PageSection;
+  columns: 3 | 4;
+  ctx: Ctx;
+}) {
   const content = parseContent(cardsSchema, section.content);
   if (content.items.length === 0) return null;
   const cols = columns === 3 ? "sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4";
+  const productsHref = `${ctx.basePath}/${ROUTE_SLUGS[ctx.locale].products}`;
+
+  // A card's stable `key` (e.g. "windows") deep-links to the localized category;
+  // cards without a key fall back to the full products listing.
+  const categories = await getCategories(ctx.locale);
+  const slugById = new Map<string, string>();
+  const slugByKey = new Map<string, string>();
+  for (const cat of categories) {
+    slugById.set(cat.id, cat.slug);
+    const key = CATEGORY_KEY_BY_ID[cat.id];
+    if (key) slugByKey.set(key, cat.slug);
+  }
+  // CMS-set category id wins; fall back to the legacy `key`, then the products list.
+  const hrefFor = (item: { category_id?: string; key?: string }) => {
+    if (item.category_id && slugById.has(item.category_id))
+      return `${productsHref}/${slugById.get(item.category_id)}`;
+    if (item.key && slugByKey.has(item.key)) return `${productsHref}/${slugByKey.get(item.key)}`;
+    return productsHref;
+  };
+
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-10 sm:py-16">
       <Container>
         {content.heading && <SectionHeading heading={content.heading} />}
         <Reveal
           stagger={0.1}
           className={`mt-8 grid grid-cols-1 border-t border-l border-line ${cols}`}
         >
-          {content.items.map((item, i) => (
-            <div key={item.title} className="group relative flex flex-col border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/60 sm:p-8">
-              <span
+          {content.items.map((item) => (
+            <Link
+              key={item.title}
+              href={hrefFor(item)}
+              className="group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/40 sm:min-h-[15rem] sm:p-8"
+            >
+              {/* Mullion cross — draws in on hover, framing the card like a window pane. */}
+              <div
                 aria-hidden
-                className="absolute top-0 left-0 h-0.5 w-0 bg-brand-700 transition-all duration-500 group-hover:w-full"
-              />
-              <span
-                aria-hidden
-                className="font-serif text-3xl leading-none text-brand-200 italic transition-colors duration-300 group-hover:text-brand-700"
+                className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-4 font-display text-lg text-slate-900 sm:text-xl">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.body}</p>
-            </div>
+                <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 origin-top scale-y-0 bg-brand-200 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100 motion-reduce:transition-none" />
+                <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 origin-left scale-x-0 bg-brand-200 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 motion-reduce:transition-none" />
+              </div>
+
+              <div className="flex items-start justify-between">
+                <span aria-hidden className="block h-3 w-3 shrink-0 bg-brand-700" />
+                <ArrowUpRight
+                  aria-hidden
+                  className="h-5 w-5 -translate-y-1 translate-x-1 text-brand-700 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
+                />
+              </div>
+
+              <div>
+                <h3 className="font-display text-xl leading-tight text-slate-900 sm:text-2xl">
+                  {item.title}
+                </h3>
+                <span
+                  aria-hidden
+                  className="mt-3 block h-0.5 w-8 bg-brand-700 transition-all duration-500 group-hover:w-14 group-hover:bg-accent"
+                />
+                {item.body && (
+                  <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-600">{item.body}</p>
+                )}
+              </div>
+            </Link>
           ))}
         </Reveal>
       </Container>
@@ -224,7 +240,7 @@ async function FeaturedProducts({ section, ctx }: { section: PageSection; ctx: C
   const products = await getFeaturedProducts(ctx.locale, 6);
   if (products.length === 0) return null;
   return (
-    <section className="border-y border-line bg-white py-12 sm:py-16">
+    <section className="border-y border-line bg-white py-10 sm:py-16">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading heading={content.heading} />
@@ -259,13 +275,13 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
   const faqs = await getFaqs(ctx.locale);
   if (faqs.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
+    <section className="relative overflow-hidden bg-brand-950 py-10 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/5" />
       </div>
-      <Container className="relative grid gap-12 lg:grid-cols-12">
+      <Container className="relative grid gap-8 sm:gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
             <SectionHeading heading={content.heading} dark />
@@ -284,9 +300,9 @@ async function Partners({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const partners = await getPartners();
   if (partners.length === 0) return null;
   return (
-    <section className="border-y border-line bg-white py-14">
+    <section className="border-y border-line bg-white py-10 sm:py-14">
       {content.heading && (
-        <p className="kicker mb-10 text-center">{content.heading}</p>
+        <p className="kicker mb-8 text-center sm:mb-10">{content.heading}</p>
       )}
       <Marquee>
         {partners.map((partner) => (
@@ -314,7 +330,7 @@ function Counters({ section }: { section: PageSection }) {
   const content = parseContent(countersSchema, section.content);
   if (content.items.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-12 sm:py-16">
+    <section className="relative overflow-hidden bg-brand-950 py-10 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
@@ -330,7 +346,7 @@ function Counters({ section }: { section: PageSection }) {
         )}
         <Reveal
           stagger={0.12}
-          className="mt-8 grid grid-cols-2 gap-y-12 lg:grid-cols-4"
+          className="mt-8 grid grid-cols-2 gap-y-10 lg:grid-cols-4"
         >
           {content.items.map((item) => (
             <div
@@ -355,11 +371,11 @@ function Counters({ section }: { section: PageSection }) {
 function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
   const content = parseContent(locationSchema, section.content);
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-10 sm:py-16">
       <Container>
         <SectionHeading heading={content.heading} />
         <Reveal className="mt-8 grid border-t border-l border-line sm:grid-cols-2">
-          <div className="space-y-5 border-r border-b border-line bg-paper p-8 sm:p-10">
+          <div className="space-y-5 border-r border-b border-line bg-paper p-6 sm:p-10">
             <p className="flex items-start gap-3 text-slate-600">
               <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-700" aria-hidden />
               {content.address}
@@ -399,7 +415,7 @@ function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
               />
             </a>
           </div>
-          <div className="border-r border-b border-line bg-paper p-8 sm:p-10">
+          <div className="border-r border-b border-line bg-paper p-6 sm:p-10">
             {content.hours.length > 0 && (
               <table className="w-full text-sm">
                 <tbody>
@@ -429,14 +445,14 @@ function QuoteCta({ section, ctx }: { section: PageSection; ctx: Ctx }) {
         <span className="absolute top-0 left-3/4 h-full w-px bg-white/8" />
         <div className="absolute -top-24 right-0 h-72 w-2/3 bg-[radial-gradient(closest-side,rgba(255,255,255,0.12),transparent)]" />
       </div>
-      <Container className="relative py-16 sm:py-20">
+      <Container className="relative py-12 sm:py-20">
         <SplitHeading
           text={content.heading}
           className="max-w-3xl font-display text-4xl leading-[0.95] text-white sm:text-5xl lg:text-6xl"
         />
         {content.body && (
           <Reveal delay={0.2} y={20}>
-            <p className="mt-6 max-w-xl text-lg text-brand-100">{content.body}</p>
+            <p className="mt-6 max-w-xl text-base text-brand-100 sm:text-lg">{content.body}</p>
           </Reveal>
         )}
         <Reveal delay={0.3} y={20}>
@@ -519,7 +535,7 @@ function ListSection({ section }: { section: PageSection }) {
   const images = LIST_SECTION_IMAGES[section.key] ?? [];
 
   return (
-    <section className="border-y border-line bg-white py-12 sm:py-16">
+    <section className="border-y border-line bg-white py-10 sm:py-16">
       <Container className="grid gap-8 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
@@ -573,7 +589,7 @@ async function GallerySection({ section, ctx }: { section: PageSection; ctx: Ctx
   const media = await getMediaByIds(content.media_ids);
   if (media.length === 0) return null;
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-10 sm:py-16">
       <Container>
         {content.heading && <SectionHeading heading={content.heading} />}
         <Reveal stagger={0.08} className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

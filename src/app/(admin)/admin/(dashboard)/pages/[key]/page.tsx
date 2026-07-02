@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { PageMetaForm } from "@/components/admin/PageMetaForm";
-import { SectionEditor } from "@/components/admin/SectionEditor";
+import { SectionList } from "@/components/admin/SectionList";
 import { requireEditor } from "@/lib/admin/auth";
 
 export const metadata = { title: "Edit page — Gergoci Admin" };
@@ -12,11 +12,11 @@ export default async function EditPagePage({ params }: Props) {
   const { key } = await params;
   const { supabase } = await requireEditor();
 
-  const [{ data: page }, { data: media }] = await Promise.all([
+  const [{ data: page }, { data: media }, { data: categories }] = await Promise.all([
     supabase
       .from("pages")
       .select(
-        "id, key, page_translations(locale, title, slug, seo_title, seo_description), page_sections(id, key, type, sort_order, page_section_translations(locale, content))",
+        "id, key, page_translations(locale, title, slug, seo_title, seo_description), page_sections(id, key, type, sort_order, active, page_section_translations(locale, content))",
       )
       .eq("key", key)
       .maybeSingle(),
@@ -24,8 +24,18 @@ export default async function EditPagePage({ params }: Props) {
       .from("media")
       .select("id, storage_path, alt_en")
       .order("created_at", { ascending: false }),
+    supabase
+      .from("project_categories")
+      .select("id, sort_order, project_category_translations!inner(name, locale)")
+      .eq("project_category_translations.locale", "en")
+      .order("sort_order"),
   ]);
   if (!page) notFound();
+
+  const categoryOptions = (categories ?? []).map((c) => ({
+    id: c.id,
+    name: c.project_category_translations[0].name,
+  }));
 
   const translationFor = (locale: "en" | "sq") => {
     const t = page.page_translations.find((row) => row.locale === locale);
@@ -58,16 +68,17 @@ export default async function EditPagePage({ params }: Props) {
           pageKey={page.key}
           initial={{ en: translationFor("en"), sq: translationFor("sq") }}
         />
-        {sections.map((section) => (
-          <SectionEditor
-            key={section.id}
-            sectionId={section.id}
-            sectionKey={section.key}
-            type={section.type}
-            initial={{ en: contentFor(section, "en"), sq: contentFor(section, "sq") }}
-            mediaOptions={media ?? []}
-          />
-        ))}
+        <SectionList
+          mediaOptions={media ?? []}
+          categoryOptions={categoryOptions}
+          sections={sections.map((section) => ({
+            sectionId: section.id,
+            sectionKey: section.key,
+            type: section.type,
+            initial: { en: contentFor(section, "en"), sq: contentFor(section, "sq") },
+            active: section.active,
+          }))}
+        />
       </div>
     </div>
   );

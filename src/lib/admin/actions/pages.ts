@@ -86,10 +86,17 @@ export async function saveSectionContent(
   sectionId: string,
   type: string,
   content: { en: unknown; sq: unknown },
+  settings: { active: boolean },
 ): Promise<ActionResult> {
   const { supabase } = await requireEditor();
   const schema = SCHEMA_BY_TYPE[type];
   if (!schema) return { ok: false, error: `Unknown section type '${type}'` };
+
+  const { error: settingsError } = await supabase
+    .from("page_sections")
+    .update({ active: settings.active })
+    .eq("id", sectionId);
+  if (settingsError) return { ok: false, error: settingsError.message };
 
   for (const locale of ["en", "sq"] as const) {
     const parsed = schema.safeParse(content[locale]);
@@ -110,4 +117,18 @@ export async function saveSectionContent(
 
   await revalidateSite();
   return { ok: true, id: sectionId };
+}
+
+/** Persist a new section order — each id's index becomes its sort_order. */
+export async function reorderSections(orderedIds: string[]): Promise<ActionResult> {
+  const { supabase } = await requireEditor();
+  for (let i = 0; i < orderedIds.length; i++) {
+    const { error } = await supabase
+      .from("page_sections")
+      .update({ sort_order: i })
+      .eq("id", orderedIds[i]);
+    if (error) return { ok: false, error: error.message };
+  }
+  await revalidateSite();
+  return { ok: true, id: orderedIds[0] ?? "" };
 }

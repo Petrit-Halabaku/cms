@@ -21,6 +21,8 @@ const factSchema = z.object({ label: z.string().min(1), value: z.string().min(1)
 const productPayloadSchema = z.object({
   id: z.string().uuid().optional(),
   categoryId: z.string().uuid(),
+  /** Full category membership (primary + additional); primary is always included. */
+  categoryIds: z.array(z.string().uuid()).default([]),
   sortOrder: z.number().int(),
   published: z.boolean(),
   brochureUrl: z.string().nullable(),
@@ -129,6 +131,18 @@ export async function saveProduct(payload: ProductPayload): Promise<ActionResult
     const { error } = await supabase.from("project_facts").insert(factRows);
     if (error) return { ok: false, error: error.message };
   }
+
+  // Replace category memberships wholesale — always includes the primary category.
+  const memberIds = Array.from(new Set([data.categoryId, ...data.categoryIds]));
+  const { error: delCatsError } = await supabase
+    .from("product_categories")
+    .delete()
+    .eq("product_id", productId);
+  if (delCatsError) return { ok: false, error: delCatsError.message };
+  const { error: insCatsError } = await supabase
+    .from("product_categories")
+    .insert(memberIds.map((category_id) => ({ product_id: productId!, category_id })));
+  if (insCatsError) return { ok: false, error: insCatsError.message };
 
   await productRevalidation(supabase, productId!, data.categoryId);
   return { ok: true, id: productId! };
