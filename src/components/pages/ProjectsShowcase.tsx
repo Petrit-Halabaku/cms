@@ -1,6 +1,6 @@
 import { FramedLightboxGallery } from "@/components/FramedLightboxGallery";
 import type { Locale } from "@/lib/database.types";
-import { listGalleryImages } from "@/lib/db/content";
+import { listGallery } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { storageUrl } from "@/lib/site";
 
@@ -11,7 +11,7 @@ import { storageUrl } from "@/lib/site";
  * least one image is uploaded, so it self-manages without CMS wiring.
  */
 export async function ProjectsShowcase({ locale }: { locale: Locale }) {
-  const images = await listGalleryImages("projects");
+  const images = await listGallery("projects", "projects");
   if (images.length === 0) return null;
 
   const dict = getDictionary(locale);

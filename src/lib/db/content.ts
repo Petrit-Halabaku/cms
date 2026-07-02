@@ -60,6 +60,30 @@ export async function listGalleryImages(
     });
 }
 
+/**
+ * Editor-curated gallery (from `gallery_images`), ordered by sort_order. Falls
+ * back to the raw storage folder listing when nothing has been curated yet, so
+ * the section keeps rendering until an admin manages it.
+ */
+export async function listGallery(
+  gallery: string,
+  fallbackFolder: string,
+): Promise<{ path: string; alt: string }[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("gallery_images")
+    .select("storage_path, alt")
+    .eq("gallery", gallery)
+    .order("sort_order", { ascending: true });
+  if (data && data.length > 0) {
+    return data.map((row) => ({
+      path: row.storage_path,
+      alt: row.alt ?? "Gergoci project photograph",
+    }));
+  }
+  return listGalleryImages(fallbackFolder);
+}
+
 export type Category = {
   id: string;
   sortOrder: number;
