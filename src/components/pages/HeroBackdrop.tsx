@@ -81,7 +81,7 @@ export function HeroBackdrop({
             src={storageUrl("media", path)}
             alt={alt}
             fill
-            quality={100}
+            quality={75}
             priority
             loading="eager"
             sizes="100vw"
