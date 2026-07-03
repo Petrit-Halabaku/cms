@@ -8,7 +8,7 @@ import { AlertTriangle, ArrowDown, ArrowUp, Check, ChevronDown, Trash2 } from "l
 import { Field, LocaleTabs, inputClass } from "@/components/admin/ui";
 import { saveSectionContent } from "@/lib/admin/actions/pages";
 import { uploadFile } from "@/lib/admin/upload";
-import { HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
+import { CATEGORY_ID_BY_KEY, HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
 
 /**
  * Friendly editor for one page section's jsonb content, per locale.
@@ -215,8 +215,16 @@ export function SectionEditor({
 
         {(type === "cards" || type === "grid") && (
           <ItemListEditor
-            items={items<{ title: string; body: string; category_id: string }>("items")}
-            onChange={(next) => set("items", next)}
+            // Show the EFFECTIVE link: cards saved before the select existed carry a
+            // legacy `key` instead of a category_id. On save the key is dropped, so
+            // the explicit choice (including "— Products page —") is what renders.
+            items={items<{ title: string; body: string; key?: string; category_id: string }>(
+              "items",
+            ).map((it) => ({
+              ...it,
+              category_id: it.category_id || CATEGORY_ID_BY_KEY[it.key ?? ""] || "",
+            }))}
+            onChange={(next) => set("items", next.map(({ key: _legacy, ...rest }) => rest))}
             fields={[
               { key: "title", label: "Title" },
               { key: "body", label: "Text", rows: 2 },

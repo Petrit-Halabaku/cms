@@ -45,6 +45,11 @@ export const CATEGORY_KEY_BY_ID: Record<string, string> = {
   "a0000000-0000-4000-8000-000000000007": "roller-shutters",
 };
 
+/** Reverse of {@link CATEGORY_KEY_BY_ID} — legacy card `key` → category UUID. */
+export const CATEGORY_ID_BY_KEY: Record<string, string> = Object.fromEntries(
+  Object.entries(CATEGORY_KEY_BY_ID).map(([id, key]) => [key, id]),
+);
+
 /** True when a storage path points at a video the hero should render with `<video>`. */
 export function isVideoPath(path: string): boolean {
   return /\.(mp4|webm|mov)$/i.test(path);
