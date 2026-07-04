@@ -16,6 +16,8 @@ const titleBody = z.object({
   key: z.string().optional(),
   /** Product category id this card links to (CMS-editable; wins over `key`). */
   category_id: z.string().optional(),
+  /** Optional decorative background photo (storage path in the `media` bucket). */
+  image_path: z.string().optional(),
 });
 
 export const heroSchema = z.object({
