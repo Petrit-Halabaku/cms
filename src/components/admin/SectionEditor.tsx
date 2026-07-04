@@ -8,7 +8,7 @@ import { AlertTriangle, ArrowDown, ArrowUp, Check, ChevronDown, Trash2 } from "l
 import { Field, LocaleTabs, inputClass } from "@/components/admin/ui";
 import { saveSectionContent } from "@/lib/admin/actions/pages";
 import { uploadFile } from "@/lib/admin/upload";
-import { HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
+import { CATEGORY_ID_BY_KEY, HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
 
 /**
  * Friendly editor for one page section's jsonb content, per locale.
@@ -215,8 +215,20 @@ export function SectionEditor({
 
         {(type === "cards" || type === "grid") && (
           <ItemListEditor
-            items={items<{ title: string; body: string; category_id: string }>("items")}
-            onChange={(next) => set("items", next)}
+            // Show the EFFECTIVE link: cards saved before the select existed carry a
+            // legacy `key` instead of a category_id. On save the key is dropped, so
+            // the explicit choice (including "— Products page —") is what renders.
+            items={items<{
+              title: string;
+              body: string;
+              key?: string;
+              category_id: string;
+              image_path?: string;
+            }>("items").map((it) => ({
+              ...it,
+              category_id: it.category_id || CATEGORY_ID_BY_KEY[it.key ?? ""] || "",
+            }))}
+            onChange={(next) => set("items", next.map(({ key: _legacy, ...rest }) => rest))}
             fields={[
               { key: "title", label: "Title" },
               { key: "body", label: "Text", rows: 2 },
@@ -229,8 +241,9 @@ export function SectionEditor({
                   ...categoryOptions.map((c) => ({ value: c.id, label: c.name })),
                 ],
               },
+              { key: "image_path", label: "Background image", type: "image" },
             ]}
-            newItem={{ title: "", body: "", category_id: "" }}
+            newItem={{ title: "", body: "", category_id: "", image_path: "" }}
           />
         )}
 
@@ -376,7 +389,7 @@ function ItemListEditor<T extends Record<string, string>>({
     key: keyof T & string;
     label: string;
     rows?: number;
-    type?: "select";
+    type?: "select" | "image";
     options?: { value: string; label: string }[];
   }[];
   newItem: T;
@@ -409,7 +422,17 @@ function ItemListEditor<T extends Record<string, string>>({
             </div>
             <div className="space-y-2">
               {fields.map((field) =>
-                field.type === "select" ? (
+                field.type === "image" ? (
+                  <div key={field.key}>
+                    <p className="mb-1 text-xs font-medium text-slate-500">{field.label}</p>
+                    <CardImageField
+                      value={String(item[field.key] ?? "")}
+                      onChange={(v) =>
+                        onChange(items.map((it, i) => (i === index ? { ...it, [field.key]: v } : it)))
+                      }
+                    />
+                  </div>
+                ) : field.type === "select" ? (
                   <select
                     key={field.key}
                     value={item[field.key] ?? ""}
@@ -500,6 +523,59 @@ function StringListEditor({
 }
 
 /** Upload + preview for the hero background (WebP image now, MP4/WebM video later). */
+/**
+ * Compact per-card background photo control: thumbnail when set, webp upload to
+ * the `cards/` folder, and a remove action. Changes flow through the item list's
+ * onChange, so they mark the section dirty like any other edit.
+ */
+function CardImageField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    setError(null);
+    const result = await uploadFile("media", file, "cards");
+    setBusy(false);
+    if ("error" in result) {
+      setError(result.error);
+      return;
+    }
+    onChange(result.path);
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      {value ? (
+        <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded border border-slate-200">
+          <Image src={storageUrl("media", value)} alt="" fill sizes="80px" className="object-cover" />
+        </div>
+      ) : (
+        <div className="flex h-14 w-20 shrink-0 items-center justify-center rounded border border-dashed border-slate-300 text-[10px] text-slate-400">
+          No image
+        </div>
+      )}
+      <label className="cursor-pointer rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+        {busy ? "Uploading…" : value ? "Replace" : "Upload image"}
+        <input type="file" accept="image/webp" onChange={onUpload} disabled={busy} className="hidden" />
+      </label>
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          className="text-xs font-semibold text-slate-500 hover:text-red-600"
+        >
+          Remove
+        </button>
+      )}
+      {error && <p className="w-full text-xs text-red-600">{error}</p>}
+    </div>
+  );
+}
+
 function HeroMediaField({
   path,
   alt,

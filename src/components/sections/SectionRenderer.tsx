@@ -192,43 +192,68 @@ async function Cards({
           stagger={0.1}
           className={`mt-8 grid grid-cols-1 border-t border-l border-line ${cols}`}
         >
-          {content.items.map((item) => (
-            <Link
-              key={item.title}
-              href={hrefFor(item)}
-              className="group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line bg-paper p-6 transition-colors duration-300 hover:bg-brand-50/40 sm:min-h-[15rem] sm:p-8"
-            >
-              {/* Mullion cross — draws in on hover, framing the card like a window pane. */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          {content.items.map((item) => {
+            const hasImage = Boolean(item.image_path);
+            return (
+              <Link
+                key={item.title}
+                href={hrefFor(item)}
+                className={`group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line p-6 transition-colors duration-300 sm:min-h-[15rem] sm:p-8 ${
+                  hasImage ? "bg-brand-950" : "bg-paper hover:bg-brand-50/40"
+                }`}
               >
-                <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 origin-top scale-y-0 bg-brand-200 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100 motion-reduce:transition-none" />
-                <span className="absolute top-1/2 left-0 h-px w-full -translate-y-1/2 origin-left scale-x-0 bg-brand-200 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 motion-reduce:transition-none" />
-              </div>
-
-              <div className="flex items-start justify-between">
-                <span aria-hidden className="block h-3 w-3 shrink-0 bg-brand-700" />
-                <ArrowUpRight
-                  aria-hidden
-                  className="h-5 w-5 -translate-y-1 translate-x-1 text-brand-700 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100"
-                />
-              </div>
-
-              <div>
-                <h3 className="font-display text-xl leading-tight text-slate-900 sm:text-2xl">
-                  {item.title}
-                </h3>
-                <span
-                  aria-hidden
-                  className="mt-3 block h-0.5 w-8 bg-brand-700 transition-all duration-500 group-hover:w-14 group-hover:bg-accent"
-                />
-                {item.body && (
-                  <p className="mt-3 max-w-xs text-sm leading-relaxed text-slate-600">{item.body}</p>
+                {/* Subject photo behind a navy scrim; zooms slowly on hover. */}
+                {hasImage && (
+                  <div aria-hidden className="absolute inset-0 -z-20 overflow-hidden">
+                    <Image
+                      src={storageUrl("media", item.image_path!)}
+                      alt=""
+                      fill
+                      sizes={`(max-width: 640px) 100vw, (max-width: 1024px) 50vw, ${columns === 3 ? "33vw" : "25vw"}`}
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-brand-950/90 via-brand-950/55 to-brand-950/30" />
+                  </div>
                 )}
-              </div>
-            </Link>
-          ))}
+
+                {/* Mullion cross — draws in on hover, framing the card like a window pane. */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                >
+                  <span className={`absolute top-0 left-1/2 h-full w-px -translate-x-1/2 origin-top scale-y-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100 motion-reduce:transition-none ${hasImage ? "bg-white/40" : "bg-brand-200"}`} />
+                  <span className={`absolute top-1/2 left-0 h-px w-full -translate-y-1/2 origin-left scale-x-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 motion-reduce:transition-none ${hasImage ? "bg-white/40" : "bg-brand-200"}`} />
+                </div>
+
+                <div className="flex items-start justify-between">
+                  <span aria-hidden className={`block h-3 w-3 shrink-0 ${hasImage ? "bg-accent" : "bg-brand-700"}`} />
+                  <ArrowUpRight
+                    aria-hidden
+                    className={`h-5 w-5 -translate-y-1 translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 ${hasImage ? "text-white" : "text-brand-700"}`}
+                  />
+                </div>
+
+                <div>
+                  <h3
+                    className={`font-display text-xl leading-tight sm:text-2xl ${hasImage ? "text-white" : "text-slate-900"}`}
+                  >
+                    {item.title}
+                  </h3>
+                  <span
+                    aria-hidden
+                    className={`mt-3 block h-0.5 w-8 transition-all duration-500 group-hover:w-14 group-hover:bg-accent ${hasImage ? "bg-white/60" : "bg-brand-700"}`}
+                  />
+                  {item.body && (
+                    <p
+                      className={`mt-3 max-w-xs text-sm leading-relaxed ${hasImage ? "text-white/75" : "text-slate-600"}`}
+                    >
+                      {item.body}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </Reveal>
       </Container>
     </section>
