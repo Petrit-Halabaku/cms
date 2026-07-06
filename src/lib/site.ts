@@ -2,6 +2,23 @@
 export const SITE_NAME = "Gergoci";
 export const SITE_URL = "https://gergoci.eu";
 
+/** Map pin coordinates from env — override CMS-stored lat/lng on the public site. */
+export const MAP_LAT = parseFloat(process.env.NEXT_PUBLIC_MAP_LAT!);
+export const MAP_LNG = parseFloat(process.env.NEXT_PUBLIC_MAP_LNG!);
+
+/** Google Business Profile CID — ties the link to the named listing (not an anonymous pin). */
+export const MAPS_CID = process.env.NEXT_PUBLIC_MAPS_CID ?? "8132120818804921462";
+
+/** Google Maps link centered on env coords and opening the GERGOCI business profile. */
+export function mapsPlaceUrl(lat = MAP_LAT, lng = MAP_LNG): string {
+  return `https://www.google.com/maps?ll=${lat},${lng}&z=19&cid=${MAPS_CID}`;
+}
+
+/** Coordinate embed for the contact-page map iframe (no API key). */
+export function mapsEmbedUrl(lat = MAP_LAT, lng = MAP_LNG): string {
+  return `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+}
+
 /**
  * Top-level route slugs per locale — mirrors page_translations seed data.
  * Phase 2 reads these from the DB for dynamic locale routing.
