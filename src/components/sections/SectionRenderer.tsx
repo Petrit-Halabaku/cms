@@ -20,7 +20,6 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { faqPageSchema } from "@/lib/seo";
 import { CATEGORY_KEY_BY_ID, isVideoPath, mapsPlaceUrl, ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
