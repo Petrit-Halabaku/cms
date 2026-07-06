@@ -20,7 +20,7 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { CATEGORY_KEY_BY_ID, isVideoPath, ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import { CATEGORY_KEY_BY_ID, isVideoPath, mapsPlaceUrl, ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
   countersSchema,
@@ -198,9 +198,8 @@ async function Cards({
               <Link
                 key={item.title}
                 href={hrefFor(item)}
-                className={`group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line p-6 transition-colors duration-300 sm:min-h-[15rem] sm:p-8 ${
-                  hasImage ? "bg-brand-950" : "bg-paper hover:bg-brand-50/40"
-                }`}
+                className={`group relative isolate flex min-h-[13rem] flex-col justify-between overflow-hidden border-r border-b border-line p-6 transition-colors duration-300 sm:min-h-[15rem] sm:p-8 ${hasImage ? "bg-brand-950" : "bg-paper hover:bg-brand-50/40"
+                  }`}
               >
                 {/* Subject photo behind a navy scrim; zooms slowly on hover. */}
                 {hasImage && (
@@ -428,7 +427,7 @@ function LocationBlock({ section, ctx }: { section: PageSection; ctx: Ctx }) {
               </p>
             )}
             <a
-              href={`https://www.google.com/maps?q=${content.lat},${content.lng}`}
+              href={mapsPlaceUrl(content.lat, content.lng)}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"

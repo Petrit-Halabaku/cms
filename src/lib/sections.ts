@@ -1,6 +1,12 @@
 import { z } from "zod";
 
 import type { Json } from "@/lib/database.types";
+import { MAP_LAT, MAP_LNG } from "@/lib/site";
+
+/** CMS jsonb may carry stale rounded coords — env always wins on the public site. */
+function withMapCoords<T extends { lat: number; lng: number }>(data: T): T {
+  return { ...data, lat: MAP_LAT, lng: MAP_LNG };
+}
 
 /**
  * Zod schemas for page_section_translations.content (jsonb), one per
@@ -45,15 +51,17 @@ export const countersSchema = z.object({
   items: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
 });
 
-export const locationSchema = z.object({
-  heading: z.string().default(""),
-  address: z.string().default(""),
-  phone: z.string().default(""),
-  phone2: z.string().default(""),
-  lat: z.number().default(42.6548),
-  lng: z.number().default(20.3172),
-  hours: z.array(z.object({ days: z.string(), hours: z.string() })).default([]),
-});
+export const locationSchema = z
+  .object({
+    heading: z.string().default(""),
+    address: z.string().default(""),
+    phone: z.string().default(""),
+    phone2: z.string().default(""),
+    lat: z.number().default(MAP_LAT),
+    lng: z.number().default(MAP_LNG),
+    hours: z.array(z.object({ days: z.string(), hours: z.string() })).default([]),
+  })
+  .transform(withMapCoords);
 
 export const ctaSchema = z.object({
   heading: z.string().default(""),
@@ -76,15 +84,17 @@ export const gallerySchema = z.object({
   media_ids: z.array(z.string()).default([]),
 });
 
-export const contactInfoSchema = z.object({
-  heading: z.string().default(""),
-  address: z.string().default(""),
-  phone: z.string().default(""),
-  phone2: z.string().default(""),
-  email: z.string().default(""),
-  lat: z.number().default(Number(process.env.NEXT_PUBLIC_MAP_LAT)),
-  lng: z.number().default(Number(process.env.NEXT_PUBLIC_MAP_LNG)),
-});
+export const contactInfoSchema = z
+  .object({
+    heading: z.string().default(""),
+    address: z.string().default(""),
+    phone: z.string().default(""),
+    phone2: z.string().default(""),
+    email: z.string().default(""),
+    lat: z.number().default(MAP_LAT),
+    lng: z.number().default(MAP_LNG),
+  })
+  .transform(withMapCoords);
 
 export type HeroContent = z.infer<typeof heroSchema>;
 export type CardsContent = z.infer<typeof cardsSchema>;

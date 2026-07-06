@@ -8,10 +8,7 @@ import { getPage } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
-
-/** External Google Maps listing opened when the embedded map is clicked. */
-const MAPS_URL =
-  "https://www.google.com/maps?ll=42.654657,20.317722&z=19&t=h&hl=en-US&gl=US&mapclient=embed&cid=8132120818804921462";
+import { mapsEmbedUrl, mapsPlaceUrl } from "@/lib/site";
 
 export async function ContactView({ locale }: { locale: Locale }) {
   const page = await getPage(locale, "contact");
@@ -84,14 +81,14 @@ export async function ContactView({ locale }: { locale: Locale }) {
             <div className="relative h-full overflow-hidden border border-line bg-brand-50">
               <iframe
                 title={info.heading}
-                src={`https://www.google.com/maps?q=${info.lat},${info.lng}&z=15&output=embed`}
+                src={mapsEmbedUrl(info.lat, info.lng)}
                 className="h-full min-h-[320px] w-full border-0 sm:min-h-[420px]"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
               />
               <a
-                href={MAPS_URL}
+                href={mapsPlaceUrl(info.lat, info.lng)}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${info.heading} — open in Google Maps`}
