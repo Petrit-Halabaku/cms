@@ -1,12 +1,14 @@
 import { notFound } from "next/navigation";
 
+import { JsonLd } from "@/components/JsonLd";
 import { EditorialHero } from "@/components/pages/editorial";
 import { ProductFilter } from "@/components/ProductFilter";
 import type { Locale } from "@/lib/database.types";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
-import { ROUTE_SLUGS } from "@/lib/site";
+import { breadcrumbSchema, collectionSchema } from "@/lib/seo";
+import { ROUTE_SLUGS, SITE_URL, storageUrl } from "@/lib/site";
 
 /** Stable, locale-independent hero key per category (keyed by the fixed UUID),
  *  so EN + SQ share one file at /hero/categories/<key>/hero.webp. */
@@ -49,8 +51,32 @@ export async function CategoryView({
       : []),
   ];
 
+  const productsUrl = `${SITE_URL}${basePath}/${ROUTE_SLUGS[locale].products}`;
+  const categoryUrl = `${productsUrl}/${category.slug}`;
+
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: dict.nav.home, url: `${SITE_URL}${basePath}/` },
+          { name: dict.nav.products, url: productsUrl },
+          { name: category.name, url: categoryUrl },
+        ])}
+      />
+      <JsonLd
+        data={collectionSchema({
+          url: categoryUrl,
+          name: category.name,
+          description: category.description,
+          items: products.map((p) => ({
+            name: p.title,
+            url: `${categoryUrl}/${p.slug}`,
+            image: p.featuredImage
+              ? storageUrl("media", p.featuredImage.storage_path)
+              : undefined,
+          })),
+        })}
+      />
       <EditorialHero
         breadcrumbLabel={dict.nav.products}
         breadcrumbHref={`${basePath}/${ROUTE_SLUGS[locale].products}`}

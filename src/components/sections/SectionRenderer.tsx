@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { JsonLd } from "@/components/JsonLd";
 import { MediaImage } from "@/components/MediaImage";
 import { CountUp } from "@/components/motion/CountUp";
 import { Marquee } from "@/components/motion/Marquee";
@@ -20,6 +21,7 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
+import { faqPageSchema } from "@/lib/seo";
 import { CATEGORY_KEY_BY_ID, isVideoPath, ROUTE_SLUGS, storageUrl } from "@/lib/site";
 import {
   cardsSchema,
@@ -300,7 +302,9 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
   const faqs = await getFaqs(ctx.locale);
   if (faqs.length === 0) return null;
   return (
-    <section className="relative overflow-hidden bg-brand-950 py-10 sm:py-16">
+    <>
+      <JsonLd data={faqPageSchema(faqs)} />
+      <section className="relative overflow-hidden bg-brand-950 py-10 sm:py-16">
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <span className="absolute top-0 left-1/4 h-full w-px bg-white/5" />
         <span className="absolute top-0 left-2/4 h-full w-px bg-white/5" />
@@ -316,7 +320,8 @@ async function FaqSection({ section, ctx }: { section: PageSection; ctx: Ctx }) 
           <FaqAccordion faqs={faqs} />
         </Reveal>
       </Container>
-    </section>
+      </section>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo, Instrument_Serif } from "next/font/google";
 import { notFound } from "next/navigation";
 
@@ -11,8 +11,20 @@ import { Header } from "@/components/layout/Header";
 import type { Locale } from "@/lib/database.types";
 import { getCategories, getLogoUrl, getPage, getSlugMap } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
-import { basePathFor } from "@/lib/i18n/urls";
+import { basePathFor, localePath } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
+import {
+  GOOGLE_SITE_VERIFICATION,
+  KEYWORDS,
+  localBusinessSchema,
+  OG_LOCALE,
+  ogImageUrl,
+  organizationSchema,
+  OG_SIZE,
+  TAGLINE,
+  TWITTER_HANDLE,
+  websiteSchema,
+} from "@/lib/seo";
 import { ROUTE_SLUGS, SITE_NAME, SITE_URL } from "@/lib/site";
 
 /**
@@ -49,19 +61,68 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
+export const viewport: Viewport = {
+  themeColor: "#012653",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale: raw } = await params;
+  const locale: Locale = raw === "sq" ? "sq" : "en";
+  const description = TAGLINE[locale];
+  const ogImage = ogImageUrl(SITE_NAME, description);
+
   return {
     metadataBase: new URL(SITE_URL),
-    title: SITE_NAME,
-    description:
-      locale === "sq"
-        ? `${SITE_NAME} — dritare, dyer & sisteme xhami në Pejë, Kosovë.`
-        : `${SITE_NAME} — windows, doors & glass systems in Pejë, Kosovo.`,
+    applicationName: SITE_NAME,
+    // Child pages set a bare `title` which this template brands with the suffix;
+    // `default` covers segments (and the home page) that opt out.
+    title: { default: SITE_NAME, template: `%s — ${SITE_NAME}` },
+    description,
+    keywords: KEYWORDS[locale],
+    authors: [{ name: SITE_NAME, url: SITE_URL }],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    formatDetection: { telephone: true, address: true, email: true },
+    alternates: {
+      canonical: localePath(locale),
+      languages: { en: "/", sq: "/sq", "x-default": "/" },
+    },
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: SITE_NAME,
+      description,
+      url: `${SITE_URL}${localePath(locale)}`,
+      locale: OG_LOCALE[locale],
+      alternateLocale: OG_LOCALE[locale === "sq" ? "en" : "sq"],
+      images: [{ url: ogImage, ...OG_SIZE, alt: SITE_NAME }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: SITE_NAME,
+      description,
+      images: [ogImage],
+      ...(TWITTER_HANDLE && { site: TWITTER_HANDLE, creator: TWITTER_HANDLE }),
+    },
+    ...(GOOGLE_SITE_VERIFICATION && { verification: { google: GOOGLE_SITE_VERIFICATION } }),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
   };
 }
 
@@ -99,36 +160,17 @@ export default async function SiteLayout({
           attributes onto <body> on the client, which React would otherwise flag
           as a hydration mismatch. Scoped to this element only. */}
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
+        <JsonLd data={organizationSchema(logoUrl)} />
+        <JsonLd data={websiteSchema(locale)} />
         <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "@id": `${SITE_URL}/#organization`,
-            name: SITE_NAME,
-            url: SITE_URL,
-            logo: logoUrl,
-          }}
-        />
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness",
-            "@id": `${SITE_URL}/#localbusiness`,
-            name: SITE_NAME,
-            url: SITE_URL,
-            logo: logoUrl,
-            image: logoUrl,
-            telephone: info.phone || undefined,
-            email: info.email || undefined,
-            areaServed: "Kosovo",
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: "Pejë",
-              addressCountry: "XK",
-              streetAddress: info.address || undefined,
-            },
-            geo: { "@type": "GeoCoordinates", latitude: info.lat, longitude: info.lng },
-          }}
+          data={localBusinessSchema({
+            logoUrl,
+            phone: info.phone,
+            email: info.email,
+            address: info.address,
+            lat: info.lat,
+            lng: info.lng,
+          })}
         />
         <a
           href="#main"

@@ -9,8 +9,10 @@ import {
   getCategorySlugPair,
   getPageKeyBySlug,
   getPageSlugPair,
+  getProductsByCategory,
 } from "@/lib/db/content";
-import { alternatesFor } from "@/lib/i18n/urls";
+import { buildPageMetadata, type OgImage } from "@/lib/seo";
+import { storageUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{ locale: Locale; pageSlug: string; categorySlug: string }>;
@@ -41,19 +43,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (key !== "products") return {};
   const category = await getCategoryBySlug(locale, categorySlug);
   if (!category) return {};
-  const [productsPair, categoryPair] = await Promise.all([
+  const [productsPair, categoryPair, products] = await Promise.all([
     getPageSlugPair("products"),
     getCategorySlugPair(category.id),
+    getProductsByCategory(locale, category.id),
   ]);
-  return {
+  // Use the first product photo as the share image; fall back to the brand card.
+  const cover = products.find((p) => p.featuredImage)?.featuredImage;
+  const images: OgImage[] | undefined = cover
+    ? [
+        {
+          url: storageUrl("media", cover.storage_path),
+          width: cover.width ?? undefined,
+          height: cover.height ?? undefined,
+          alt: category.name,
+        },
+      ]
+    : undefined;
+  return buildPageMetadata({
+    locale,
     title: category.seoTitle ?? category.name,
-    description: category.seoDescription ?? category.description ?? undefined,
-    alternates: alternatesFor(
-      locale,
-      [productsPair.en, categoryPair.en],
-      [productsPair.sq, categoryPair.sq],
-    ),
-  };
+    description: category.seoDescription ?? category.description,
+    enSegments: [productsPair.en, categoryPair.en],
+    sqSegments: [productsPair.sq, categoryPair.sq],
+    images,
+  });
 }
 
 export default async function CategoryPage({ params }: Props) {

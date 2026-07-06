@@ -12,7 +12,8 @@ import {
   getPageSlugPair,
   getPageSlugs,
 } from "@/lib/db/content";
-import { alternatesFor } from "@/lib/i18n/urls";
+import { buildPageMetadata } from "@/lib/seo";
+import { SITE_NAME } from "@/lib/site";
 
 type Props = { params: Promise<{ locale: Locale; pageSlug: string }> };
 
@@ -31,11 +32,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const key = await getPageKeyBySlug(locale, pageSlug);
   if (!key) return {};
   const [page, pair] = await Promise.all([getPage(locale, key), getPageSlugPair(key)]);
-  return {
-    title: page?.seoTitle ?? page?.title,
-    description: page?.seoDescription ?? undefined,
-    alternates: alternatesFor(locale, [pair.en], [pair.sq]),
-  };
+  return buildPageMetadata({
+    locale,
+    title: page?.seoTitle ?? page?.title ?? SITE_NAME,
+    description: page?.seoDescription,
+    enSegments: [pair.en],
+    sqSegments: [pair.sq],
+  });
 }
 
 export default async function TopLevelPage({ params }: Props) {

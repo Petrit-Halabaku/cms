@@ -17,6 +17,7 @@ import {
 } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
+import { breadcrumbSchema, productSchema } from "@/lib/seo";
 import { ROUTE_SLUGS, SITE_URL, storageUrl } from "@/lib/site";
 
 export async function ProductView({
@@ -58,29 +59,22 @@ export async function ProductView({
   return (
     <>
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Product",
-          "@id": `${productUrl}#product`,
+        data={productSchema({
           name: product.title,
           description: product.seoDescription ?? product.body?.slice(0, 200) ?? undefined,
           category: category.name,
           url: productUrl,
-          ...(schemaImages && { image: schemaImages }),
-          ...(product.brand && { brand: { "@type": "Brand", name: product.brand } }),
-        }}
+          images: schemaImages,
+          brand: product.brand,
+        })}
       />
       <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: dict.nav.home, item: `${SITE_URL}${basePath}/` },
-            { "@type": "ListItem", position: 2, name: dict.nav.products, item: `${SITE_URL}${basePath}/${ROUTE_SLUGS[locale].products}` },
-            { "@type": "ListItem", position: 3, name: category.name, item: `${SITE_URL}${categoryHref}` },
-            { "@type": "ListItem", position: 4, name: product.title, item: productUrl },
-          ],
-        }}
+        data={breadcrumbSchema([
+          { name: dict.nav.home, url: `${SITE_URL}${basePath}/` },
+          { name: dict.nav.products, url: `${SITE_URL}${basePath}/${ROUTE_SLUGS[locale].products}` },
+          { name: category.name, url: `${SITE_URL}${categoryHref}` },
+          { name: product.title, url: productUrl },
+        ])}
       />
       <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 sm:pt-8 lg:px-8">
         <Link

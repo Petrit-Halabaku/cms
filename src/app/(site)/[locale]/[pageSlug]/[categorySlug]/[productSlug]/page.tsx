@@ -13,7 +13,8 @@ import {
   getProductSlugPair,
   getProductsByCategory,
 } from "@/lib/db/content";
-import { alternatesFor } from "@/lib/i18n/urls";
+import { buildPageMetadata, type OgImage } from "@/lib/seo";
+import { storageUrl } from "@/lib/site";
 
 type Props = {
   params: Promise<{
@@ -64,15 +65,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     getCategorySlugPair(category.id),
     getProductSlugPair(product.id),
   ]);
-  return {
+  const cover = product.featuredImage;
+  const images: OgImage[] | undefined = cover
+    ? [
+        {
+          url: storageUrl("media", cover.storage_path),
+          width: cover.width ?? undefined,
+          height: cover.height ?? undefined,
+          alt: product.title,
+        },
+      ]
+    : undefined;
+  return buildPageMetadata({
+    locale,
     title: product.seoTitle ?? product.title,
-    description: product.seoDescription ?? undefined,
-    alternates: alternatesFor(
-      locale,
-      [productsPair.en, categoryPair.en, productPair.en],
-      [productsPair.sq, categoryPair.sq, productPair.sq],
-    ),
-  };
+    description: product.seoDescription ?? product.body?.slice(0, 160),
+    enSegments: [productsPair.en, categoryPair.en, productPair.en],
+    sqSegments: [productsPair.sq, categoryPair.sq, productPair.sq],
+    images,
+    type: "article",
+  });
 }
 
 export default async function ProductPage({ params }: Props) {
