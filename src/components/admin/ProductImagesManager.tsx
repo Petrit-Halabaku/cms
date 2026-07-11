@@ -6,6 +6,7 @@ import { Star, Trash2, Upload } from "lucide-react";
 
 import { saveProductImages } from "@/lib/admin/actions/products";
 import { useProductEditor, type CommitResult } from "@/components/admin/product-editor-context";
+import { ConfirmDialog } from "@/components/admin/ui";
 import { getImageDimensions, uploadFile } from "@/lib/admin/upload";
 import { storageUrl } from "@/lib/site";
 
@@ -59,6 +60,7 @@ export function ProductImagesManager({ productId, slug, images }: Props) {
   );
   const [error, setError] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
+  const [pendingRemove, setPendingRemove] = useState<string | null>(null);
   const dragIndex = useRef<number | null>(null);
   const newKey = useRef(0);
 
@@ -250,7 +252,7 @@ export function ProductImagesManager({ productId, slug, images }: Props) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => remove(image.key)}
+                  onClick={() => setPendingRemove(image.key)}
                   disabled={disabled}
                   title="Remove image"
                   className="text-white hover:text-red-400"
@@ -272,6 +274,18 @@ export function ProductImagesManager({ productId, slug, images }: Props) {
         <p className="mt-4 text-sm text-slate-500">No images yet.</p>
       )}
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      <ConfirmDialog
+        open={pendingRemove !== null}
+        title="Remove image"
+        message="The image will be removed from this product when you save."
+        confirmLabel="Remove"
+        destructive
+        onConfirm={() => {
+          if (pendingRemove) remove(pendingRemove);
+          setPendingRemove(null);
+        }}
+        onCancel={() => setPendingRemove(null)}
+      />
     </div>
   );
 }

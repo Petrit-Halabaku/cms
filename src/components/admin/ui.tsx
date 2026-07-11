@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 /** Small shared building blocks for admin forms. */
 
@@ -93,47 +93,113 @@ export function LocaleTabs({
   );
 }
 
-/** Destructive button that asks for an inline confirmation click. */
+/** Destructive button that opens a themed confirmation dialog before firing. */
 export function ConfirmButton({
   onConfirm,
   children,
-  confirmLabel = "Confirm delete?",
+  title = "Are you sure?",
+  message = "This can’t be undone.",
+  confirmLabel = "Delete",
   className = "",
 }: {
   onConfirm: () => void;
   children: React.ReactNode;
+  title?: string;
+  message?: string;
   confirmLabel?: string;
   className?: string;
 }) {
-  const [arming, setArming] = useState(false);
-  if (arming) {
-    return (
-      <span className="inline-flex items-center gap-2">
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
-        >
-          {confirmLabel}
-        </button>
-        <button
-          type="button"
-          onClick={() => setArming(false)}
-          className="text-xs font-medium text-slate-500 hover:text-slate-700"
-        >
-          Cancel
-        </button>
-      </span>
-    );
-  }
+  const [open, setOpen] = useState(false);
   return (
-    <button
-      type="button"
-      onClick={() => setArming(true)}
-      className={`text-sm font-medium text-red-600 hover:text-red-700 ${className}`}
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={`text-sm font-medium text-red-600 hover:text-red-700 ${className}`}
+      >
+        {children}
+      </button>
+      <ConfirmDialog
+        open={open}
+        title={title}
+        message={message}
+        confirmLabel={confirmLabel}
+        destructive
+        onConfirm={() => {
+          setOpen(false);
+          onConfirm();
+        }}
+        onCancel={() => setOpen(false)}
+      />
+    </>
+  );
+}
+
+/** Themed replacement for window.confirm — overlay dialog matching the admin cards. */
+export function ConfirmDialog({
+  open,
+  title,
+  message,
+  confirmLabel,
+  cancelLabel = "Cancel",
+  destructive = false,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  destructive?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onCancel]);
+
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+      onClick={onCancel}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
     >
-      {children}
-    </button>
+      <div
+        className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-6 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+        <p className="mt-2 text-sm text-slate-500">{message}</p>
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            {cancelLabel}
+          </button>
+          <button
+            type="button"
+            autoFocus
+            onClick={onConfirm}
+            className={`rounded-md px-4 py-2 text-sm font-semibold text-white ${
+              destructive ? "bg-red-600 hover:bg-red-700" : "bg-brand-700 hover:bg-brand-800"
+            }`}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

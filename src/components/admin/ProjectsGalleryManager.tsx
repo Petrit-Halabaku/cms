@@ -10,6 +10,7 @@ import {
   importGalleryFromFolder,
   reorderGallery,
 } from "@/lib/admin/actions/gallery";
+import { ConfirmDialog } from "@/components/admin/ui";
 import { uploadFile } from "@/lib/admin/upload";
 import { storageUrl } from "@/lib/site";
 
@@ -35,6 +36,7 @@ export function ProjectsGalleryManager({
   const [savedIds, setSavedIds] = useState(() => images.map((i) => i.id));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   const currentIds = order.map((i) => i.id);
@@ -207,7 +209,7 @@ export function ProjectsGalleryManager({
                 </div>
                 <button
                   type="button"
-                  onClick={() => remove(img.id)}
+                  onClick={() => setPendingDelete(img.id)}
                   disabled={pending}
                   aria-label="Delete"
                   className="p-1 text-slate-400 hover:text-red-600 disabled:opacity-30"
@@ -219,6 +221,18 @@ export function ProjectsGalleryManager({
           ))}
         </ul>
       )}
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Delete image"
+        message="The image will be permanently removed from the projects gallery. This can’t be undone."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => {
+          if (pendingDelete) remove(pendingDelete);
+          setPendingDelete(null);
+        }}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }
