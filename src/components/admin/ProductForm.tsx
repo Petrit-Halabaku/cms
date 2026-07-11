@@ -7,6 +7,7 @@ import { AlertTriangle, ArrowDown, ArrowUp, Trash2, Wand2 } from "lucide-react";
 import {
   CountedInput,
   ConfirmButton,
+  ConfirmDialog,
   Field,
   LocaleTabs,
   inputClass,
@@ -80,7 +81,9 @@ export function ProductForm({ categories, initial, children }: Props) {
   );
 
   // Warn before leaving with unsaved changes — full unloads (reload/close) and
-  // in-app link clicks (sidebar, back link). Cleared once saved.
+  // in-app link clicks (sidebar, back link). Cleared once saved. In-app clicks
+  // open the themed dialog; beforeunload has to stay browser-native.
+  const [leaveHref, setLeaveHref] = useState<string | null>(null);
   useEffect(() => {
     if (!dirty) return;
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -93,10 +96,9 @@ export function ProductForm({ categories, initial, children }: Props) {
       const href = anchor?.getAttribute("href");
       if (!anchor || !href || href.startsWith("#") || anchor.target === "_blank") return;
       if (anchor.hasAttribute("download")) return;
-      if (!window.confirm("You have unsaved changes. Leave without saving?")) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+      e.preventDefault();
+      e.stopPropagation();
+      setLeaveHref(href);
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     document.addEventListener("click", onClickCapture, true);
@@ -127,6 +129,78 @@ export function ProductForm({ categories, initial, children }: Props) {
     markDirty();
   };
 
+  // Autofill on new products: the EN title mirrors into the SQ title until the
+  // SQ title is edited by hand, and each locale's slug tracks its title until
+  // that slug is edited by hand. Off on existing products — regenerating a
+  // live slug would change public URLs.
+  const sqTitleTouched = useRef(false);
+  const slugTouched = useRef({ en: false, sq: false });
+
+  const handleTitleChange = (value: string) => {
+    if (locale === "sq") sqTitleTouched.current = true;
+    setTranslations((prev) => {
+      const next = { ...prev, [locale]: { ...prev[locale], title: value } };
+      if (initial) return next;
+      if (!slugTouched.current[locale]) next[locale].slug = slugify(value);
+      if (locale === "en" && !sqTitleTouched.current) {
+        next.sq = {
+          ...next.sq,
+          title: value,
+          slug: slugTouched.current.sq ? next.sq.slug : slugify(value),
+        };
+      }
+      return next;
+    });
+    markDirty();
+  };
+
+  const handleSlugChange = (value: string) => {
+    slugTouched.current[locale] = true;
+    setT({ slug: value });
+  };
+
+  // Required-field validation, shown as red sections + messages after the
+  // first submit attempt (then kept live). The server re-validates with zod.
+  const [errors, setErrors] = useState<{ main: string[]; facts: string[] }>({
+    main: [],
+    facts: [],
+  });
+  const [attempted, setAttempted] = useState(false);
+
+  const computeErrors = useCallback(() => {
+    const main: string[] = [];
+    const factErrors: string[] = [];
+    const locales = new Set<"en" | "sq">();
+    for (const loc of ["en", "sq"] as const) {
+      const L = loc.toUpperCase();
+      const tr = translations[loc];
+      if (!tr.title.trim()) {
+        main.push(`Title (${L}) is required.`);
+        locales.add(loc);
+      }
+      if (!tr.slug.trim()) {
+        main.push(`Slug (${L}) is required.`);
+        locales.add(loc);
+      } else if (!/^[a-z0-9-]+$/.test(tr.slug)) {
+        main.push(`Slug (${L}) may only contain lowercase letters, numbers and dashes.`);
+        locales.add(loc);
+      }
+      facts[loc].forEach((fact, index) => {
+        if (!fact.label.trim() || !fact.value.trim()) {
+          factErrors.push(`Row ${index + 1} (${L}) needs both a label and a value.`);
+          locales.add(loc);
+        }
+      });
+    }
+    return { main, facts: factErrors, locales: [...locales] };
+  }, [translations, facts]);
+
+  useEffect(() => {
+    if (!attempted) return;
+    const { main, facts: factErrors } = computeErrors();
+    setErrors({ main, facts: factErrors });
+  }, [attempted, computeErrors]);
+
   const localeFacts = facts[locale];
   const setLocaleFacts = (next: Fact[]) => {
     setFacts((prev) => ({ ...prev, [locale]: next }));
@@ -144,6 +218,16 @@ export function ProductForm({ categories, initial, children }: Props) {
   function submit() {
     setError(null);
     setSaved(false);
+    setAttempted(true);
+    const validation = computeErrors();
+    setErrors({ main: validation.main, facts: validation.facts });
+    if (validation.main.length > 0 || validation.facts.length > 0) {
+      // Errors may be on the hidden locale tab — bring the first one into view.
+      if (!validation.locales.includes(locale) && validation.locales.length > 0) {
+        setLocale(validation.locales[0]);
+      }
+      return;
+    }
     startTransition(async () => {
       // 1) Product fields first.
       const result = await saveProduct({
@@ -207,7 +291,11 @@ export function ProductForm({ categories, initial, children }: Props) {
           Draft — you have unsaved changes. They’ll be lost if you leave without saving.
         </div>
       )}
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div
+        className={`rounded-lg border bg-white p-6 ${
+          errors.main.length > 0 ? "border-red-400 ring-1 ring-red-400" : "border-slate-200"
+        }`}
+      >
         <div className="flex items-center justify-between gap-4">
           <LocaleTabs locale={locale} onChange={setLocale} />
           <label className="flex items-center gap-2 text-sm font-medium text-slate-900">
@@ -229,7 +317,7 @@ export function ProductForm({ categories, initial, children }: Props) {
             <input
               type="text"
               value={t.title}
-              onChange={(e) => setT({ title: e.target.value })}
+              onChange={(e) => handleTitleChange(e.target.value)}
               className={inputClass}
             />
           </Field>
@@ -240,14 +328,14 @@ export function ProductForm({ categories, initial, children }: Props) {
                 <input
                   type="text"
                   value={t.slug}
-                  onChange={(e) => setT({ slug: e.target.value })}
+                  onChange={(e) => handleSlugChange(e.target.value)}
                   className={inputClass}
                 />
               </Field>
             </div>
             <button
               type="button"
-              onClick={() => setT({ slug: slugify(t.title) })}
+              onClick={() => handleSlugChange(slugify(t.title))}
               title="Generate from title"
               className="mb-5 inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
             >
@@ -324,9 +412,21 @@ export function ProductForm({ categories, initial, children }: Props) {
             </Field>
           </div>
         </div>
+
+        {errors.main.length > 0 && (
+          <ul className="mt-4 space-y-1 text-sm font-medium text-red-600">
+            {errors.main.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div
+        className={`rounded-lg border bg-white p-6 ${
+          errors.facts.length > 0 ? "border-red-400 ring-1 ring-red-400" : "border-slate-200"
+        }`}
+      >
         <h2 className="text-sm font-semibold text-slate-900">
           Specifications ({locale.toUpperCase()})
         </h2>
@@ -382,6 +482,14 @@ export function ProductForm({ categories, initial, children }: Props) {
         >
           + Add row
         </button>
+
+        {errors.facts.length > 0 && (
+          <ul className="mt-4 space-y-1 text-sm font-medium text-red-600">
+            {errors.facts.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
@@ -423,9 +531,32 @@ export function ProductForm({ categories, initial, children }: Props) {
                 : "Saved"
               : "Create product"}
         </button>
-        {initial && <ConfirmButton onConfirm={remove}>Delete product</ConfirmButton>}
+        {initial && (
+          <ConfirmButton
+            onConfirm={remove}
+            title="Delete product"
+            message="The product and all its content will be permanently deleted. This can’t be undone."
+          >
+            Delete product
+          </ConfirmButton>
+        )}
       </div>
     </div>
+    <ConfirmDialog
+      open={leaveHref !== null}
+      title="Unsaved changes"
+      message="You have unsaved changes. They’ll be lost if you leave without saving."
+      confirmLabel="Leave without saving"
+      cancelLabel="Stay"
+      destructive
+      onConfirm={() => {
+        if (!leaveHref) return;
+        setDirty(false);
+        setLeaveHref(null);
+        router.push(leaveHref);
+      }}
+      onCancel={() => setLeaveHref(null)}
+    />
     </ProductEditorProvider>
   );
 }

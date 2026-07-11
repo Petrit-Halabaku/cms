@@ -186,7 +186,11 @@ function MediaDetail({
           >
             {busy ? "Working…" : "Save alt text"}
           </button>
-          <ConfirmButton onConfirm={remove} confirmLabel="Really delete?">
+          <ConfirmButton
+            onConfirm={remove}
+            title="Delete file"
+            message="The file will be permanently deleted from the media library. This can’t be undone."
+          >
             Delete file
           </ConfirmButton>
         </div>

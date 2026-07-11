@@ -111,7 +111,13 @@ function FaqCard({
           <button type="button" onClick={onMoveDown} disabled={disabled || !onMoveDown} aria-label="Move down" className="p-1 text-slate-400 hover:text-brand-700 disabled:opacity-30">
             <ArrowDown className="h-4 w-4" />
           </button>
-          <ConfirmButton onConfirm={onDelete}>Delete</ConfirmButton>
+          <ConfirmButton
+            onConfirm={onDelete}
+            title="Delete FAQ"
+            message="The question will be permanently deleted in both languages. This can’t be undone."
+          >
+            Delete
+          </ConfirmButton>
         </div>
       </div>
       <div className="mt-4 space-y-3">

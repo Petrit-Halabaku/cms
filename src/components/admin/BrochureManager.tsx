@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FileDown, Trash2, Upload } from "lucide-react";
 
+import { ConfirmDialog } from "@/components/admin/ui";
 import { setProductBrochure } from "@/lib/admin/actions/brochure";
 import { useProductEditor, type CommitResult } from "@/components/admin/product-editor-context";
 import { uploadFile } from "@/lib/admin/upload";
@@ -20,6 +21,7 @@ export function BrochureManager({ productId, brochureUrl }: Props) {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [removed, setRemoved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
 
   // Reset the buffer after a save (router.refresh) brings the new saved value.
   useEffect(() => {
@@ -95,7 +97,7 @@ export function BrochureManager({ productId, brochureUrl }: Props) {
             </a>
             <button
               type="button"
-              onClick={onRemove}
+              onClick={() => setConfirmingRemove(true)}
               disabled={pending}
               className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700"
             >
@@ -120,6 +122,18 @@ export function BrochureManager({ productId, brochureUrl }: Props) {
         </label>
       </div>
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      <ConfirmDialog
+        open={confirmingRemove}
+        title="Remove brochure"
+        message="The brochure will be removed from this product when you save."
+        confirmLabel="Remove"
+        destructive
+        onConfirm={() => {
+          onRemove();
+          setConfirmingRemove(false);
+        }}
+        onCancel={() => setConfirmingRemove(false)}
+      />
     </div>
   );
 }

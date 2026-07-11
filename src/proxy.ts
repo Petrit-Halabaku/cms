@@ -74,6 +74,15 @@ export async function proxy(request: NextRequest) {
     }
 
     if (!user) {
+      // Server-action POSTs must not be redirected: the browser's fetch
+      // follows the 307 transparently and receives the login page's HTML,
+      // which the client rejects with "An unexpected response was received
+      // from the server." Let them through — every action re-checks auth via
+      // requireEditor(), whose redirect() the client handles as a clean
+      // navigation to /admin/login.
+      if (request.method === "POST" && request.headers.has("next-action")) {
+        return response;
+      }
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
       return NextResponse.redirect(url);
