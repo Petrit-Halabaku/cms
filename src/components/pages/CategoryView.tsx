@@ -12,6 +12,7 @@ import { ROUTE_SLUGS } from "@/lib/site";
  *  so EN + SQ share one file at /hero/categories/<key>/hero.webp. */
 const CATEGORY_HERO_KEY: Record<string, string> = {
   "a0000000-0000-4000-8000-000000000001": "windows",
+  "4163df53-e1cb-47ce-a366-f20a313d03dc": "aluminium",
   "a0000000-0000-4000-8000-000000000002": "doors",
   "a0000000-0000-4000-8000-000000000003": "sliding-systems",
   "a0000000-0000-4000-8000-000000000004": "facades",
@@ -34,8 +35,8 @@ export async function CategoryView({
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
   const heroKey = CATEGORY_HERO_KEY[category.id];
-  const heroPath = "products/products-image.webp";
-  // const heroPath = heroKey ? `hero/categories/${heroKey}.webp` : "products/products.webp";
+  // const heroPath = "products/products-image.webp";
+  const heroPath = heroKey ? `hero/categories/${heroKey}.webp` : "products/products-image.webp";
   const brandCount = new Set(
     products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
   ).size;
