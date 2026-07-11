@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="960" viewBox="0 0 1280 960">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#012653"/>
+      <stop offset="1" stop-color="#01173a"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8dd7f7" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#8dd7f7" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="960" fill="url(#bg)"/>
+  <g stroke="#8dd7f7" stroke-opacity="0.055" stroke-width="1"><line x1="64" y1="0" x2="64" y2="960"/><line x1="128" y1="0" x2="128" y2="960"/><line x1="192" y1="0" x2="192" y2="960"/><line x1="256" y1="0" x2="256" y2="960"/><line x1="320" y1="0" x2="320" y2="960"/><line x1="384" y1="0" x2="384" y2="960"/><line x1="448" y1="0" x2="448" y2="960"/><line x1="512" y1="0" x2="512" y2="960"/><line x1="576" y1="0" x2="576" y2="960"/><line x1="640" y1="0" x2="640" y2="960"/><line x1="704" y1="0" x2="704" y2="960"/><line x1="768" y1="0" x2="768" y2="960"/><line x1="832" y1="0" x2="832" y2="960"/><line x1="896" y1="0" x2="896" y2="960"/><line x1="960" y1="0" x2="960" y2="960"/><line x1="1024" y1="0" x2="1024" y2="960"/><line x1="1088" y1="0" x2="1088" y2="960"/><line x1="1152" y1="0" x2="1152" y2="960"/><line x1="1216" y1="0" x2="1216" y2="960"/><line x1="0" y1="64" x2="1280" y2="64"/><line x1="0" y1="128" x2="1280" y2="128"/><line x1="0" y1="192" x2="1280" y2="192"/><line x1="0" y1="256" x2="1280" y2="256"/><line x1="0" y1="320" x2="1280" y2="320"/><line x1="0" y1="384" x2="1280" y2="384"/><line x1="0" y1="448" x2="1280" y2="448"/><line x1="0" y1="512" x2="1280" y2="512"/><line x1="0" y1="576" x2="1280" y2="576"/><line x1="0" y1="640" x2="1280" y2="640"/><line x1="0" y1="704" x2="1280" y2="704"/><line x1="0" y1="768" x2="1280" y2="768"/><line x1="0" y1="832" x2="1280" y2="832"/><line x1="0" y1="896" x2="1280" y2="896"/></g>
+  
+  <!-- diagonal light bands -->
+  <polygon points="180,0 420,0 -60,960 -300,960" fill="#ffffff" opacity="0.05"/>
+  <polygon points="760,0 900,0 420,960 280,960" fill="#ffffff" opacity="0.08"/>
+  
+    <g transform="rotate(-8 640 430)">
+      <rect x="300" y="80" width="520" height="640" rx="10"
+        fill="#8dd7f7" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.3" stroke-width="2.5"/>
+      <polygon points="300,80 450,80 300,230"
+        fill="#ffffff" opacity="0.16000000000000003"/>
+    </g>
+  
+    <g transform="rotate(-8 640 430)">
+      <rect x="450" y="125" width="520" height="640" rx="10"
+        fill="#8dd7f7" fill-opacity="0.16" stroke="#ffffff" stroke-opacity="0.45" stroke-width="2.5"/>
+      <polygon points="450,125 600,125 450,275"
+        fill="#ffffff" opacity="0.256"/>
+    </g>
+  
+    <g transform="rotate(-8 640 430)">
+      <rect x="600" y="170" width="520" height="640" rx="10"
+        fill="#8dd7f7" fill-opacity="0.22" stroke="#ffffff" stroke-opacity="0.6" stroke-width="2.5"/>
+      <polygon points="600,170 750,170 600,320"
+        fill="#ffffff" opacity="0.35200000000000004"/>
+    </g>
+  <!-- bright glass edge on the front pane -->
+  <g transform="rotate(-8 640 430)">
+    <line x1="1120" y1="170" x2="1120" y2="810" stroke="#8dd7f7" stroke-opacity="0.9" stroke-width="5"/>
+  </g>
+  <!-- bokeh accents -->
+  <g fill="#8dd7f7">
+    <circle cx="1075" cy="150" r="12" opacity="0.45"/>
+    <circle cx="1150" cy="255" r="7" opacity="0.3"/>
+    <circle cx="1010" cy="95" r="5" opacity="0.5"/>
+    <circle cx="190" cy="640" r="9" opacity="0.25"/>
+    <circle cx="130" cy="540" r="5" opacity="0.4"/>
+  </g>
+</svg>
