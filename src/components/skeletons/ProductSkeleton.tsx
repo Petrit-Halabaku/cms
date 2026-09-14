@@ -1,7 +1,7 @@
 import { ProductGridSkeleton, Skeleton } from "@/components/Skeleton";
 
 /** Product detail skeleton — back link + image/info split + specs + related. */
-export default function Loading() {
+export function ProductSkeleton() {
   return (
     <div role="status" aria-label="Loading">
       <span className="sr-only">Loading…</span>

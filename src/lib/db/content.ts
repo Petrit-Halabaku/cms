@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Json, Locale, Tables } from "@/lib/database.types";
 import { LOGO_PATH, storageUrl } from "@/lib/site";
@@ -187,10 +189,10 @@ export async function getCategories(locale: Locale): Promise<Category[]> {
   });
 }
 
-export async function getCategoryBySlug(
+export const getCategoryBySlug = cache(async (
   locale: Locale,
   slug: string,
-): Promise<Category | null> {
+): Promise<Category | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("project_category_translations")
@@ -210,7 +212,7 @@ export async function getCategoryBySlug(
     seoTitle: data.seo_title,
     seoDescription: data.seo_description,
   };
-}
+})
 
 export async function getProductsByCategory(
   locale: Locale,
@@ -252,10 +254,10 @@ export async function getProductsByCategory(
   });
 }
 
-export async function getProductBySlug(
+export const getProductBySlug = cache(async (
   locale: Locale,
   slug: string,
-): Promise<ProductDetail | null> {
+): Promise<ProductDetail | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("project_translations")
@@ -329,7 +331,7 @@ export async function getProductBySlug(
       media: img.media,
     })),
   };
-}
+})
 
 export type ProductCatalogItem = ProductListItem & {
   /** Primary category (drives the product URL). */
@@ -509,10 +511,10 @@ export async function getPage(
 }
 
 /** Resolve a localized top-level page slug (e.g. 'rreth-nesh') to its page key. */
-export async function getPageKeyBySlug(
+export const getPageKeyBySlug = cache(async (
   locale: Locale,
   slug: string,
-): Promise<string | null> {
+): Promise<string | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("page_translations")
@@ -522,7 +524,7 @@ export async function getPageKeyBySlug(
     .maybeSingle();
   if (error) throw error;
   return data?.pages.key ?? null;
-}
+})
 
 /** All non-home top-level page slugs for a locale (for generateStaticParams). */
 export async function getPageSlugs(locale: Locale): Promise<string[]> {

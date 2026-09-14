@@ -1,7 +1,7 @@
 import { HeroSkeleton, ProductGridSkeleton, Skeleton } from "@/components/Skeleton";
 
 /** Category skeleton — hero + brand filter chips + product grid. */
-export default function Loading() {
+export function CategorySkeleton() {
   return (
     <div role="status" aria-label="Loading">
       <span className="sr-only">Loading…</span>

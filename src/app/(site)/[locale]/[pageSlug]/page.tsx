@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { AboutView } from "@/components/pages/AboutView";
 import { ContactView } from "@/components/pages/ContactView";
 import { ProductsView } from "@/components/pages/ProductsView";
 import { ServicesView } from "@/components/pages/ServicesView";
+import { TopLevelPageSkeleton } from "@/components/skeletons/TopLevelPageSkeleton";
 import type { Locale } from "@/lib/database.types";
 import {
   getPage,
@@ -42,16 +44,22 @@ export default async function TopLevelPage({ params }: Props) {
   const { locale, pageSlug } = await params;
   const key = await getPageKeyBySlug(locale, pageSlug);
 
-  switch (key) {
-    case "about":
-      return <AboutView locale={locale} />;
-    case "services":
-      return <ServicesView locale={locale} />;
-    case "products":
-      return <ProductsView locale={locale} />;
-    case "contact":
-      return <ContactView locale={locale} />;
-    default:
-      notFound();
-  }
+  // Resolved before the Suspense boundary below, so an unknown slug 404s with a
+  // real 404 status instead of streaming the 404 UI into an already-sent 200.
+  const view = (() => {
+    switch (key) {
+      case "about":
+        return <AboutView locale={locale} />;
+      case "services":
+        return <ServicesView locale={locale} />;
+      case "products":
+        return <ProductsView locale={locale} />;
+      case "contact":
+        return <ContactView locale={locale} />;
+      default:
+        notFound();
+    }
+  })();
+
+  return <Suspense fallback={<TopLevelPageSkeleton />}>{view}</Suspense>;
 }
