@@ -51,16 +51,36 @@ export const HERO_MEDIA_FOLDER = "homepage";
  * references (e.g. homepage feature-card `key`s) resolve to the localized category
  * slug via `getCategories()`. Only the categories referenced by the homepage cards
  * need entries here.
+ *
+ * Must match the live `project_categories` rows: the catalog re-import renamed
+ * 004/006/007 and moved Aluminium to its own row, so a stale entry here silently
+ * points a card at the wrong category rather than failing.
  */
 export const CATEGORY_KEY_BY_ID: Record<string, string> = {
   "a0000000-0000-4000-8000-000000000001": "windows",
   "a0000000-0000-4000-8000-000000000002": "doors",
   "a0000000-0000-4000-8000-000000000003": "sliding-systems",
-  "a0000000-0000-4000-8000-000000000004": "aluminium",
+  "a0000000-0000-4000-8000-000000000004": "facades",
   "a0000000-0000-4000-8000-000000000005": "glass",
-  "a0000000-0000-4000-8000-000000000006": "blinds",
-  "a0000000-0000-4000-8000-000000000007": "roller-shutters",
+  "a0000000-0000-4000-8000-000000000006": "hardware-mechanisms",
+  "a0000000-0000-4000-8000-000000000007": "shading-shutters",
+  "4163df53-e1cb-47ce-a366-f20a313d03dc": "aluminium",
 };
+
+/**
+ * Card `key`s written before the re-categorization → their current key. Cards
+ * still storing a legacy key (the Albanian offer grid) would otherwise resolve
+ * to the wrong category, or to none once the ids above were corrected.
+ */
+export const LEGACY_CATEGORY_KEYS: Record<string, string> = {
+  blinds: "shading-shutters",
+  "roller-shutters": "shading-shutters",
+};
+
+/** Current key for a card `key`, mapping legacy spellings forward. */
+export function canonicalCategoryKey(key: string): string {
+  return LEGACY_CATEGORY_KEYS[key] ?? key;
+}
 
 /** Reverse of {@link CATEGORY_KEY_BY_ID} — legacy card `key` → category UUID. */
 export const CATEGORY_ID_BY_KEY: Record<string, string> = Object.fromEntries(

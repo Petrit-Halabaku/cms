@@ -58,10 +58,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     getCategoryBySlug(locale, categorySlug),
     getProductBySlug(locale, productSlug),
   ]);
-  if (!category || !product || product.categoryId !== category.id) return {};
+  // Same membership rule as ProductView: a product reachable under a secondary
+  // category must still get its own title, description and alternates.
+  if (!category || !product || !product.categoryIds.includes(category.id)) return {};
+  // A product listed under several categories is reachable at one URL per
+  // category. Canonicalize them all to the primary-category URL so the
+  // duplicates consolidate instead of each self-canonicalizing.
   const [productsPair, categoryPair, productPair] = await Promise.all([
     getPageSlugPair("products"),
-    getCategorySlugPair(category.id),
+    getCategorySlugPair(product.categoryId),
     getProductSlugPair(product.id),
   ]);
   return {
