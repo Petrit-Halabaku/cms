@@ -8,7 +8,13 @@ import { AlertTriangle, ArrowDown, ArrowUp, Check, ChevronDown, Trash2 } from "l
 import { Field, LocaleTabs, inputClass } from "@/components/admin/ui";
 import { saveSectionContent } from "@/lib/admin/actions/pages";
 import { uploadFile } from "@/lib/admin/upload";
-import { CATEGORY_ID_BY_KEY, HERO_MEDIA_FOLDER, isVideoPath, storageUrl } from "@/lib/site";
+import {
+  canonicalCategoryKey,
+  CATEGORY_ID_BY_KEY,
+  HERO_MEDIA_FOLDER,
+  isVideoPath,
+  storageUrl,
+} from "@/lib/site";
 
 /**
  * Friendly editor for one page section's jsonb content, per locale.
@@ -226,7 +232,8 @@ export function SectionEditor({
               image_path?: string;
             }>("items").map((it) => ({
               ...it,
-              category_id: it.category_id || CATEGORY_ID_BY_KEY[it.key ?? ""] || "",
+              category_id:
+                it.category_id || CATEGORY_ID_BY_KEY[canonicalCategoryKey(it.key ?? "")] || "",
             }))}
             onChange={(next) => set("items", next.map(({ key: _legacy, ...rest }) => rest))}
             fields={[

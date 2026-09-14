@@ -12,6 +12,7 @@ import { ProductGallery } from "@/components/ProductGallery";
 import type { Locale } from "@/lib/database.types";
 import {
   getCategoryBySlug,
+  getCategorySlugPair,
   getProductBySlug,
   getProductsByCategory,
 } from "@/lib/db/content";
@@ -33,7 +34,10 @@ export async function ProductView({
     getProductBySlug(locale, productSlug),
   ]);
   // 404 unless the product exists AND belongs to the category in the URL.
-  if (!category || !product || product.categoryId !== category.id) notFound();
+  // Membership is the full set: category listings join through
+  // `product_categories`, so a product shown under a secondary category links
+  // here with that slug. Comparing only the primary `categoryId` 404s those.
+  if (!category || !product || !product.categoryIds.includes(category.id)) notFound();
 
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
@@ -48,7 +52,13 @@ export async function ProductView({
     .filter((media): media is NonNullable<typeof media> => media !== null)
     .filter((media) => media.id !== featured?.id);
   const categoryHref = `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`;
-  const productUrl = `${SITE_URL}${categoryHref}/${product.slug}`;
+  // Breadcrumbs follow the path actually browsed; the Product entity uses the
+  // canonical (primary-category) URL, so the two URLs of a dual-listed product
+  // describe one entity rather than two.
+  const primaryCategoryPair = await getCategorySlugPair(product.categoryId);
+  const canonicalCategoryHref = `${basePath}/${ROUTE_SLUGS[locale].products}/${primaryCategoryPair[locale]}`;
+  const productUrl = `${SITE_URL}${canonicalCategoryHref}/${product.slug}`;
+  const breadcrumbProductUrl = `${SITE_URL}${categoryHref}/${product.slug}`;
   const schemaImages = galleryMedia.length
     ? galleryMedia.map((m) => storageUrl("media", m.storage_path))
     : featured
@@ -78,7 +88,7 @@ export async function ProductView({
             { "@type": "ListItem", position: 1, name: dict.nav.home, item: `${SITE_URL}${basePath}/` },
             { "@type": "ListItem", position: 2, name: dict.nav.products, item: `${SITE_URL}${basePath}/${ROUTE_SLUGS[locale].products}` },
             { "@type": "ListItem", position: 3, name: category.name, item: `${SITE_URL}${categoryHref}` },
-            { "@type": "ListItem", position: 4, name: product.title, item: productUrl },
+            { "@type": "ListItem", position: 4, name: product.title, item: breadcrumbProductUrl },
           ],
         }}
       />

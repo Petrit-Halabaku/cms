@@ -20,7 +20,14 @@ import {
   type PageSection,
 } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
-import { CATEGORY_KEY_BY_ID, isVideoPath, mapsPlaceUrl, ROUTE_SLUGS, storageUrl } from "@/lib/site";
+import {
+  canonicalCategoryKey,
+  CATEGORY_KEY_BY_ID,
+  isVideoPath,
+  mapsPlaceUrl,
+  ROUTE_SLUGS,
+  storageUrl,
+} from "@/lib/site";
 import {
   cardsSchema,
   countersSchema,
@@ -180,7 +187,9 @@ async function Cards({
   const hrefFor = (item: { category_id?: string; key?: string }) => {
     if (item.category_id && slugById.has(item.category_id))
       return `${productsHref}/${slugById.get(item.category_id)}`;
-    if (item.key && slugByKey.has(item.key)) return `${productsHref}/${slugByKey.get(item.key)}`;
+    const legacyKey = item.key ? canonicalCategoryKey(item.key) : null;
+    if (legacyKey && slugByKey.has(legacyKey))
+      return `${productsHref}/${slugByKey.get(legacyKey)}`;
     return productsHref;
   };
 

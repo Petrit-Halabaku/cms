@@ -1,7 +1,7 @@
 import { HeroSkeleton, ProductGridSkeleton, Skeleton } from "@/components/Skeleton";
 
 /** Inner page skeleton (about / services / products / contact) — hero + content. */
-export default function Loading() {
+export function TopLevelPageSkeleton() {
   return (
     <div role="status" aria-label="Loading">
       <span className="sr-only">Loading…</span>

@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Json, Locale, Tables } from "@/lib/database.types";
 import { LOGO_PATH, storageUrl } from "@/lib/site";
@@ -118,6 +120,12 @@ function pickFeatured(images: ImageRow[]): Tables<"media"> | null {
 }
 
 export type ProductDetail = ProductListItem & {
+  /**
+   * Every category the product belongs to (primary + additional). Category
+   * listings join through `product_categories`, so a product is reachable under
+   * any of these — the product page must accept them all, not just `categoryId`.
+   */
+  categoryIds: string[];
   body: string | null;
   brochureUrl: string | null;
   /** Manufacturer brand (partner name), null when unset. */
@@ -181,10 +189,10 @@ export async function getCategories(locale: Locale): Promise<Category[]> {
   });
 }
 
-export async function getCategoryBySlug(
+export const getCategoryBySlug = cache(async (
   locale: Locale,
   slug: string,
-): Promise<Category | null> {
+): Promise<Category | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("project_category_translations")
@@ -204,7 +212,7 @@ export async function getCategoryBySlug(
     seoTitle: data.seo_title,
     seoDescription: data.seo_description,
   };
-}
+})
 
 export async function getProductsByCategory(
   locale: Locale,
@@ -246,10 +254,10 @@ export async function getProductsByCategory(
   });
 }
 
-export async function getProductBySlug(
+export const getProductBySlug = cache(async (
   locale: Locale,
   slug: string,
-): Promise<ProductDetail | null> {
+): Promise<ProductDetail | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("project_translations")
@@ -262,7 +270,7 @@ export async function getProductBySlug(
   if (error) throw error;
   if (!data) return null;
 
-  const [factsRes, imagesRes] = await Promise.all([
+  const [factsRes, imagesRes, categoriesRes] = await Promise.all([
     supabase
       .from("project_facts")
       .select("id, label, value, sort_order")
@@ -274,9 +282,23 @@ export async function getProductBySlug(
       .select("id, sort_order, is_featured, media(*)")
       .eq("project_id", data.project_id)
       .order("sort_order"),
+    supabase
+      .from("product_categories")
+      .select("category_id")
+      .eq("product_id", data.project_id),
   ]);
   if (factsRes.error) throw factsRes.error;
   if (imagesRes.error) throw imagesRes.error;
+  if (categoriesRes.error) throw categoriesRes.error;
+
+  // Union with the primary id: `product_categories` is the source of truth for
+  // listings, but the primary category must stay reachable even if unrowed.
+  const categoryIds = [
+    ...new Set([
+      data.projects.category_id,
+      ...(categoriesRes.data ?? []).map((row) => row.category_id),
+    ]),
+  ];
 
   let brand: string | null = null;
   if (data.projects.brand_partner_id) {
@@ -292,6 +314,7 @@ export async function getProductBySlug(
     id: data.project_id,
     brand,
     categoryId: data.projects.category_id,
+    categoryIds,
     sortOrder: data.projects.sort_order,
     title: data.title,
     slug: data.slug,
@@ -308,7 +331,7 @@ export async function getProductBySlug(
       media: img.media,
     })),
   };
-}
+})
 
 export type ProductCatalogItem = ProductListItem & {
   /** Primary category (drives the product URL). */
@@ -488,10 +511,10 @@ export async function getPage(
 }
 
 /** Resolve a localized top-level page slug (e.g. 'rreth-nesh') to its page key. */
-export async function getPageKeyBySlug(
+export const getPageKeyBySlug = cache(async (
   locale: Locale,
   slug: string,
-): Promise<string | null> {
+): Promise<string | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("page_translations")
@@ -501,7 +524,7 @@ export async function getPageKeyBySlug(
     .maybeSingle();
   if (error) throw error;
   return data?.pages.key ?? null;
-}
+})
 
 /** All non-home top-level page slugs for a locale (for generateStaticParams). */
 export async function getPageSlugs(locale: Locale): Promise<string[]> {

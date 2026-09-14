@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { CategoryView } from "@/components/pages/CategoryView";
+import { CategorySkeleton } from "@/components/skeletons/CategorySkeleton";
 import type { Locale } from "@/lib/database.types";
 import {
   getCategories,
@@ -60,5 +62,16 @@ export default async function CategoryPage({ params }: Props) {
   const { locale, pageSlug, categorySlug } = await params;
   const key = await getPageKeyBySlug(locale, pageSlug);
   if (key !== "products") notFound();
-  return <CategoryView locale={locale} categorySlug={categorySlug} />;
+
+  // Existence is settled here, before the Suspense boundary: a fallback flushed
+  // first would send 200 and leave notFound() unable to change the status.
+  // `getCategoryBySlug` is request-cached, so CategoryView's own call is free.
+  const category = await getCategoryBySlug(locale, categorySlug);
+  if (!category) notFound();
+
+  return (
+    <Suspense fallback={<CategorySkeleton />}>
+      <CategoryView locale={locale} categorySlug={categorySlug} />
+    </Suspense>
+  );
 }

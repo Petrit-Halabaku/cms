@@ -1,7 +1,7 @@
 import { ProductGridSkeleton, Skeleton } from "@/components/Skeleton";
 
 /** Home skeleton — hero (text + window panel) + features + featured products. */
-export default function Loading() {
+export function HomeSkeleton() {
   return (
     <div role="status" aria-label="Loading">
       <span className="sr-only">Loading…</span>
