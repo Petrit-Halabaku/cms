@@ -347,7 +347,7 @@ export async function getAllProducts(locale: Locale): Promise<ProductCatalogItem
   const { data, error } = await supabase
     .from("projects")
     .select(
-      "id, category_id, brand_partner_id, sort_order, project_translations!inner(title, slug), project_images(is_featured, sort_order, media(*)), project_categories!projects_category_id_fkey!inner(sort_order, project_category_translations!inner(name, slug))",
+      "id, category_id, brand_partner_id, sort_order, project_translations!inner(title, slug), project_images(is_featured, sort_order, media(*)), project_categories!projects_category_id_fkey!inner(project_category_translations!inner(name, slug))",
     )
     .eq("project_translations.locale", locale)
     .eq("project_categories.project_category_translations.locale", locale)
@@ -363,29 +363,25 @@ export async function getAllProducts(locale: Locale): Promise<ProductCatalogItem
     for (const p of partners ?? []) brandMap.set(p.id, p.name);
   }
 
-  const items = data
-    .sort((a, b) => {
-      const ca = a.project_categories.sort_order;
-      const cb = b.project_categories.sort_order;
-      return ca !== cb ? ca - cb : a.sort_order - b.sort_order;
-    })
-    .map((row) => {
-      const t = row.project_translations[0];
-      const cat = row.project_categories.project_category_translations[0];
-      return {
-        id: row.id,
-        categoryId: row.category_id,
-        sortOrder: row.sort_order,
-        title: t.title,
-        slug: t.slug,
-        seoTitle: null,
-        seoDescription: null,
-        brand: row.brand_partner_id ? brandMap.get(row.brand_partner_id) ?? null : null,
-        featuredImage: pickFeatured(row.project_images),
-        categorySlug: cat.slug,
-        categoryName: cat.name,
-      };
-    });
+  // Preserve the global positions returned by the query. Category and brand
+  // filters should narrow this sequence without regrouping the products.
+  const items = data.map((row) => {
+    const t = row.project_translations[0];
+    const cat = row.project_categories.project_category_translations[0];
+    return {
+      id: row.id,
+      categoryId: row.category_id,
+      sortOrder: row.sort_order,
+      title: t.title,
+      slug: t.slug,
+      seoTitle: null,
+      seoDescription: null,
+      brand: row.brand_partner_id ? brandMap.get(row.brand_partner_id) ?? null : null,
+      featuredImage: pickFeatured(row.project_images),
+      categorySlug: cat.slug,
+      categoryName: cat.name,
+    };
+  });
 
   // Attach every category each product belongs to (primary + additional).
   const ids = items.map((p) => p.id);

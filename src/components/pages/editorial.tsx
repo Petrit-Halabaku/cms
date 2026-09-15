@@ -79,6 +79,7 @@ export function EditorialHero({
   kicker,
   title,
   titleAccentLast = false,
+  categories,
   subtitle,
   image,
   mediaType = "image",
@@ -91,6 +92,7 @@ export function EditorialHero({
   kicker?: string;
   title: string;
   titleAccentLast?: boolean;
+  categories?: string;
   subtitle: string;
   image: EditorialImage;
   mediaType?: "image" | "video";
@@ -131,6 +133,12 @@ export function EditorialHero({
           delay={0.12}
           className="mt-5 max-w-4xl font-display text-[2.5rem] leading-[1.02] text-white sm:mt-6 sm:text-7xl sm:leading-[0.95]"
         />
+
+        {categories && (
+          <p className="mt-4 max-w-4xl text-base font-medium tracking-wide text-white/90 sm:mt-5 sm:text-xl">
+            {categories}
+          </p>
+        )}
 
         {subtitle && (
           <Reveal delay={0.4} y={18}>

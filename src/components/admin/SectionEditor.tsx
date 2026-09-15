@@ -192,13 +192,16 @@ export function SectionEditor({
           )}
           <div className="mt-5 space-y-4">
         {"heading" in mergeKeys(type) && (
-          <Field label="Heading">
+          <Field label={type === "hero" ? "Heading / slogan" : "Heading"}>
             <input type="text" value={str("heading")} onChange={(e) => set("heading", e.target.value)} className={inputClass} />
           </Field>
         )}
 
         {type === "hero" && (
           <>
+            <Field label="Categories (separate with |)">
+              <input type="text" value={str("categories")} onChange={(e) => set("categories", e.target.value)} className={inputClass} />
+            </Field>
             <Field label="Subheading">
               <textarea rows={2} value={str("subheading")} onChange={(e) => set("subheading", e.target.value)} className={inputClass} />
             </Field>

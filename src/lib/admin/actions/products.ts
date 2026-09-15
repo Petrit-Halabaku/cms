@@ -23,7 +23,7 @@ const productPayloadSchema = z.object({
   categoryId: z.string().uuid(),
   /** Full category membership (primary + additional); primary is always included. */
   categoryIds: z.array(z.string().uuid()).default([]),
-  sortOrder: z.number().int(),
+  sortOrder: z.number().int().min(1, "Position must be at least 1."),
   published: z.boolean(),
   brochureUrl: z.string().nullable(),
   translations: z.object({ en: translationSchema, sq: translationSchema }),
@@ -145,7 +145,30 @@ export async function saveProduct(payload: ProductPayload): Promise<ActionResult
   if (insCatsError) return { ok: false, error: insCatsError.message };
 
   await productRevalidation(supabase, productId!, data.categoryId);
+  await revalidateSite(); // Position changes also move products in other categories.
   return { ok: true, id: productId! };
+}
+
+/** The database moves the product and shifts its neighbours in one transaction. */
+export async function setProductOrder(id: string, sortOrder: number): Promise<ActionResult> {
+  const { supabase } = await requireEditor();
+  const parsed = z.object({
+    id: z.string().uuid(),
+    sortOrder: z.number().int().min(1).max(2147483647),
+  }).safeParse({ id, sortOrder });
+  if (!parsed.success) return { ok: false, error: "Enter a whole-number position starting at 1." };
+
+  const { error } = await supabase
+    .from("projects")
+    .update({ sort_order: parsed.data.sortOrder })
+    .eq("id", parsed.data.id)
+    .select("id")
+    .single();
+  if (error) return { ok: false, error: error.message };
+
+  // Products can belong to several categories; refresh every affected listing.
+  await revalidateSite();
+  return { ok: true, id: parsed.data.id };
 }
 
 export async function setProductPublished(id: string, published: boolean): Promise<ActionResult> {
