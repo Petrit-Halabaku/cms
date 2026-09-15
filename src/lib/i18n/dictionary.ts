@@ -12,6 +12,7 @@ export type Dictionary = {
   header: { menuLabel: string };
   footer: {
     tagline: string;
+    productLine: string;
     quickLinks: string;
     contactTitle: string;
     rights: string;
@@ -74,6 +75,7 @@ const en: Dictionary = {
   header: { menuLabel: "Menu" },
   footer: {
     tagline: "Windows, doors & glass systems in Pejë, Kosovo.",
+    productLine: "Window | Doors | Glass | Blinds",
     quickLinks: "Quick links",
     contactTitle: "Contact",
     rights: "All rights reserved.",
@@ -136,6 +138,7 @@ const sq: Dictionary = {
   header: { menuLabel: "Menyja" },
   footer: {
     tagline: "Dritare, dyer & sisteme xhami në Pejë, Kosovë.",
+    productLine: "Dritare | Dyer | Xham | Roleta",
     quickLinks: "Lidhje të shpejta",
     contactTitle: "Kontakti",
     rights: "Të gjitha të drejtat e rezervuara.",
