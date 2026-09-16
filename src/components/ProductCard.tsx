@@ -23,7 +23,9 @@ export function ProductCard({ product, href, locale, index, priority }: Props) {
           <MediaImage
             media={product.featuredImage}
             locale={locale}
-            className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/card:scale-[1.06]"
+            // Product shots vary in aspect: contain shows the whole item, and the
+            // inset leaves room for the hover zoom so it never crops either.
+            className="h-full w-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/card:scale-[1.04]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={priority}
           />

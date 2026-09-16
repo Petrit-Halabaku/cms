@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, FileDown, ImageOff } from "lucide-react";
 
 import { JsonLd } from "@/components/JsonLd";
-import { MediaImage } from "@/components/MediaImage";
 import { WindowFrame } from "@/components/pages/WindowFrame";
 import { Reveal } from "@/components/motion/Reveal";
 import { SplitHeading } from "@/components/motion/SplitHeading";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductGallery } from "@/components/ProductGallery";
+import { ProductHeroGallery } from "@/components/ProductHeroGallery";
 import type { Locale } from "@/lib/database.types";
 import {
   getCategoryBySlug,
@@ -109,21 +109,20 @@ export async function ProductView({
       <article className="mx-auto max-w-7xl px-4 pt-6 pb-10 sm:px-6 sm:pb-16 lg:px-8">
         <div className="grid gap-6 sm:gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <Reveal y={20}>
-            <WindowFrame aspect="landscape">
-              {featured ? (
-                <MediaImage
-                  media={featured}
-                  locale={locale}
-                  className="h-full w-full object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-              ) : (
+            {featured ? (
+              <ProductHeroGallery
+                featured={featured}
+                gallery={galleryMedia}
+                locale={locale}
+                galleryLabel={dict.product.gallery}
+              />
+            ) : (
+              <WindowFrame aspect="landscape">
                 <span className="grid h-full w-full place-items-center">
                   <ImageOff className="h-14 w-14 text-brand-200" aria-hidden />
                 </span>
-              )}
-            </WindowFrame>
+              </WindowFrame>
+            )}
           </Reveal>
 
           <div>
