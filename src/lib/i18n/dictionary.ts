@@ -12,6 +12,7 @@ export type Dictionary = {
   header: { menuLabel: string };
   footer: {
     tagline: string;
+    productLine: string;
     quickLinks: string;
     contactTitle: string;
     rights: string;
@@ -27,6 +28,12 @@ export type Dictionary = {
   projects: {
     heading: string;
     subheading: string;
+  };
+  markets: {
+    heading: string;
+    body: string;
+    eu: string;
+    usa: string;
   };
   form: {
     name: string;
@@ -68,6 +75,7 @@ const en: Dictionary = {
   header: { menuLabel: "Menu" },
   footer: {
     tagline: "Windows, doors & glass systems in Pejë, Kosovo.",
+    productLine: "Window | Doors | Glass | Blinds",
     quickLinks: "Quick links",
     contactTitle: "Contact",
     rights: "All rights reserved.",
@@ -83,6 +91,12 @@ const en: Dictionary = {
   projects: {
     heading: "Our projects",
     subheading: "A selection of windows, doors and glass systems we've installed across Kosovo.",
+  },
+  markets: {
+    heading: "From Kosovo, with a focus on the EU & USA.",
+    body: "Based in Pejë, Gergoci focuses on customers and partners in the European Union and the United States. Explore our windows, doors and glass systems, and talk to us about your next project.",
+    eu: "European Union",
+    usa: "United States",
   },
   form: {
     name: "Name",
@@ -124,6 +138,7 @@ const sq: Dictionary = {
   header: { menuLabel: "Menyja" },
   footer: {
     tagline: "Dritare, dyer & sisteme xhami në Pejë, Kosovë.",
+    productLine: "Dritare | Dyer | Xham | Roleta",
     quickLinks: "Lidhje të shpejta",
     contactTitle: "Kontakti",
     rights: "Të gjitha të drejtat e rezervuara.",
@@ -139,6 +154,12 @@ const sq: Dictionary = {
   projects: {
     heading: "Projektet tona",
     subheading: "Një përzgjedhje e dritareve, dyerve dhe sistemeve të xhamit që kemi instaluar në Kosovë.",
+  },
+  markets: {
+    heading: "Nga Kosova, me fokus në BE dhe SHBA.",
+    body: "Me seli në Pejë, Gergoci fokusohet te klientët dhe partnerët në Bashkimin Evropian dhe Shtetet e Bashkuara të Amerikës. Zbuloni dritaret, dyert dhe sistemet tona të xhamit dhe na kontaktoni për projektin tuaj të ardhshëm.",
+    eu: "Bashkimi Evropian",
+    usa: "Shtetet e Bashkuara të Amerikës",
   },
   form: {
     name: "Emri",

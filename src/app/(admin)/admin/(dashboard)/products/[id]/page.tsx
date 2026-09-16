@@ -13,7 +13,7 @@ export default async function EditProductPage({ params }: Props) {
   const { id } = await params;
   const { supabase } = await requireEditor();
 
-  const [{ data: product }, { data: categories }] = await Promise.all([
+  const [{ data: product }, { data: categories }, { count }] = await Promise.all([
     supabase
       .from("projects")
       .select(
@@ -26,6 +26,7 @@ export default async function EditProductPage({ params }: Props) {
       .select("id, sort_order, project_category_translations!inner(name, locale)")
       .eq("project_category_translations.locale", "en")
       .order("sort_order"),
+    supabase.from("projects").select("id", { count: "exact", head: true }),
   ]);
   if (!product) notFound();
 
@@ -69,6 +70,7 @@ export default async function EditProductPage({ params }: Props) {
       </h1>
       <div className="mt-6">
         <ProductForm
+          maxPosition={count ?? 1}
           categories={(categories ?? []).map((c) => ({
             id: c.id,
             name: c.project_category_translations[0].name,

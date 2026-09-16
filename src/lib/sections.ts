@@ -28,6 +28,7 @@ const titleBody = z.object({
 
 export const heroSchema = z.object({
   heading: z.string().default(""),
+  categories: z.string().default(""),
   subheading: z.string().default(""),
   cta_label: z.string().default(""),
   phone: z.string().default(""),

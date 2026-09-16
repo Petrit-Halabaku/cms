@@ -27,7 +27,6 @@ export type AboutContent = {
     heading: string;
     paragraphs: string[];
   };
-  stats: { value: number; suffix?: string; label: string }[];
   advantage: {
     heading: string;
     tabs: { label: string; panel: AdvantagePanel }[];
@@ -73,12 +72,6 @@ export const aboutContent: AboutContent = {
       "The 22 years of experience behind our company makes us stronger and more capable in recognizing customer requirements and delivering products made to the highest quality in the market.",
     ],
   },
-
-  stats: [
-    { value: 22, label: "Years Experience" },
-    { value: 1200, label: "Projects Completed" },
-    { value: 1000, suffix: "+", label: "Satisfied Customers" },
-  ],
 
   advantage: {
     heading: "The advantage of Gergoci is its commitment to the quality of its products.",

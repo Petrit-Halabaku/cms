@@ -48,12 +48,13 @@ export type ProductFormInitial = {
 
 type Props = {
   categories: { id: string; name: string }[];
+  maxPosition: number;
   initial?: ProductFormInitial;
   /** Rendered below the form on existing products (images + brochure managers). */
   children?: React.ReactNode;
 };
 
-export function ProductForm({ categories, initial, children }: Props) {
+export function ProductForm({ categories, maxPosition, initial, children }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +113,7 @@ export function ProductForm({ categories, initial, children }: Props) {
   const [extraCategoryIds, setExtraCategoryIds] = useState<string[]>(
     initial?.extraCategoryIds ?? [],
   );
-  const [sortOrder, setSortOrder] = useState(initial?.sortOrder ?? 0);
+  const [sortOrder, setSortOrder] = useState(initial?.sortOrder ?? maxPosition);
   const [published, setPublished] = useState(initial?.published ?? false);
   const [translations, setTranslations] = useState({
     en: initial?.translations.en ?? { ...emptyTranslation },
@@ -369,9 +370,13 @@ export function ProductForm({ categories, initial, children }: Props) {
                 ))}
               </select>
             </Field>
-            <Field label="Sort order" hint="Lower numbers appear first.">
+            <Field label="Position" hint="Exact position in the full product list. Other products shift automatically.">
               <input
                 type="number"
+                min={1}
+                max={maxPosition}
+                step={1}
+                required
                 value={sortOrder}
                 onChange={(e) => {
                   setSortOrder(Number(e.target.value));

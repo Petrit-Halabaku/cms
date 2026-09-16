@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { BrandFilm } from "@/components/pages/BrandFilm";
 import { EditorialHero } from "@/components/pages/editorial";
 import { ProductFilter } from "@/components/ProductFilter";
 import type { Locale } from "@/lib/database.types";
@@ -40,6 +41,19 @@ export async function CategoryView({
   const brandCount = new Set(
     products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
   ).size;
+  const brandFilmLabel = locale === "sq" ? "Video e markës" : "Brand film";
+  const productsBase = `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`;
+  // The film is Alumil's, so lead with that brand's systems when the category
+  // carries any; otherwise the first products in the range stand in.
+  const alumilProducts = products.filter((p) => p.brand?.toLowerCase().includes("alumil"));
+  const filmProducts = (alumilProducts.length > 0 ? alumilProducts : products).slice(0, 4);
+  const filmBrandName = alumilProducts[0]?.brand ?? "Alumil";
+  const filmLinksLabel =
+    alumilProducts.length > 0
+      ? locale === "sq"
+        ? `Sisteme ${filmBrandName}`
+        : `${filmBrandName} systems`
+      : dict.product.related;
   const specs = [
     {
       value: String(products.length),
@@ -61,11 +75,22 @@ export async function CategoryView({
         specs={specs}
       />
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+        {heroKey === "aluminium" && (
+          <BrandFilm
+            src="/videos/alumil-video.mp4"
+            label={brandFilmLabel}
+            brandName={filmBrandName}
+            body={category.seoDescription}
+            links={filmProducts.map((p) => ({ id: p.id, title: p.title, slug: p.slug }))}
+            linksLabel={filmLinksLabel}
+            hrefBase={productsBase}
+          />
+        )}
         {products.length > 0 ? (
           <ProductFilter
             products={products}
             locale={locale}
-            hrefBase={`${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`}
+            hrefBase={productsBase}
           />
         ) : (
           <p className="text-slate-600">{dict.product.noProducts}</p>

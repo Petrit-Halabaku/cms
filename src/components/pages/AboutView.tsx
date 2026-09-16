@@ -10,16 +10,29 @@ import { Odometer } from "@/components/motion/Odometer";
 import { Reveal } from "@/components/motion/Reveal";
 import type { Locale } from "@/lib/database.types";
 import { aboutContent } from "@/data/about";
-import { listGalleryImages } from "@/lib/db/content";
+import { parseCounterValue } from "@/lib/counter-value";
+import { getPage, listGalleryImages } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
+import { countersSchema, parseContent } from "@/lib/sections";
 
 /** Bespoke about page built on the shared editorial system. */
 export async function AboutView({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
-  const { hero, experience, intro, stats, advantage } = aboutContent;
-  const gallery = await listGalleryImages("about-us/gallery");
+  const { hero, experience, intro, advantage } = aboutContent;
+  const [page, gallery] = await Promise.all([
+    getPage(locale, "about"),
+    listGalleryImages("about-us/gallery"),
+  ]);
+  const counters = parseContent(
+    countersSchema,
+    page?.sections.find((section) => section.type === "counters")?.content ?? {},
+  );
+  const stats = counters.items.flatMap((item) => {
+    const parsed = parseCounterValue(item.value);
+    return parsed ? [{ ...item, ...parsed }] : [];
+  });
 
   return (
     <>
@@ -82,46 +95,48 @@ export async function AboutView({ locale }: { locale: Locale }) {
       </section>
 
       {/* Stats — rolling odometers framed like glazing */}
-      <section className="bg-brand-950 py-12 text-white sm:py-24">
-        <EditorialContainer>
-          <Reveal y={12} className="flex items-center gap-3">
-            <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-accent" />
-            <p className="kicker text-accent">By the numbers</p>
-          </Reveal>
+      {stats.length > 0 && (
+        <section className="bg-brand-950 py-12 text-white sm:py-24">
+          <EditorialContainer>
+            <Reveal y={12} className="flex items-center gap-3">
+              <span aria-hidden className="block h-2.5 w-2.5 shrink-0 bg-accent" />
+              <p className="kicker text-accent">{counters.heading || "By the numbers"}</p>
+            </Reveal>
 
-          <Reveal
-            stagger={0.14}
-            className="mt-10 grid grid-cols-3 gap-px overflow-hidden border border-white/12 bg-white/12"
-          >
-            {stats.map((stat) => (
-              <div key={stat.label} className="relative bg-brand-950 px-3 py-6 sm:px-8 sm:py-12">
-                {/* Sightline tick rule — the editorial system's measurement motif. */}
-                <div aria-hidden className="flex items-end gap-1.5">
-                  {Array.from({ length: 9 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="block w-px bg-white/30"
-                      style={{ height: i % 3 === 0 ? "0.7rem" : "0.4rem" }}
+            <Reveal
+              stagger={0.14}
+              className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-px overflow-hidden border border-white/12 bg-white/12"
+            >
+              {stats.map((stat) => (
+                <div key={stat.label} className="relative bg-brand-950 px-3 py-6 sm:px-8 sm:py-12">
+                  {/* Sightline tick rule — the editorial system's measurement motif. */}
+                  <div aria-hidden className="flex items-end gap-1.5">
+                    {Array.from({ length: 9 }).map((_, i) => (
+                      <span
+                        key={i}
+                        className="block w-px bg-white/30"
+                        style={{ height: i % 3 === 0 ? "0.7rem" : "0.4rem" }}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="relative mt-4 sm:mt-7">
+                    <Odometer
+                      value={stat.value}
+                      suffix={stat.suffix}
+                      className="font-display text-3xl leading-none text-white sm:text-7xl"
                     />
-                  ))}
-                </div>
+                  </div>
 
-                <div className="relative mt-4 sm:mt-7">
-                  <Odometer
-                    value={stat.value}
-                    suffix={stat.suffix}
-                    className="font-display text-3xl leading-none text-white sm:text-7xl"
-                  />
+                  <span className="mt-3 block text-[0.65rem] font-medium tracking-[0.12em] text-white/60 uppercase sm:mt-6 sm:text-sm sm:tracking-[0.18em]">
+                    {stat.label}
+                  </span>
                 </div>
-
-                <span className="mt-3 block text-[0.65rem] font-medium tracking-[0.12em] text-white/60 uppercase sm:mt-6 sm:text-sm sm:tracking-[0.18em]">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
-          </Reveal>
-        </EditorialContainer>
-      </section>
+              ))}
+            </Reveal>
+          </EditorialContainer>
+        </section>
+      )}
 
       {/* Advantage */}
       <section className="py-10 sm:py-20">

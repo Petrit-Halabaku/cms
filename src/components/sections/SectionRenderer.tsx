@@ -128,6 +128,7 @@ function Hero({ section, ctx }: { section: PageSection; ctx: Ctx }) {
     <EditorialHero
       kicker={ctx.dict.footer.tagline}
       title={content.heading}
+      categories={content.categories}
       titleAccentLast
       subtitle={content.subheading}
       image={{ path: content.media_path, alt: content.media_alt || content.heading }}

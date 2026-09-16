@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
+import { ImageLightbox, type LightboxImage } from "@/components/ImageLightbox";
 import { gsap, prefersReducedMotion, useGSAP } from "@/components/motion/gsap";
 import { Reveal } from "@/components/motion/Reveal";
 import { WindowFrame } from "@/components/pages/WindowFrame";
 
-export type LightboxImage = { src: string; alt: string };
+export type { LightboxImage } from "@/components/ImageLightbox";
 
 /**
  * Editorial framed-photo gallery + full-screen lightbox. Click a frame to open,
@@ -54,22 +54,6 @@ export function FramedLightboxGallery({
     [images.length],
   );
 
-  // Lightbox keyboard + scroll lock.
-  useEffect(() => {
-    if (openIndex === null) return;
-    document.documentElement.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      if (e.key === "ArrowLeft") step(-1);
-      if (e.key === "ArrowRight") step(1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.documentElement.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [openIndex, close, step]);
-
   const useCarousel = variant === "carousel" && !reduced;
 
   // Seamless infinite marquee + drag-to-scroll. The track holds two identical
@@ -94,7 +78,7 @@ export function FramedLightboxGallery({
       let draggedFar = false;
       let pointerId = -1;
       let wrap = gsap.utils.wrap(0, 1);
-      const speed = 60; // px per second
+      const speed = 100; // px per second
       const DRAG_THRESHOLD = 6; // px before a press becomes a drag
 
       const apply = () => gsap.set(track, { x: wrap(pos) });
@@ -241,11 +225,11 @@ export function FramedLightboxGallery({
         {[...images, ...images].map((image, i) => {
           const realIndex = i % images.length;
           return (
-            <li key={`${image.src}-${i}`} className="w-[78%] shrink-0 sm:w-[46%] lg:w-[30%]">
+            <li key={`${image.src}-${i}`} className="w-[48vw] shrink-0 sm:w-[32vw] lg:w-[24vw]">
               {frame(
                 image,
                 realIndex,
-                "(max-width: 640px) 78vw, (max-width: 1024px) 46vw, 30vw",
+                "(max-width: 640px) 48vw, (max-width: 1024px) 32vw, 24vw",
                 priorityFirst && i === 0,
               )}
             </li>
@@ -271,69 +255,7 @@ export function FramedLightboxGallery({
         layout
       )}
 
-      {openIndex !== null && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-brand-950/95 p-4 sm:p-6"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Gallery"
-          onClick={close}
-        >
-          <button
-            type="button"
-            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
-            onClick={close}
-            aria-label="Close"
-          >
-            <X className="h-6 w-6" />
-          </button>
-
-          {images.length > 1 && (
-            <button
-              type="button"
-              className="absolute left-3 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 sm:left-6"
-              onClick={(e) => {
-                e.stopPropagation();
-                step(-1);
-              }}
-              aria-label="Previous image"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-          )}
-
-          <div className="relative h-[82vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={images[openIndex].src}
-              alt={images[openIndex].alt}
-              fill
-              priority
-              sizes="100vw"
-              className="object-contain"
-            />
-          </div>
-
-          {images.length > 1 && (
-            <button
-              type="button"
-              className="absolute right-3 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 sm:right-6"
-              onClick={(e) => {
-                e.stopPropagation();
-                step(1);
-              }}
-              aria-label="Next image"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          )}
-
-          {images.length > 1 && (
-            <span className="absolute bottom-5 left-1/2 -translate-x-1/2 font-display text-sm tracking-[0.18em] text-white/70">
-              {String(openIndex + 1).padStart(2, "0")} / {String(images.length).padStart(2, "0")}
-            </span>
-          )}
-        </div>
-      )}
+      <ImageLightbox images={images} openIndex={openIndex} onClose={close} onStep={step} />
     </div>
   );
 }

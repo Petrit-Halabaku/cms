@@ -52,7 +52,7 @@ export function Footer({ dict, basePath = "", routes, contact, logoUrl }: Props)
             <span className="font-display text-xl tracking-tight">{SITE_NAME.toUpperCase()}</span>
           </div>
           <p className="mt-5 max-w-xs font-serif text-xl italic text-brand-100/80">
-            {dict.footer.tagline}
+            {dict.footer.productLine}
           </p>
           {contact.phone && (
             <a

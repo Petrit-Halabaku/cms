@@ -30,7 +30,7 @@
 
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --animate-marquee: marquee 36s linear infinite;
+  --animate-marquee: marquee 10s linear infinite;
 
   @keyframes marquee {
     to {
