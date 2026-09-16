@@ -225,11 +225,11 @@ export function FramedLightboxGallery({
         {[...images, ...images].map((image, i) => {
           const realIndex = i % images.length;
           return (
-            <li key={`${image.src}-${i}`} className="w-[92%] shrink-0 sm:w-[66%] lg:w-[48%]">
+            <li key={`${image.src}-${i}`} className="w-[48vw] shrink-0 sm:w-[32vw] lg:w-[24vw]">
               {frame(
                 image,
                 realIndex,
-                "(max-width: 640px) 92vw, (max-width: 1024px) 66vw, 48vw",
+                "(max-width: 640px) 48vw, (max-width: 1024px) 32vw, 24vw",
                 priorityFirst && i === 0,
               )}
             </li>
