@@ -156,7 +156,15 @@ export function CategoryForm({ initial }: Props) {
         >
           {pending ? "Saving…" : initial ? "Save changes" : "Create category"}
         </button>
-        {initial && <ConfirmButton onConfirm={remove}>Delete category</ConfirmButton>}
+        {initial && (
+          <ConfirmButton
+            onConfirm={remove}
+            title="Delete category"
+            message="The category will be permanently deleted. This can’t be undone."
+          >
+            Delete category
+          </ConfirmButton>
+        )}
       </div>
     </div>
   );

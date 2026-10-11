@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, X } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { gsap, prefersReducedMotion, useGSAP } from "@/components/motion/gsap";
@@ -11,6 +12,8 @@ import type { Locale } from "@/lib/database.types";
 import type { SlugPair } from "@/lib/db/content";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import { SITE_NAME } from "@/lib/site";
+
+type NavCategory = { name: string; slug: string };
 
 type Props = {
   dict: Dictionary;
@@ -22,34 +25,145 @@ type Props = {
     services: string;
     products: string;
     contact: string;
-    getQuote: string;
   };
   locale: Locale;
   slugPairs: SlugPair[];
+  /** Business phone for the click-to-call CTA. */
+  phone?: string;
+  categories?: NavCategory[];
+  /** CMS-managed logo URL (cache-busted) from the site layout. */
+  logoUrl: string;
 };
 
-function Wordmark({ basePath }: { basePath: string }) {
+const navLinkClass = (active: boolean) =>
+  `relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-brand-700 after:transition-transform after:duration-300 hover:text-brand-700 hover:after:origin-left hover:after:scale-x-100 ${
+    active ? "text-brand-700 after:scale-x-100" : "text-slate-700"
+  }`;
+
+const isCategoryActive = (productsHref: string, categorySlug: string, pathname: string) => {
+  const categoryPath = `${productsHref}/${categorySlug}`;
+  return pathname === categoryPath || pathname.startsWith(`${categoryPath}/`);
+};
+
+function ProductsNavItem({
+  href,
+  label,
+  active,
+  categories,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  categories: NavCategory[];
+}) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setDropdownOpen(false);
+  }, [pathname]);
+
+  if (categories.length === 0) {
+    return (
+      <Link href={href} className={navLinkClass(active)}>
+        {label}
+      </Link>
+    );
+  }
+
+  const closeDropdown = () => setDropdownOpen(false);
+
+  return (
+    <div
+      className="group relative"
+      onMouseEnter={() => setDropdownOpen(true)}
+      onMouseLeave={closeDropdown}
+      onFocus={() => setDropdownOpen(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) closeDropdown();
+      }}
+    >
+      <Link
+        href={href}
+        className={`${navLinkClass(active)} inline-flex items-center gap-1`}
+        aria-haspopup="true"
+        aria-expanded={dropdownOpen}
+        onClick={closeDropdown}
+      >
+        {label}
+        <ChevronDown
+          aria-hidden
+          className={`h-3.5 w-3.5 transition-transform duration-300 ease-expo group-hover:rotate-180 ${
+            dropdownOpen ? "rotate-180" : ""
+          }`}
+        />
+      </Link>
+      <div
+        className={`absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 transition-opacity duration-200 ${
+          dropdownOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <ul
+          role="menu"
+          aria-label={label}
+          className="overflow-hidden rounded-lg border border-line bg-paper py-1 shadow-[0_8px_30px_rgba(1,38,83,0.12)]"
+        >
+          {categories.map((category) => {
+            const active = isCategoryActive(href, category.slug, pathname);
+            return (
+              <li key={category.slug} role="none">
+                <Link
+                  href={`${href}/${category.slug}`}
+                  role="menuitem"
+                  aria-current={active ? "page" : undefined}
+                  className={`block px-4 py-2.5 text-sm transition-colors ${
+                    active
+                      ? "bg-brand-50 font-medium text-brand-700"
+                      : "text-slate-700 hover:bg-brand-50 hover:text-brand-700"
+                  }`}
+                  onClick={closeDropdown}
+                >
+                  {category.name}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function Wordmark({ basePath, logoUrl }: { basePath: string; logoUrl: string }) {
   return (
     <Link href={`${basePath}/`} className="group flex items-center gap-2.5">
-      <span className="grid h-8 w-8 place-items-center bg-brand-700 font-display text-base text-white transition-colors group-hover:bg-brand-800">
-        G
-      </span>
+      <Image
+        src={logoUrl}
+        alt=""
+        aria-hidden
+        width={32}
+        height={32}
+        unoptimized
+        className="h-8 w-8 object-contain transition-transform group-hover:scale-105"
+      />
       <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
     </Link>
   );
 }
 
-export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props) {
+export function Header({ dict, basePath = "", routes, locale, slugPairs, phone, categories = [], logoUrl }: Props) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement>(null);
 
+  const productsHref = `${basePath}/${routes.products}`;
+
   const items = [
     { href: `${basePath}/`, label: dict.nav.home },
     { href: `${basePath}/${routes.about}`, label: dict.nav.about },
     { href: `${basePath}/${routes.services}`, label: dict.nav.services },
-    { href: `${basePath}/${routes.products}`, label: dict.nav.products },
+    { href: productsHref, label: dict.nav.products, categories },
     { href: `${basePath}/${routes.contact}`, label: dict.nav.contact },
   ];
 
@@ -95,34 +209,37 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
     <>
     <header
       className={`sticky top-0 z-40 border-b transition-all duration-300 ${
-        scrolled ? "border-line bg-paper/90 shadow-[0_1px_0_0_rgba(23,43,102,0.04)] backdrop-blur-md" : "border-transparent"
+        scrolled ? "border-line bg-paper/90 shadow-[0_1px_0_0_rgba(1,38,83,0.07)] backdrop-blur-md" : "border-transparent"
       }`}
     >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Wordmark basePath={basePath} />
+          <Wordmark basePath={basePath} logoUrl={logoUrl} />
 
         <nav className="hidden items-center gap-7 md:flex" aria-label={dict.header.menuLabel}>
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-brand-700 after:transition-transform after:duration-300 hover:text-brand-700 hover:after:origin-left hover:after:scale-x-100 ${
-                isActive(item.href) ? "text-brand-700 after:scale-x-100" : "text-slate-700"
-              }`}
+          {items.map((item) =>
+            item.categories ? (
+              <ProductsNavItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                active={isActive(item.href)}
+                categories={item.categories}
+              />
+            ) : (
+              <Link key={item.href} href={item.href} className={navLinkClass(isActive(item.href))}>
+                {item.label}
+              </Link>
+            ),
+          )}
+          {phone && (
+            <a
+              href={`tel:${phone.replace(/\s/g, "")}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-brand-700 py-2 pr-4.5 pl-4 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
             >
-              {item.label}
-            </Link>
-          ))}
-          <Link
-            href={`${basePath}/${routes.getQuote}`}
-            className="group inline-flex items-center gap-1.5 rounded-full bg-brand-700 py-2 pr-3.5 pl-4.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800"
-          >
-            {dict.nav.getQuote}
-            <ArrowUpRight
-              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden
-            />
-          </Link>
+              <Phone className="h-4 w-4" aria-hidden />
+              {dict.common.callNow}
+            </a>
+          )}
           <LanguageSwitcher locale={locale} slugPairs={slugPairs} />
         </nav>
 
@@ -156,9 +273,15 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
 
           <div className="flex h-18 items-center justify-between px-4 sm:px-6">
             <Link href={`${basePath}/`} onClick={() => setOpen(false)} className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center bg-white font-display text-base text-brand-800">
-                G
-              </span>
+              <Image
+                src={logoUrl}
+                alt=""
+                aria-hidden
+                width={32}
+                height={32}
+                unoptimized
+                className="h-8 w-8 object-contain"
+              />
               <span className="font-display text-lg tracking-tight">{SITE_NAME.toUpperCase()}</span>
             </Link>
             <button
@@ -173,32 +296,56 @@ export function Header({ dict, basePath = "", routes, locale, slugPairs }: Props
 
           <nav className="flex flex-1 flex-col justify-center gap-1 px-6" aria-label={dict.header.menuLabel}>
             {items.map((item, i) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                data-menu-item
-                className={`flex items-baseline gap-4 py-2.5 font-display text-4xl tracking-tight transition-colors ${
-                  isActive(item.href) ? "text-white" : "text-white/55 hover:text-white"
-                }`}
-                onClick={() => setOpen(false)}
-              >
-                <span className="font-serif text-sm font-normal italic text-brand-100/60">
-                  0{i + 1}
-                </span>
-                {item.label}
-              </Link>
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  data-menu-item
+                  className={`flex items-baseline gap-4 py-2.5 font-display text-4xl tracking-tight transition-colors ${
+                    isActive(item.href) ? "text-white" : "text-white/55 hover:text-white"
+                  }`}
+                  onClick={() => setOpen(false)}
+                >
+                  <span className="font-serif text-sm font-normal italic text-brand-100/60">
+                    0{i + 1}
+                  </span>
+                  {item.label}
+                </Link>
+                {item.categories && item.categories.length > 0 && (
+                  <ul className="mb-2 ml-10 space-y-1 border-l border-white/10 pl-4">
+                    {item.categories.map((category) => {
+                      const categoryActive = isCategoryActive(item.href, category.slug, pathname);
+                      return (
+                        <li key={category.slug}>
+                          <Link
+                            href={`${item.href}/${category.slug}`}
+                            aria-current={categoryActive ? "page" : undefined}
+                            className={`block py-1.5 text-base transition-colors ${
+                              categoryActive ? "font-medium text-white" : "text-white/45 hover:text-white"
+                            }`}
+                            onClick={() => setOpen(false)}
+                          >
+                            {category.name}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
             ))}
           </nav>
 
           <div data-menu-foot className="border-t border-white/10 px-6 py-6">
-            <Link
-              href={`${basePath}/${routes.getQuote}`}
-              className="flex w-full items-center justify-between rounded-full bg-white px-6 py-3.5 font-display text-base text-brand-800"
-              onClick={() => setOpen(false)}
-            >
-              {dict.nav.getQuote}
-              <ArrowUpRight className="h-5 w-5" aria-hidden />
-            </Link>
+            {phone && (
+              <a
+                href={`tel:${phone.replace(/\s/g, "")}`}
+                className="flex w-full items-center justify-between rounded-full bg-white px-6 py-3.5 font-display text-base text-brand-800"
+                onClick={() => setOpen(false)}
+              >
+                {dict.common.callNow}
+                <Phone className="h-5 w-5" aria-hidden />
+              </a>
+            )}
             <LanguageSwitcher
               locale={locale}
               slugPairs={slugPairs}

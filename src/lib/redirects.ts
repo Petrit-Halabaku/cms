@@ -8,7 +8,6 @@
 export const WP_EXACT_REDIRECTS: Record<string, string> = {
   "/about-us": "/about",
   "/about-us/contact-us": "/contact",
-  "/about-us/get-quote": "/get-quote",
   "/service": "/services",
   "/single-shop": "/products",
 };
@@ -55,7 +54,6 @@ export const EN_TO_SQ_SEGMENT: Record<string, string> = {
   services: "sherbimet",
   products: "produktet",
   contact: "kontakti",
-  "get-quote": "kerko-oferte",
   windows: "dritare",
   doors: "dyer",
   "sliding-systems": "sisteme-rreshqitese",

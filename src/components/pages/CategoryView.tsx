@@ -1,13 +1,26 @@
 import { notFound } from "next/navigation";
 
-import { Reveal } from "@/components/motion/Reveal";
-import { PageHero } from "@/components/PageHero";
-import { ProductGrid } from "@/components/ProductCard";
+import { BrandFilm } from "@/components/pages/BrandFilm";
+import { EditorialHero } from "@/components/pages/editorial";
+import { ProductFilter } from "@/components/ProductFilter";
 import type { Locale } from "@/lib/database.types";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { ROUTE_SLUGS } from "@/lib/site";
+
+/** Stable, locale-independent hero key per category (keyed by the fixed UUID),
+ *  so EN + SQ share one file at /hero/categories/<key>/hero.webp. */
+const CATEGORY_HERO_KEY: Record<string, string> = {
+  "a0000000-0000-4000-8000-000000000001": "windows",
+  "4163df53-e1cb-47ce-a366-f20a313d03dc": "aluminium",
+  "a0000000-0000-4000-8000-000000000002": "doors",
+  "a0000000-0000-4000-8000-000000000003": "sliding-systems",
+  "a0000000-0000-4000-8000-000000000004": "facades",
+  "a0000000-0000-4000-8000-000000000005": "glass",
+  "a0000000-0000-4000-8000-000000000006": "hardware-mechanisms",
+  "a0000000-0000-4000-8000-000000000007": "shading-shutters",
+};
 
 export async function CategoryView({
   locale,
@@ -22,25 +35,63 @@ export async function CategoryView({
   const products = await getProductsByCategory(locale, category.id);
   const dict = getDictionary(locale);
   const basePath = basePathFor(locale);
+  const heroKey = CATEGORY_HERO_KEY[category.id];
+  // const heroPath = "products/products-image.webp";
+  const heroPath = heroKey ? `hero/categories/${heroKey}.webp` : "products/products-image.webp";
+  const brandCount = new Set(
+    products.map((p) => p.brand).filter((b): b is string => Boolean(b)),
+  ).size;
+  const brandFilmLabel = locale === "sq" ? "Video e markës" : "Brand film";
+  const productsBase = `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}`;
+  // The film is Alumil's, so lead with that brand's systems when the category
+  // carries any; otherwise the first products in the range stand in.
+  const alumilProducts = products.filter((p) => p.brand?.toLowerCase().includes("alumil"));
+  const filmProducts = (alumilProducts.length > 0 ? alumilProducts : products).slice(0, 4);
+  const filmBrandName = alumilProducts[0]?.brand ?? "Alumil";
+  const filmLinksLabel =
+    alumilProducts.length > 0
+      ? locale === "sq"
+        ? `Sisteme ${filmBrandName}`
+        : `${filmBrandName} systems`
+      : dict.product.related;
+  const specs = [
+    {
+      value: String(products.length),
+      label: locale === "sq" ? "Produkte" : "Products",
+    },
+    ...(brandCount > 0
+      ? [{ value: String(brandCount), label: locale === "sq" ? "Marka" : "Brands" }]
+      : []),
+  ];
 
   return (
     <>
-      <PageHero
-        kicker={dict.nav.products}
+      <EditorialHero
+        breadcrumbLabel={dict.nav.products}
+        breadcrumbHref={`${basePath}/${ROUTE_SLUGS[locale].products}`}
         title={category.name}
-        intro={category.description ?? undefined}
+        subtitle={category.description ?? dict.footer.tagline}
+        image={{ path: heroPath, alt: category.name }}
+        specs={specs}
       />
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+        {heroKey === "aluminium" && (
+          <BrandFilm
+            src="/videos/alumil-video.mp4"
+            label={brandFilmLabel}
+            brandName={filmBrandName}
+            body={category.seoDescription}
+            links={filmProducts.map((p) => ({ id: p.id, title: p.title, slug: p.slug }))}
+            linksLabel={filmLinksLabel}
+            hrefBase={productsBase}
+          />
+        )}
         {products.length > 0 ? (
-          <Reveal stagger={0.08}>
-            <ProductGrid
-              products={products}
-              locale={locale}
-              hrefFor={(p) =>
-                `${basePath}/${ROUTE_SLUGS[locale].products}/${category.slug}/${p.slug}`
-              }
-            />
-          </Reveal>
+          <ProductFilter
+            products={products}
+            locale={locale}
+            hrefBase={productsBase}
+          />
         ) : (
           <p className="text-slate-600">{dict.product.noProducts}</p>
         )}

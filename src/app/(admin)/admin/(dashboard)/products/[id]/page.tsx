@@ -13,11 +13,11 @@ export default async function EditProductPage({ params }: Props) {
   const { id } = await params;
   const { supabase } = await requireEditor();
 
-  const [{ data: product }, { data: categories }] = await Promise.all([
+  const [{ data: product }, { data: categories }, { count }] = await Promise.all([
     supabase
       .from("projects")
       .select(
-        "id, category_id, sort_order, published, brochure_url, project_translations(locale, title, slug, body, seo_title, seo_description), project_facts(id, locale, label, value, sort_order), project_images(id, sort_order, is_featured, media(id, storage_path, width, height))",
+        "id, category_id, sort_order, published, brochure_url, project_translations(locale, title, slug, body, seo_title, seo_description), project_facts(id, locale, label, value, sort_order), project_images(id, sort_order, is_featured, media(id, storage_path, width, height)), product_categories(category_id)",
       )
       .eq("id", id)
       .maybeSingle(),
@@ -26,6 +26,7 @@ export default async function EditProductPage({ params }: Props) {
       .select("id, sort_order, project_category_translations!inner(name, locale)")
       .eq("project_category_translations.locale", "en")
       .order("sort_order"),
+    supabase.from("projects").select("id", { count: "exact", head: true }),
   ]);
   if (!product) notFound();
 
@@ -45,9 +46,14 @@ export default async function EditProductPage({ params }: Props) {
       .sort((a, b) => a.sort_order - b.sort_order)
       .map((fact) => ({ label: fact.label, value: fact.value }));
 
+  const extraCategoryIds = (product.product_categories ?? [])
+    .map((pc) => pc.category_id)
+    .filter((cid) => cid !== product.category_id);
+
   const initial: ProductFormInitial = {
     id: product.id,
     categoryId: product.category_id,
+    extraCategoryIds,
     sortOrder: product.sort_order,
     published: product.published,
     brochureUrl: product.brochure_url,
@@ -64,13 +70,18 @@ export default async function EditProductPage({ params }: Props) {
       </h1>
       <div className="mt-6">
         <ProductForm
+          maxPosition={count ?? 1}
           categories={(categories ?? []).map((c) => ({
             id: c.id,
             name: c.project_category_translations[0].name,
           }))}
           initial={initial}
         >
-          <ProductImagesManager productId={product.id} images={images} />
+          <ProductImagesManager
+            productId={product.id}
+            slug={translationFor("en").slug}
+            images={images}
+          />
           <BrochureManager productId={product.id} brochureUrl={product.brochure_url} />
         </ProductForm>
       </div>

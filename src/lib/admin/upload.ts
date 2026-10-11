@@ -7,22 +7,66 @@ import { createClient } from "@/lib/supabase/client";
  * RLS policies authorize it). Returns the storage path to register via a
  * server action.
  */
+const HERO_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
+
 export async function uploadFile(
   bucket: "media" | "brochures",
   file: File,
+  /** Optional folder prefix within the bucket, e.g. "products/<slug>/gallery". */
+  folder?: string,
+  /** When `allowVideo`, the `media` bucket also accepts MP4/WebM/MOV (hero media). */
+  options?: { allowVideo?: boolean },
 ): Promise<{ path: string } | { error: string }> {
+  if (bucket === "media") {
+    const ok =
+      file.type === "image/webp" ||
+      (options?.allowVideo === true && HERO_VIDEO_TYPES.includes(file.type));
+    if (!ok) {
+      return {
+        error: options?.allowVideo
+          ? "Allowed: WebP image or MP4/WebM video."
+          : "Only WebP images are allowed.",
+      };
+    }
+  }
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "bin";
   const safeBase = file.name
     .replace(/\.[^.]+$/, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .slice(0, 40);
-  const path = `${safeBase}-${crypto.randomUUID().slice(0, 8)}.${extension}`;
+  const name = `${safeBase}-${crypto.randomUUID().slice(0, 8)}.${extension}`;
+  const prefix = folder?.replace(/^\/+|\/+$/g, "");
+  const path = prefix ? `${prefix}/${name}` : name;
 
   const supabase = createClient();
   const { error } = await supabase.storage.from(bucket).upload(path, file, {
     contentType: file.type,
     cacheControl: "31536000",
+  });
+  if (error) return { error: error.message };
+  return { path };
+}
+
+/**
+ * Upload to a fixed path, overwriting any existing object. Used for singleton
+ * brand assets (e.g. the site logo) where the URL must stay stable and callers
+ * cache-bust with a version token instead. Same WebP guard and cache lifetime
+ * as `uploadFile`.
+ */
+export async function uploadToPath(
+  bucket: "media" | "brochures",
+  path: string,
+  file: File,
+): Promise<{ path: string } | { error: string }> {
+  if (bucket === "media" && file.type !== "image/webp") {
+    return { error: "Only WebP images are allowed." };
+  }
+  const supabase = createClient();
+  const { error } = await supabase.storage.from(bucket).upload(path, file, {
+    contentType: file.type,
+    cacheControl: "31536000",
+    upsert: true,
   });
   if (error) return { error: error.message };
   return { path };

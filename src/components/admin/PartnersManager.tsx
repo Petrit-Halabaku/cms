@@ -102,7 +102,7 @@ export function PartnersManager({ partners }: { partners: PartnerRow[] }) {
               <Upload className="h-3.5 w-3.5" aria-hidden /> Logo
               <input
                 type="file"
-                accept="image/*"
+                accept="image/webp,.webp"
                 className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
@@ -118,7 +118,11 @@ export function PartnersManager({ partners }: { partners: PartnerRow[] }) {
               <button type="button" onClick={() => move(index, 1)} disabled={pending || index === partners.length - 1} aria-label="Move down" className="p-1 text-slate-400 hover:text-brand-700 disabled:opacity-30">
                 <ArrowDown className="h-4 w-4" />
               </button>
-              <ConfirmButton onConfirm={() => run(() => deletePartner(partner.id))}>
+              <ConfirmButton
+                onConfirm={() => run(() => deletePartner(partner.id))}
+                title="Delete partner"
+                message="The partner will be permanently deleted. This can’t be undone."
+              >
                 Delete
               </ConfirmButton>
             </div>

@@ -1,6 +1,12 @@
 import { z } from "zod";
 
 import type { Json } from "@/lib/database.types";
+import { MAP_LAT, MAP_LNG } from "@/lib/site";
+
+/** CMS jsonb may carry stale rounded coords — env always wins on the public site. */
+function withMapCoords<T extends { lat: number; lng: number }>(data: T): T {
+  return { ...data, lat: MAP_LAT, lng: MAP_LNG };
+}
 
 /**
  * Zod schemas for page_section_translations.content (jsonb), one per
@@ -12,13 +18,24 @@ import type { Json } from "@/lib/database.types";
 const titleBody = z.object({
   title: z.string().default(""),
   body: z.string().default(""),
+  /** Optional stable key (e.g. "windows") linking a card to a product category. */
+  key: z.string().optional(),
+  /** Product category id this card links to (CMS-editable; wins over `key`). */
+  category_id: z.string().optional(),
+  /** Optional decorative background photo (storage path in the `media` bucket). */
+  image_path: z.string().optional(),
 });
 
 export const heroSchema = z.object({
   heading: z.string().default(""),
+  categories: z.string().default(""),
   subheading: z.string().default(""),
   cta_label: z.string().default(""),
   phone: z.string().default(""),
+  /** Background media path in the `media` bucket (image or video); shared across locales. */
+  media_path: z.string().default(""),
+  /** Alt text for a background image (ignored for video). */
+  media_alt: z.string().default(""),
 });
 
 export const cardsSchema = z.object({
@@ -35,14 +52,17 @@ export const countersSchema = z.object({
   items: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
 });
 
-export const locationSchema = z.object({
-  heading: z.string().default(""),
-  address: z.string().default(""),
-  phone: z.string().default(""),
-  lat: z.number().default(42.6548),
-  lng: z.number().default(20.3172),
-  hours: z.array(z.object({ days: z.string(), hours: z.string() })).default([]),
-});
+export const locationSchema = z
+  .object({
+    heading: z.string().default(""),
+    address: z.string().default(""),
+    phone: z.string().default(""),
+    phone2: z.string().default(""),
+    lat: z.number().default(MAP_LAT),
+    lng: z.number().default(MAP_LNG),
+    hours: z.array(z.object({ days: z.string(), hours: z.string() })).default([]),
+  })
+  .transform(withMapCoords);
 
 export const ctaSchema = z.object({
   heading: z.string().default(""),
@@ -65,14 +85,17 @@ export const gallerySchema = z.object({
   media_ids: z.array(z.string()).default([]),
 });
 
-export const contactInfoSchema = z.object({
-  heading: z.string().default(""),
-  address: z.string().default(""),
-  phone: z.string().default(""),
-  email: z.string().default(""),
-  lat: z.number().default(42.6548),
-  lng: z.number().default(20.3172),
-});
+export const contactInfoSchema = z
+  .object({
+    heading: z.string().default(""),
+    address: z.string().default(""),
+    phone: z.string().default(""),
+    phone2: z.string().default(""),
+    email: z.string().default(""),
+    lat: z.number().default(MAP_LAT),
+    lng: z.number().default(MAP_LNG),
+  })
+  .transform(withMapCoords);
 
 export type HeroContent = z.infer<typeof heroSchema>;
 export type CardsContent = z.infer<typeof cardsSchema>;

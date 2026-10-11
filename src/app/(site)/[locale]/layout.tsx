@@ -5,10 +5,11 @@ import { notFound } from "next/navigation";
 import "../../globals.css";
 
 import { JsonLd } from "@/components/JsonLd";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import type { Locale } from "@/lib/database.types";
-import { getPage, getSlugMap } from "@/lib/db/content";
+import { getCategories, getLogoUrl, getPage, getSlugMap } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
@@ -79,24 +80,47 @@ export default async function SiteLayout({
   const basePath = basePathFor(locale);
 
   // Footer contact details + language-switcher slug map.
-  const [contactPage, slugPairs] = await Promise.all([
+  const [contactPage, slugPairs, categories, logoUrl] = await Promise.all([
     getPage(locale, "contact"),
     getSlugMap(),
+    getCategories(locale),
+    getLogoUrl(),
   ]);
   const infoSection = contactPage?.sections.find((s) => s.type === "contact-info");
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
 
   return (
-    <html lang={locale} className={`${archivo.variable} ${instrumentSerif.variable} h-full`}>
-      <body className="flex min-h-full flex-col">
+    <html
+      lang={locale}
+      data-scroll-behavior="smooth"
+      className={`${archivo.variable} ${instrumentSerif.variable} h-full`}
+    >
+      {/* suppressHydrationWarning: browser extensions (Grammarly, etc.) inject
+          attributes onto <body> on the client, which React would otherwise flag
+          as a hydration mismatch. Scoped to this element only. */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": `${SITE_URL}/#organization`,
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: logoUrl,
+          }}
+        />
         <JsonLd
           data={{
             "@context": "https://schema.org",
             "@type": "LocalBusiness",
+            "@id": `${SITE_URL}/#localbusiness`,
             name: SITE_NAME,
             url: SITE_URL,
+            logo: logoUrl,
+            image: logoUrl,
             telephone: info.phone || undefined,
             email: info.email || undefined,
+            areaServed: "Kosovo",
             address: {
               "@type": "PostalAddress",
               addressLocality: "Pejë",
@@ -118,14 +142,19 @@ export default async function SiteLayout({
           routes={routes}
           locale={locale}
           slugPairs={slugPairs}
+          phone={info.phone || undefined}
+          categories={categories.map(({ name, slug }) => ({ name, slug }))}
+          logoUrl={logoUrl}
         />
         <main id="main" className="flex-1">{children}</main>
         <Footer
           dict={dict}
           basePath={basePath}
           routes={routes}
-          contact={{ address: info.address, phone: info.phone, email: info.email }}
+          contact={{ address: info.address, phone: info.phone, phone2: info.phone2, email: info.email }}
+          logoUrl={logoUrl}
         />
+        <ScrollToTop label={locale === "sq" ? "Kthehu lart" : "Back to top"} />
       </body>
     </html>
   );

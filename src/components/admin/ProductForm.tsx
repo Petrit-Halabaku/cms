@@ -1,17 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { ArrowDown, ArrowUp, Trash2, Wand2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { AlertTriangle, ArrowDown, ArrowUp, Trash2, Wand2 } from "lucide-react";
 
 import {
   CountedInput,
   ConfirmButton,
+  ConfirmDialog,
   Field,
   LocaleTabs,
   inputClass,
   slugify,
 } from "@/components/admin/ui";
+import {
+  ProductEditorProvider,
+  type CommitResult,
+} from "@/components/admin/product-editor-context";
 import {
   deleteProduct,
   saveProduct,
@@ -32,6 +37,8 @@ const emptyTranslation: Translation = {
 export type ProductFormInitial = {
   id: string;
   categoryId: string;
+  /** Additional categories (excludes the primary) this product also appears under. */
+  extraCategoryIds: string[];
   sortOrder: number;
   published: boolean;
   brochureUrl: string | null;
@@ -41,20 +48,72 @@ export type ProductFormInitial = {
 
 type Props = {
   categories: { id: string; name: string }[];
+  maxPosition: number;
   initial?: ProductFormInitial;
   /** Rendered below the form on existing products (images + brochure managers). */
   children?: React.ReactNode;
 };
 
-export function ProductForm({ categories, initial, children }: Props) {
+export function ProductForm({ categories, maxPosition, initial, children }: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [locale, setLocale] = useState<"en" | "sq">("en");
 
+  // Deferred commits registered by child managers (images, brochure). They run
+  // on Save, after the product fields persist — nothing hits Supabase before.
+  const commits = useRef(new Map<string, () => Promise<CommitResult>>());
+
+  const markDirty = useCallback(() => {
+    setDirty(true);
+    setSaved(false);
+  }, []);
+  const registerCommit = useCallback((key: string, fn: () => Promise<CommitResult>) => {
+    commits.current.set(key, fn);
+  }, []);
+  const unregisterCommit = useCallback((key: string) => {
+    commits.current.delete(key);
+  }, []);
+  const editorCtx = useMemo(
+    () => ({ markDirty, registerCommit, unregisterCommit, pending }),
+    [markDirty, registerCommit, unregisterCommit, pending],
+  );
+
+  // Warn before leaving with unsaved changes — full unloads (reload/close) and
+  // in-app link clicks (sidebar, back link). Cleared once saved. In-app clicks
+  // open the themed dialog; beforeunload has to stay browser-native.
+  const [leaveHref, setLeaveHref] = useState<string | null>(null);
+  useEffect(() => {
+    if (!dirty) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    const onClickCapture = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey) return;
+      const anchor = (e.target as HTMLElement).closest?.("a");
+      const href = anchor?.getAttribute("href");
+      if (!anchor || !href || href.startsWith("#") || anchor.target === "_blank") return;
+      if (anchor.hasAttribute("download")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setLeaveHref(href);
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("click", onClickCapture, true);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("click", onClickCapture, true);
+    };
+  }, [dirty]);
+
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? categories[0]?.id ?? "");
-  const [sortOrder, setSortOrder] = useState(initial?.sortOrder ?? 0);
+  const [extraCategoryIds, setExtraCategoryIds] = useState<string[]>(
+    initial?.extraCategoryIds ?? [],
+  );
+  const [sortOrder, setSortOrder] = useState(initial?.sortOrder ?? maxPosition);
   const [published, setPublished] = useState(initial?.published ?? false);
   const [translations, setTranslations] = useState({
     en: initial?.translations.en ?? { ...emptyTranslation },
@@ -66,12 +125,88 @@ export function ProductForm({ categories, initial, children }: Props) {
   });
 
   const t = translations[locale];
-  const setT = (patch: Partial<Translation>) =>
+  const setT = (patch: Partial<Translation>) => {
     setTranslations((prev) => ({ ...prev, [locale]: { ...prev[locale], ...patch } }));
+    markDirty();
+  };
+
+  // Autofill on new products: the EN title mirrors into the SQ title until the
+  // SQ title is edited by hand, and each locale's slug tracks its title until
+  // that slug is edited by hand. Off on existing products — regenerating a
+  // live slug would change public URLs.
+  const sqTitleTouched = useRef(false);
+  const slugTouched = useRef({ en: false, sq: false });
+
+  const handleTitleChange = (value: string) => {
+    if (locale === "sq") sqTitleTouched.current = true;
+    setTranslations((prev) => {
+      const next = { ...prev, [locale]: { ...prev[locale], title: value } };
+      if (initial) return next;
+      if (!slugTouched.current[locale]) next[locale].slug = slugify(value);
+      if (locale === "en" && !sqTitleTouched.current) {
+        next.sq = {
+          ...next.sq,
+          title: value,
+          slug: slugTouched.current.sq ? next.sq.slug : slugify(value),
+        };
+      }
+      return next;
+    });
+    markDirty();
+  };
+
+  const handleSlugChange = (value: string) => {
+    slugTouched.current[locale] = true;
+    setT({ slug: value });
+  };
+
+  // Required-field validation, shown as red sections + messages after the
+  // first submit attempt (then kept live). The server re-validates with zod.
+  const [errors, setErrors] = useState<{ main: string[]; facts: string[] }>({
+    main: [],
+    facts: [],
+  });
+  const [attempted, setAttempted] = useState(false);
+
+  const computeErrors = useCallback(() => {
+    const main: string[] = [];
+    const factErrors: string[] = [];
+    const locales = new Set<"en" | "sq">();
+    for (const loc of ["en", "sq"] as const) {
+      const L = loc.toUpperCase();
+      const tr = translations[loc];
+      if (!tr.title.trim()) {
+        main.push(`Title (${L}) is required.`);
+        locales.add(loc);
+      }
+      if (!tr.slug.trim()) {
+        main.push(`Slug (${L}) is required.`);
+        locales.add(loc);
+      } else if (!/^[a-z0-9-]+$/.test(tr.slug)) {
+        main.push(`Slug (${L}) may only contain lowercase letters, numbers and dashes.`);
+        locales.add(loc);
+      }
+      facts[loc].forEach((fact, index) => {
+        if (!fact.label.trim() || !fact.value.trim()) {
+          factErrors.push(`Row ${index + 1} (${L}) needs both a label and a value.`);
+          locales.add(loc);
+        }
+      });
+    }
+    return { main, facts: factErrors, locales: [...locales] };
+  }, [translations, facts]);
+
+  useEffect(() => {
+    if (!attempted) return;
+    const { main, facts: factErrors } = computeErrors();
+    setErrors({ main, facts: factErrors });
+  }, [attempted, computeErrors]);
 
   const localeFacts = facts[locale];
-  const setLocaleFacts = (next: Fact[]) =>
+  const setLocaleFacts = (next: Fact[]) => {
     setFacts((prev) => ({ ...prev, [locale]: next }));
+    markDirty();
+  };
 
   const moveFact = (index: number, delta: number) => {
     const next = [...localeFacts];
@@ -84,10 +219,22 @@ export function ProductForm({ categories, initial, children }: Props) {
   function submit() {
     setError(null);
     setSaved(false);
+    setAttempted(true);
+    const validation = computeErrors();
+    setErrors({ main: validation.main, facts: validation.facts });
+    if (validation.main.length > 0 || validation.facts.length > 0) {
+      // Errors may be on the hidden locale tab — bring the first one into view.
+      if (!validation.locales.includes(locale) && validation.locales.length > 0) {
+        setLocale(validation.locales[0]);
+      }
+      return;
+    }
     startTransition(async () => {
+      // 1) Product fields first.
       const result = await saveProduct({
         id: initial?.id,
         categoryId,
+        categoryIds: Array.from(new Set([categoryId, ...extraCategoryIds])),
         sortOrder,
         published,
         brochureUrl: initial?.brochureUrl ?? null,
@@ -98,7 +245,19 @@ export function ProductForm({ categories, initial, children }: Props) {
         setError(result.error);
         return;
       }
+      // 2) Then the deferred commits (images, brochure). Fields are already
+      // saved; a commit failure is reported so the editor can retry.
+      for (const run of commits.current.values()) {
+        const committed = await run();
+        if (!committed.ok) {
+          // Fields saved, but image/brochure changes aren't — stay dirty so the
+          // editor is still warned about leaving, and can retry Save.
+          setError(committed.error);
+          return;
+        }
+      }
       setSaved(true);
+      setDirty(false);
       if (!initial) {
         router.push(`/admin/products/${result.id}`);
       } else {
@@ -109,6 +268,7 @@ export function ProductForm({ categories, initial, children }: Props) {
 
   function remove() {
     if (!initial) return;
+    setDirty(false); // intentional navigation — skip the unsaved-changes prompt
     startTransition(async () => {
       const result = await deleteProduct(initial.id);
       if (!result.ok) {
@@ -120,15 +280,33 @@ export function ProductForm({ categories, initial, children }: Props) {
   }
 
   return (
-    <div className="max-w-3xl space-y-8">
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+    <ProductEditorProvider value={editorCtx}>
+    <div
+      className={`max-w-3xl space-y-8 rounded-xl transition-shadow ${
+        dirty ? "ring-2 ring-amber-400 ring-offset-4 ring-offset-slate-50" : ""
+      }`}
+    >
+      {dirty && (
+        <div className="sticky top-4 z-20 flex items-center gap-2.5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 shadow-sm">
+          <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
+          Draft — you have unsaved changes. They’ll be lost if you leave without saving.
+        </div>
+      )}
+      <div
+        className={`rounded-lg border bg-white p-6 ${
+          errors.main.length > 0 ? "border-red-400 ring-1 ring-red-400" : "border-slate-200"
+        }`}
+      >
         <div className="flex items-center justify-between gap-4">
           <LocaleTabs locale={locale} onChange={setLocale} />
           <label className="flex items-center gap-2 text-sm font-medium text-slate-900">
             <input
               type="checkbox"
               checked={published}
-              onChange={(e) => setPublished(e.target.checked)}
+              onChange={(e) => {
+                setPublished(e.target.checked);
+                markDirty();
+              }}
               className="h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-brand-600"
             />
             Published
@@ -140,7 +318,7 @@ export function ProductForm({ categories, initial, children }: Props) {
             <input
               type="text"
               value={t.title}
-              onChange={(e) => setT({ title: e.target.value })}
+              onChange={(e) => handleTitleChange(e.target.value)}
               className={inputClass}
             />
           </Field>
@@ -151,14 +329,14 @@ export function ProductForm({ categories, initial, children }: Props) {
                 <input
                   type="text"
                   value={t.slug}
-                  onChange={(e) => setT({ slug: e.target.value })}
+                  onChange={(e) => handleSlugChange(e.target.value)}
                   className={inputClass}
                 />
               </Field>
             </div>
             <button
               type="button"
-              onClick={() => setT({ slug: slugify(t.title) })}
+              onClick={() => handleSlugChange(slugify(t.title))}
               title="Generate from title"
               className="mb-5 inline-flex items-center gap-1 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
             >
@@ -179,7 +357,10 @@ export function ProductForm({ categories, initial, children }: Props) {
             <Field label="Category">
               <select
                 value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
+                onChange={(e) => {
+                  setCategoryId(e.target.value);
+                  markDirty();
+                }}
                 className={`${inputClass} bg-white`}
               >
                 {categories.map((category) => (
@@ -189,19 +370,68 @@ export function ProductForm({ categories, initial, children }: Props) {
                 ))}
               </select>
             </Field>
-            <Field label="Sort order" hint="Lower numbers appear first.">
+            <Field label="Position" hint="Exact position in the full product list. Other products shift automatically.">
               <input
                 type="number"
+                min={1}
+                max={maxPosition}
+                step={1}
+                required
                 value={sortOrder}
-                onChange={(e) => setSortOrder(Number(e.target.value))}
+                onChange={(e) => {
+                  setSortOrder(Number(e.target.value));
+                  markDirty();
+                }}
                 className={inputClass}
               />
             </Field>
           </div>
+
+          <div className="mt-5">
+            <Field
+              label="Also in categories"
+              hint="Extra categories this product appears under. The Category above stays its primary (URL) category."
+            >
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {categories
+                  .filter((c) => c.id !== categoryId)
+                  .map((c) => (
+                    <label key={c.id} className="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={extraCategoryIds.includes(c.id)}
+                        onChange={() => {
+                          setExtraCategoryIds((prev) =>
+                            prev.includes(c.id)
+                              ? prev.filter((id) => id !== c.id)
+                              : [...prev, c.id],
+                          );
+                          markDirty();
+                        }}
+                        className="h-4 w-4 rounded-sm border-slate-300 text-brand-700 focus:ring-brand-700"
+                      />
+                      {c.name}
+                    </label>
+                  ))}
+              </div>
+            </Field>
+          </div>
         </div>
+
+        {errors.main.length > 0 && (
+          <ul className="mt-4 space-y-1 text-sm font-medium text-red-600">
+            {errors.main.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <div
+        className={`rounded-lg border bg-white p-6 ${
+          errors.facts.length > 0 ? "border-red-400 ring-1 ring-red-400" : "border-slate-200"
+        }`}
+      >
         <h2 className="text-sm font-semibold text-slate-900">
           Specifications ({locale.toUpperCase()})
         </h2>
@@ -257,6 +487,14 @@ export function ProductForm({ categories, initial, children }: Props) {
         >
           + Add row
         </button>
+
+        {errors.facts.length > 0 && (
+          <ul className="mt-4 space-y-1 text-sm font-medium text-red-600">
+            {errors.facts.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-6">
@@ -287,13 +525,43 @@ export function ProductForm({ categories, initial, children }: Props) {
         <button
           type="button"
           onClick={submit}
-          disabled={pending}
+          disabled={pending || (!!initial && !dirty)}
           className="rounded-md bg-brand-700 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
         >
-          {pending ? "Saving…" : initial ? "Save changes" : "Create product"}
+          {pending
+            ? "Saving…"
+            : initial
+              ? dirty
+                ? "Save changes"
+                : "Saved"
+              : "Create product"}
         </button>
-        {initial && <ConfirmButton onConfirm={remove}>Delete product</ConfirmButton>}
+        {initial && (
+          <ConfirmButton
+            onConfirm={remove}
+            title="Delete product"
+            message="The product and all its content will be permanently deleted. This can’t be undone."
+          >
+            Delete product
+          </ConfirmButton>
+        )}
       </div>
     </div>
+    <ConfirmDialog
+      open={leaveHref !== null}
+      title="Unsaved changes"
+      message="You have unsaved changes. They’ll be lost if you leave without saving."
+      confirmLabel="Leave without saving"
+      cancelLabel="Stay"
+      destructive
+      onConfirm={() => {
+        if (!leaveHref) return;
+        setDirty(false);
+        setLeaveHref(null);
+        router.push(leaveHref);
+      }}
+      onCancel={() => setLeaveHref(null)}
+    />
+    </ProductEditorProvider>
   );
 }

@@ -1,26 +1,35 @@
 import { notFound } from "next/navigation";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-import { ContactForm } from "@/components/forms/ContactForm";
 import { Reveal } from "@/components/motion/Reveal";
-import { PageHero } from "@/components/PageHero";
+import { EditorialHero } from "@/components/pages/editorial";
 import type { Locale } from "@/lib/database.types";
 import { getPage } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
+import { basePathFor } from "@/lib/i18n/urls";
 import { contactInfoSchema, parseContent } from "@/lib/sections";
+import { mapsEmbedUrl, mapsPlaceUrl } from "@/lib/site";
 
 export async function ContactView({ locale }: { locale: Locale }) {
   const page = await getPage(locale, "contact");
   if (!page) notFound();
   const dict = getDictionary(locale);
+  const basePath = basePathFor(locale);
   const infoSection = page.sections.find((s) => s.type === "contact-info");
   const info = parseContent(contactInfoSchema, infoSection?.content ?? {});
 
   return (
     <>
-      <PageHero kicker={dict.footer.tagline} title={page.title} />
+      <EditorialHero
+        breadcrumbLabel={dict.nav.home}
+        breadcrumbHref={basePath || "/"}
+        title={page.title}
+        subtitle={dict.footer.tagline}
+        image={{ path: "hero/contact-image.webp", alt: page.title }}
+        specs={[]}
+      />
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:gap-12 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-8">
         <Reveal>
           <h2 className="flex items-center gap-3 font-display text-xl text-slate-900">
             <span aria-hidden className="block h-2.5 w-2.5 bg-brand-700" />
@@ -40,6 +49,17 @@ export async function ContactView({ locale }: { locale: Locale }) {
                 {info.phone}
               </a>
             </li>
+            {info.phone2 && (
+              <li className="border-b border-line">
+                <a
+                  href={`tel:${info.phone2.replace(/\s/g, "")}`}
+                  className="flex items-center gap-3.5 py-4 text-slate-600 transition-colors hover:text-brand-700"
+                >
+                  <Phone className="h-5 w-5 shrink-0 text-brand-700" aria-hidden />
+                  {info.phone2}
+                </a>
+              </li>
+            )}
             <li className="border-b border-line">
               <a
                 href={`mailto:${info.email}`}
@@ -50,24 +70,29 @@ export async function ContactView({ locale }: { locale: Locale }) {
               </a>
             </li>
           </ul>
-
-          <ContactForm locale={locale} dict={dict} />
         </Reveal>
 
         <Reveal delay={0.15}>
           <div className="relative h-full">
             <div
               aria-hidden
-              className="absolute -top-4 -right-4 h-full w-full border border-brand-200 bg-brand-50"
+              className="absolute -top-3 -right-3 h-full w-full border border-brand-200 bg-brand-50 sm:-top-4 sm:-right-4"
             />
             <div className="relative h-full overflow-hidden border border-line bg-brand-50">
               <iframe
                 title={info.heading}
-                src={`https://www.google.com/maps?q=${info.lat},${info.lng}&z=15&output=embed`}
-                className="h-full min-h-[420px] w-full border-0"
+                src={mapsEmbedUrl(info.lat, info.lng)}
+                className="h-full min-h-[320px] w-full border-0 sm:min-h-[420px]"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 allowFullScreen
+              />
+              <a
+                href={mapsPlaceUrl(info.lat, info.lng)}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${info.heading} — open in Google Maps`}
+                className="absolute inset-0 z-10"
               />
             </div>
           </div>

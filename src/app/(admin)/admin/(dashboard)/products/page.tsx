@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 
+import { ProductOrderInput } from "@/components/admin/ProductOrderInput";
 import { requireEditor } from "@/lib/admin/auth";
 
 export const metadata = { title: "Products — Gergoci Admin" };
@@ -13,7 +14,7 @@ export default async function ProductsAdminPage({ searchParams }: Props) {
   const { q = "", category = "" } = await searchParams;
   const { supabase } = await requireEditor();
 
-  const [{ data: categories }, { data: products }] = await Promise.all([
+  const [{ data: categories }, { data: products }, { count: totalProducts }] = await Promise.all([
     supabase
       .from("project_categories")
       .select("id, sort_order, project_category_translations!inner(name, locale)")
@@ -25,8 +26,9 @@ export default async function ProductsAdminPage({ searchParams }: Props) {
         "id, category_id, sort_order, published, project_translations!inner(title, slug, locale)",
       )
       .eq("project_translations.locale", "en")
-      .order("category_id")
-      .order("sort_order"),
+      .order("sort_order")
+      .order("id"),
+    supabase.from("projects").select("id", { count: "exact", head: true }),
   ]);
 
   const categoryName = new Map(
@@ -86,10 +88,14 @@ export default async function ProductsAdminPage({ searchParams }: Props) {
         </button>
       </form>
 
-      <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <p id="product-order-hint" className="mt-5 text-sm text-slate-500">
+        Enter the exact position in the full product list and press Enter or Save. Other products shift automatically.
+      </p>
+      <div className="mt-3 overflow-x-auto rounded-lg border border-slate-200 bg-white">
         <table className="w-full text-sm">
           <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
             <tr>
+              <th scope="col" className="px-4 py-3">Position</th>
               <th className="px-4 py-3">Title</th>
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Slug</th>
@@ -99,6 +105,14 @@ export default async function ProductsAdminPage({ searchParams }: Props) {
           <tbody className="divide-y divide-slate-100">
             {filtered.map((product) => (
               <tr key={product.id} className="hover:bg-slate-50">
+                <td className="px-4 py-3">
+                  <ProductOrderInput
+                    productId={product.id}
+                    title={product.project_translations[0].title}
+                    sortOrder={product.sort_order}
+                    totalProducts={totalProducts ?? products?.length ?? 0}
+                  />
+                </td>
                 <td className="px-4 py-3 font-medium text-slate-900">
                   <Link href={`/admin/products/${product.id}`} className="hover:text-brand-700">
                     {product.project_translations[0].title}
@@ -123,7 +137,7 @@ export default async function ProductsAdminPage({ searchParams }: Props) {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-slate-500">
+                <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
                   No products match.
                 </td>
               </tr>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="960" viewBox="0 0 1280 960">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#012653"/>
+      <stop offset="1" stop-color="#01173a"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8dd7f7" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#8dd7f7" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="960" fill="url(#bg)"/>
+  <g stroke="#8dd7f7" stroke-opacity="0.055" stroke-width="1"><line x1="64" y1="0" x2="64" y2="960"/><line x1="128" y1="0" x2="128" y2="960"/><line x1="192" y1="0" x2="192" y2="960"/><line x1="256" y1="0" x2="256" y2="960"/><line x1="320" y1="0" x2="320" y2="960"/><line x1="384" y1="0" x2="384" y2="960"/><line x1="448" y1="0" x2="448" y2="960"/><line x1="512" y1="0" x2="512" y2="960"/><line x1="576" y1="0" x2="576" y2="960"/><line x1="640" y1="0" x2="640" y2="960"/><line x1="704" y1="0" x2="704" y2="960"/><line x1="768" y1="0" x2="768" y2="960"/><line x1="832" y1="0" x2="832" y2="960"/><line x1="896" y1="0" x2="896" y2="960"/><line x1="960" y1="0" x2="960" y2="960"/><line x1="1024" y1="0" x2="1024" y2="960"/><line x1="1088" y1="0" x2="1088" y2="960"/><line x1="1152" y1="0" x2="1152" y2="960"/><line x1="1216" y1="0" x2="1216" y2="960"/><line x1="0" y1="64" x2="1280" y2="64"/><line x1="0" y1="128" x2="1280" y2="128"/><line x1="0" y1="192" x2="1280" y2="192"/><line x1="0" y1="256" x2="1280" y2="256"/><line x1="0" y1="320" x2="1280" y2="320"/><line x1="0" y1="384" x2="1280" y2="384"/><line x1="0" y1="448" x2="1280" y2="448"/><line x1="0" y1="512" x2="1280" y2="512"/><line x1="0" y1="576" x2="1280" y2="576"/><line x1="0" y1="640" x2="1280" y2="640"/><line x1="0" y1="704" x2="1280" y2="704"/><line x1="0" y1="768" x2="1280" y2="768"/><line x1="0" y1="832" x2="1280" y2="832"/><line x1="0" y1="896" x2="1280" y2="896"/></g>
+  
+  <!-- door hinted at the right edge (cropped) -->
+  <g stroke="#aecbff" stroke-opacity="0.35" fill="none" stroke-width="6">
+    <rect x="1080" y="200" width="260" height="720" rx="8"/>
+    <rect x="1120" y="240" width="180" height="300" rx="4"/>
+    <rect x="1120" y="580" width="180" height="300" rx="4"/>
+  </g>
+  <circle cx="1102" cy="560" r="9" fill="#aecbff" fill-opacity="0.5"/>
+  <!-- window frame -->
+  <rect x="330" y="130" width="620" height="620" rx="6" fill="none" stroke="#eef3ff" stroke-width="16"/>
+  <rect x="366" y="166" width="548" height="548" rx="3" fill="#8dd7f7" fill-opacity="0.07" stroke="#cfe0ff" stroke-opacity="0.7" stroke-width="5"/>
+  <!-- mullion cross (site hover motif) -->
+  <rect x="632" y="166" width="16" height="548" fill="#eef3ff"/>
+  <rect x="366" y="432" width="548" height="16" fill="#eef3ff"/>
+  <!-- glass reflections -->
+  <g stroke="#ffffff" stroke-opacity="0.14" stroke-width="9">
+    <line x1="420" y1="400" x2="600" y2="200"/>
+    <line x1="450" y1="410" x2="610" y2="235"/>
+    <line x1="410" y1="690" x2="590" y2="490"/>
+    <line x1="690" y1="690" x2="870" y2="490"/>
+  </g>
+  <!-- ajar sash, swung out of the top-right quadrant -->
+  <polygon points="656,180 950,148 950,420 656,424" fill="#cfe0ff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.55" stroke-width="3.5"/>
+  <line x1="656" y1="180" x2="656" y2="424" stroke="#1e54ff" stroke-opacity="0.9" stroke-width="5"/>
+  <line x1="700" y1="196" x2="906" y2="176" stroke="#ffffff" stroke-opacity="0.2" stroke-width="6"/>
+  <!-- handle -->
+  <rect x="654" y="466" width="12" height="56" rx="6" fill="#eef3ff"/>
+  <!-- sill shadow -->
+  <ellipse cx="640" cy="770" rx="330" ry="16" fill="#000000" opacity="0.18"/>
+</svg>

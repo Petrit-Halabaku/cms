@@ -111,6 +111,7 @@ export type Database = {
         Row: {
           id: string;
           category_id: string;
+          brand_partner_id: string | null;
           brochure_url: string | null;
           sort_order: number;
           published: boolean;
@@ -119,6 +120,7 @@ export type Database = {
         Insert: {
           id?: string;
           category_id: string;
+          brand_partner_id?: string | null;
           brochure_url?: string | null;
           sort_order?: number;
           published?: boolean;
@@ -127,6 +129,7 @@ export type Database = {
         Update: {
           id?: string;
           category_id?: string;
+          brand_partner_id?: string | null;
           brochure_url?: string | null;
           sort_order?: number;
           published?: boolean;
@@ -176,6 +179,63 @@ export type Database = {
             columns: ["project_id"];
             isOneToOne: false;
             referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      gallery_images: {
+        Row: {
+          id: string;
+          gallery: string;
+          storage_path: string;
+          alt: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          gallery: string;
+          storage_path: string;
+          alt?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          gallery?: string;
+          storage_path?: string;
+          alt?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      product_categories: {
+        Row: {
+          product_id: string;
+          category_id: string;
+        };
+        Insert: {
+          product_id: string;
+          category_id: string;
+        };
+        Update: {
+          product_id?: string;
+          category_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "product_categories_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "product_categories_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "project_categories";
             referencedColumns: ["id"];
           },
         ];
@@ -311,6 +371,7 @@ export type Database = {
           key: string;
           type: string;
           sort_order: number;
+          active: boolean;
         };
         Insert: {
           id?: string;
@@ -318,6 +379,7 @@ export type Database = {
           key: string;
           type: string;
           sort_order?: number;
+          active?: boolean;
         };
         Update: {
           id?: string;
@@ -325,6 +387,7 @@ export type Database = {
           key?: string;
           type?: string;
           sort_order?: number;
+          active?: boolean;
         };
         Relationships: [
           {

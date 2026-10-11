@@ -5,11 +5,14 @@ export const metadata = { title: "New product — Gergoci Admin" };
 
 export default async function NewProductPage() {
   const { supabase } = await requireEditor();
-  const { data: categories } = await supabase
-    .from("project_categories")
-    .select("id, sort_order, project_category_translations!inner(name, locale)")
-    .eq("project_category_translations.locale", "en")
-    .order("sort_order");
+  const [{ data: categories }, { count }] = await Promise.all([
+    supabase
+      .from("project_categories")
+      .select("id, sort_order, project_category_translations!inner(name, locale)")
+      .eq("project_category_translations.locale", "en")
+      .order("sort_order"),
+    supabase.from("projects").select("id", { count: "exact", head: true }),
+  ]);
 
   return (
     <div>
@@ -19,6 +22,7 @@ export default async function NewProductPage() {
       </p>
       <div className="mt-6">
         <ProductForm
+          maxPosition={(count ?? 0) + 1}
           categories={(categories ?? []).map((c) => ({
             id: c.id,
             name: c.project_category_translations[0].name,

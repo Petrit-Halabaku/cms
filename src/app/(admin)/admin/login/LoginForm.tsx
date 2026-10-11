@@ -37,9 +37,9 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 space-y-4">
+    <form onSubmit={onSubmit} className="mt-8 space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-slate-900">
+        <label htmlFor="email" className="block text-sm font-medium text-white/80">
           Email
         </label>
         <input
@@ -48,11 +48,11 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600"
+          className="mt-1.5 w-full rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:border-brand-200 focus:bg-white/10 focus:outline-none focus:ring-1 focus:ring-brand-200"
         />
       </div>
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-slate-900">
+        <label htmlFor="password" className="block text-sm font-medium text-white/80">
           Password
         </label>
         <input
@@ -61,14 +61,18 @@ export function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600"
+          className="mt-1.5 w-full rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder-white/30 transition-colors focus:border-brand-200 focus:bg-white/10 focus:outline-none focus:ring-1 focus:ring-brand-200"
         />
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          {error}
+        </p>
+      )}
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 disabled:opacity-50"
+        className="w-full rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-700/30 transition-all hover:bg-brand-600 hover:shadow-brand-600/40 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>

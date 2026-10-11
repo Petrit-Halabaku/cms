@@ -10,7 +10,7 @@ import {
 import { localePath } from "@/lib/i18n/urls";
 import { SITE_URL } from "@/lib/site";
 
-const PAGE_KEYS = ["home", "about", "services", "products", "contact", "get-quote"];
+const PAGE_KEYS = ["home", "about", "services", "products", "contact"];
 
 /** Both-locale sitemap with hreflang alternates, generated from the DB. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

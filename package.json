@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "migrate": "supabase db push",
+    "migrate:local": "supabase migration up",
+    "seed": "supabase db reset"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
