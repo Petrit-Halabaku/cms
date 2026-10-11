@@ -29,6 +29,11 @@ export async function uploadFile(
       };
     }
   }
+  if (bucket === "brochures" && file.type !== "application/pdf") {
+    return { error: "Only PDF brochures are allowed." };
+  }
+  const maxSize = bucket === "media" ? 100 * 1024 * 1024 : 20 * 1024 * 1024;
+  if (file.size > maxSize) return { error: "File exceeds the allowed upload size." };
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "bin";
   const safeBase = file.name
     .replace(/\.[^.]+$/, "")

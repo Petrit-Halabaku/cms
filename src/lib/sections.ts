@@ -3,9 +3,9 @@ import { z } from "zod";
 import type { Json } from "@/lib/database.types";
 import { MAP_LAT, MAP_LNG } from "@/lib/site";
 
-/** CMS jsonb may carry stale rounded coords — env always wins on the public site. */
+/** CMS jsonb may carry stale rounded coords — validated env overrides win on the public site. */
 function withMapCoords<T extends { lat: number; lng: number }>(data: T): T {
-  return { ...data, lat: MAP_LAT, lng: MAP_LNG };
+  return { ...data, lat: MAP_LAT ?? data.lat, lng: MAP_LNG ?? data.lng };
 }
 
 /**
@@ -58,8 +58,8 @@ export const locationSchema = z
     address: z.string().default(""),
     phone: z.string().default(""),
     phone2: z.string().default(""),
-    lat: z.number().default(MAP_LAT),
-    lng: z.number().default(MAP_LNG),
+    lat: z.number().min(-90).max(90).default(MAP_LAT ?? 0),
+    lng: z.number().min(-180).max(180).default(MAP_LNG ?? 0),
     hours: z.array(z.object({ days: z.string(), hours: z.string() })).default([]),
   })
   .transform(withMapCoords);
@@ -92,8 +92,8 @@ export const contactInfoSchema = z
     phone: z.string().default(""),
     phone2: z.string().default(""),
     email: z.string().default(""),
-    lat: z.number().default(MAP_LAT),
-    lng: z.number().default(MAP_LNG),
+    lat: z.number().min(-90).max(90).default(MAP_LAT ?? 0),
+    lng: z.number().min(-180).max(180).default(MAP_LNG ?? 0),
   })
   .transform(withMapCoords);
 

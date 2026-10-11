@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
-  : "*.supabase.co";
+  : undefined;
 
 const nextConfig: NextConfig = {
   // Renders app/global-not-found.tsx for unmatched URLs and pre-stream
@@ -11,15 +11,22 @@ const nextConfig: NextConfig = {
   experimental: {
     globalNotFound: true,
   },
+  async headers() {
+    return [{ source: "/:path*", headers: [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "SAMEORIGIN" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+    ] }];
+  },
   images: {
     qualities: [75, 90, 100],
-    remotePatterns: [
+    remotePatterns: supabaseHostname ? [
       {
         protocol: "https",
         hostname: supabaseHostname,
         pathname: "/storage/v1/object/public/**",
       },
-    ],
+    ] : [],
   },
 };
 

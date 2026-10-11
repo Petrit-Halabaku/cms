@@ -1,3 +1,4 @@
+import { requiredEnv } from "@/lib/supabase/env";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -39,8 +40,8 @@ export async function proxy(request: NextRequest) {
     let response = NextResponse.next({ request });
 
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      requiredEnv(process.env.NEXT_PUBLIC_SUPABASE_URL, "NEXT_PUBLIC_SUPABASE_URL"),
+      requiredEnv(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, "NEXT_PUBLIC_SUPABASE_ANON_KEY"),
       {
         cookies: {
           getAll() {
@@ -65,7 +66,7 @@ export async function proxy(request: NextRequest) {
 
     if (pathname === "/admin/login") {
       // Already signed in? Go straight to the dashboard.
-      if (user) {
+      if (user && request.nextUrl.searchParams.get("error") !== "no-profile") {
         const url = request.nextUrl.clone();
         url.pathname = "/admin";
         return NextResponse.redirect(url);
@@ -95,6 +96,8 @@ export async function proxy(request: NextRequest) {
   if (pathname === "/en" || pathname.startsWith("/en/")) {
     const url = request.nextUrl.clone();
     url.pathname = pathname.replace(/^\/en/, "") || "/";
+    // Internal rewrites may re-enter Proxy in the Node runtime.
+    if (request.headers.get("x-gergoci-locale-rewrite") === "en") return NextResponse.next();
     return NextResponse.redirect(url, 301);
   }
 
@@ -106,7 +109,9 @@ export async function proxy(request: NextRequest) {
   // Everything else is English — rewrite internally under /en.
   const url = request.nextUrl.clone();
   url.pathname = pathname === "/" ? "/en" : `/en${pathname}`;
-  return NextResponse.rewrite(url);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-gergoci-locale-rewrite", "en");
+  return NextResponse.rewrite(url, { request: { headers: requestHeaders } });
 }
 
 export const config = {

@@ -8,7 +8,10 @@
     "start": "next start",
     "migrate": "supabase db push",
     "migrate:local": "supabase migration up",
-    "seed": "supabase db reset"
+    "seed": "supabase db reset",
+    "test": "node --experimental-strip-types --test src/lib/*.test.ts src/lib/i18n/*.test.ts src/lib/supabase/*.test.ts",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test:routing": "node --test scripts/tests/routing.test.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -16,9 +19,10 @@
     "@supabase/supabase-js": "^2.108.1",
     "gsap": "^3.15.0",
     "lucide-react": "^1.18.0",
-    "next": "16.2.9",
+    "next": "16.3.8",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "server-only": "0.0.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {

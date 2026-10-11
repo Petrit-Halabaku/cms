@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import type { Locale } from "@/lib/database.types";
+import { LOCALES, isLocale } from "@/lib/i18n/locale";
 import { getCategories, getLogoUrl, getPage, getSlugMap } from "@/lib/db/content";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { basePathFor } from "@/lib/i18n/urls";
@@ -39,11 +39,7 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-const LOCALES: Locale[] = ["en", "sq"];
-
-function isLocale(value: string): value is Locale {
-  return (LOCALES as string[]).includes(value);
-}
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -55,6 +51,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   return {
     metadataBase: new URL(SITE_URL),
     title: SITE_NAME,

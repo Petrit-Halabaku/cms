@@ -1,21 +1,27 @@
 /** Site-wide constants. Content (phone, address, hours) lives in the DB. */
 export const SITE_NAME = "Gergoci";
-export const SITE_URL = "https://gergoci.eu";
+export const SITE_URL = "https://www.gergoci.eu";
+
+function parseCoordinate(value: string | undefined, limit: number): number | undefined {
+  if (!value?.trim()) return undefined;
+  const coordinate = Number(value);
+  return Number.isFinite(coordinate) && Math.abs(coordinate) <= limit ? coordinate : undefined;
+}
 
 /** Map pin coordinates from env — override CMS-stored lat/lng on the public site. */
-export const MAP_LAT = parseFloat(process.env.NEXT_PUBLIC_MAP_LAT!);
-export const MAP_LNG = parseFloat(process.env.NEXT_PUBLIC_MAP_LNG!);
+export const MAP_LAT = parseCoordinate(process.env.NEXT_PUBLIC_MAP_LAT, 90);
+export const MAP_LNG = parseCoordinate(process.env.NEXT_PUBLIC_MAP_LNG, 180);
 
 /** Google Business Profile CID — ties the link to the named listing (not an anonymous pin). */
 export const MAPS_CID = process.env.NEXT_PUBLIC_MAPS_CID ?? "8132120818804921462";
 
 /** Google Maps link centered on env coords and opening the GERGOCI business profile. */
-export function mapsPlaceUrl(lat = MAP_LAT, lng = MAP_LNG): string {
+export function mapsPlaceUrl(lat = MAP_LAT ?? 0, lng = MAP_LNG ?? 0): string {
   return `https://www.google.com/maps?ll=${lat},${lng}&z=19&cid=${MAPS_CID}`;
 }
 
 /** Coordinate embed for the contact-page map iframe (no API key). */
-export function mapsEmbedUrl(lat = MAP_LAT, lng = MAP_LNG): string {
+export function mapsEmbedUrl(lat = MAP_LAT ?? 0, lng = MAP_LNG ?? 0): string {
   return `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
 }
 
