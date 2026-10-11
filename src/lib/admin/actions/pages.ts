@@ -92,12 +92,7 @@ export async function saveSectionContent(
   const schema = SCHEMA_BY_TYPE[type];
   if (!schema) return { ok: false, error: `Unknown section type '${type}'` };
 
-  const { error: settingsError } = await supabase
-    .from("page_sections")
-    .update({ active: settings.active })
-    .eq("id", sectionId);
-  if (settingsError) return { ok: false, error: settingsError.message };
-
+  const validated: Partial<Record<"en" | "sq", Json>> = {};
   for (const locale of ["en", "sq"] as const) {
     const parsed = schema.safeParse(content[locale]);
     if (!parsed.success) {
@@ -106,10 +101,20 @@ export async function saveSectionContent(
         error: `${locale.toUpperCase()}: ${parsed.error.issues[0]?.message ?? "invalid content"}`,
       };
     }
+    validated[locale] = parsed.data as Json;
+  }
+
+  const { error: settingsError } = await supabase
+    .from("page_sections")
+    .update({ active: settings.active })
+    .eq("id", sectionId);
+  if (settingsError) return { ok: false, error: settingsError.message };
+
+  for (const locale of ["en", "sq"] as const) {
     const { error } = await supabase
       .from("page_section_translations")
       .upsert(
-        { section_id: sectionId, locale, content: parsed.data as Json },
+        { section_id: sectionId, locale, content: validated[locale]! },
         { onConflict: "section_id,locale" },
       );
     if (error) return { ok: false, error: error.message };

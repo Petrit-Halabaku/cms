@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 import { CategoryView } from "@/components/pages/CategoryView";
 import { CategorySkeleton } from "@/components/skeletons/CategorySkeleton";
-import type { Locale } from "@/lib/database.types";
+import { isLocale } from "@/lib/i18n/locale";
 import {
   getCategories,
   getCategoryBySlug,
@@ -15,7 +15,7 @@ import {
 import { alternatesFor } from "@/lib/i18n/urls";
 
 type Props = {
-  params: Promise<{ locale: Locale; pageSlug: string; categorySlug: string }>;
+  params: Promise<{ locale: string; pageSlug: string; categorySlug: string }>;
 };
 
 export async function generateStaticParams({
@@ -26,7 +26,8 @@ export async function generateStaticParams({
   // Only `locale` cascades down from parent segments, so return complete
   // combos including pageSlug. Categories only exist under the products page.
   const { locale: rawLocale } = await params;
-  const locale = rawLocale as Locale;
+  if (!isLocale(rawLocale)) notFound();
+  const locale = rawLocale;
   const [productsPair, categories] = await Promise.all([
     getPageSlugPair("products"),
     getCategories(locale),
@@ -39,6 +40,7 @@ export async function generateStaticParams({
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, pageSlug, categorySlug } = await params;
+  if (!isLocale(locale)) notFound();
   const key = await getPageKeyBySlug(locale, pageSlug);
   if (key !== "products") return {};
   const category = await getCategoryBySlug(locale, categorySlug);
@@ -60,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CategoryPage({ params }: Props) {
   const { locale, pageSlug, categorySlug } = await params;
+  if (!isLocale(locale)) notFound();
   const key = await getPageKeyBySlug(locale, pageSlug);
   if (key !== "products") notFound();
 

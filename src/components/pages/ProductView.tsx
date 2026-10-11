@@ -206,7 +206,7 @@ export async function ProductView({
 
       {/* Gallery + related */}
       <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 sm:pb-16 lg:px-8">
-        {galleryMedia.length > 1 && (
+        {galleryMedia.length > 0 && (
           <div className="pt-10 sm:pt-16">
             <ProductGallery images={galleryMedia} locale={locale} heading={dict.product.gallery} />
           </div>

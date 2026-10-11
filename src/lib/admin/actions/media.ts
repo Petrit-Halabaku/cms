@@ -58,12 +58,15 @@ export async function updateMediaAlt(
 export async function deleteMedia(id: string): Promise<ActionResult> {
   const { supabase } = await requireEditor();
 
-  const [{ count: imageRefs }, { count: partnerRefs }, gallerySections] =
+  const [{ count: imageRefs, error: imageError }, { count: partnerRefs, error: partnerError }, gallerySections] =
     await Promise.all([
       supabase.from("project_images").select("*", { count: "exact", head: true }).eq("media_id", id),
       supabase.from("partners").select("*", { count: "exact", head: true }).eq("logo_media_id", id),
       supabase.from("page_section_translations").select("section_id, content"),
     ]);
+
+  const referenceError = imageError ?? partnerError ?? gallerySections.error;
+  if (referenceError) return { ok: false, error: "Could not verify media references. Try again." };
 
   const galleryRefs = (gallerySections.data ?? []).filter((row) => {
     const content = row.content as { media_ids?: unknown };

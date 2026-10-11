@@ -1,3 +1,5 @@
+import { isLocale } from "./locale.ts";
+
 import type { Locale } from "@/lib/database.types";
 
 /** Every UI string in the public site lives here — no hardcoded copy in components. */
@@ -193,5 +195,6 @@ const sq: Dictionary = {
 const dictionaries: Record<Locale, Dictionary> = { en, sq };
 
 export function getDictionary(locale: Locale): Dictionary {
+  if (!isLocale(locale)) throw new RangeError("Unsupported locale passed to getDictionary");
   return dictionaries[locale];
 }

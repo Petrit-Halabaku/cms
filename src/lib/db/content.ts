@@ -234,7 +234,8 @@ export async function getProductsByCategory(
   ];
   const brandMap = new Map<string, string>();
   if (brandIds.length > 0) {
-    const { data: partners } = await supabase.from("partners").select("id, name").in("id", brandIds);
+    const { data: partners, error: partnersError } = await supabase.from("partners").select("id, name").in("id", brandIds);
+    if (partnersError) throw partnersError;
     for (const p of partners ?? []) brandMap.set(p.id, p.name);
   }
 
@@ -359,7 +360,8 @@ export async function getAllProducts(locale: Locale): Promise<ProductCatalogItem
   ];
   const brandMap = new Map<string, string>();
   if (brandIds.length > 0) {
-    const { data: partners } = await supabase.from("partners").select("id, name").in("id", brandIds);
+    const { data: partners, error: partnersError } = await supabase.from("partners").select("id, name").in("id", brandIds);
+    if (partnersError) throw partnersError;
     for (const p of partners ?? []) brandMap.set(p.id, p.name);
   }
 
@@ -387,18 +389,20 @@ export async function getAllProducts(locale: Locale): Promise<ProductCatalogItem
   const ids = items.map((p) => p.id);
   const catsByProduct = new Map<string, { slug: string; name: string }[]>();
   if (ids.length > 0) {
-    const { data: memberships } = await supabase
+    const { data: memberships, error: membershipsError } = await supabase
       .from("product_categories")
       .select("product_id, category_id")
       .in("product_id", ids);
+    if (membershipsError) throw membershipsError;
     const catIds = [...new Set((memberships ?? []).map((m) => m.category_id))];
     const labelById = new Map<string, { slug: string; name: string }>();
     if (catIds.length > 0) {
-      const { data: cats } = await supabase
+      const { data: cats, error: catsError } = await supabase
         .from("project_category_translations")
         .select("category_id, name, slug")
         .eq("locale", locale)
         .in("category_id", catIds);
+      if (catsError) throw catsError;
       for (const c of cats ?? []) labelById.set(c.category_id, { slug: c.slug, name: c.name });
     }
     for (const m of memberships ?? []) {
@@ -468,10 +472,10 @@ export async function getMediaByIds(ids: string[]): Promise<Tables<"media">[]> {
   return ids.flatMap((id) => byId.get(id) ?? []);
 }
 
-export async function getPage(
+export const getPage = cache(async (
   locale: Locale,
   key: string,
-): Promise<PageContent | null> {
+): Promise<PageContent | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("pages")
@@ -504,7 +508,7 @@ export async function getPage(
       }))
       .sort((a, b) => a.sortOrder - b.sortOrder),
   };
-}
+});
 
 /** Resolve a localized top-level page slug (e.g. 'rreth-nesh') to its page key. */
 export const getPageKeyBySlug = cache(async (

@@ -1,16 +1,18 @@
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { HomeView } from "@/components/pages/HomeView";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
-import type { Locale } from "@/lib/database.types";
+import { isLocale } from "@/lib/i18n/locale";
 import { getPage } from "@/lib/db/content";
 import { alternatesFor } from "@/lib/i18n/urls";
 
-type Props = { params: Promise<{ locale: Locale }> };
+type Props = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   const page = await getPage(locale, "home");
   return {
     title: page?.seoTitle ?? page?.title,
@@ -21,6 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  if (!(await getPage(locale, "home"))) notFound();
   // Streaming lives in an explicit boundary rather than a route-level
   // loading.tsx: a route-level fallback flushes the shell (and its 200) before
   // any page below can call notFound(), which turns every 404 into a soft 404.

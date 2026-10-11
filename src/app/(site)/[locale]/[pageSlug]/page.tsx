@@ -7,7 +7,7 @@ import { ContactView } from "@/components/pages/ContactView";
 import { ProductsView } from "@/components/pages/ProductsView";
 import { ServicesView } from "@/components/pages/ServicesView";
 import { TopLevelPageSkeleton } from "@/components/skeletons/TopLevelPageSkeleton";
-import type { Locale } from "@/lib/database.types";
+import { isLocale } from "@/lib/i18n/locale";
 import {
   getPage,
   getPageKeyBySlug,
@@ -16,7 +16,7 @@ import {
 } from "@/lib/db/content";
 import { alternatesFor } from "@/lib/i18n/urls";
 
-type Props = { params: Promise<{ locale: Locale; pageSlug: string }> };
+type Props = { params: Promise<{ locale: string; pageSlug: string }> };
 
 export async function generateStaticParams({
   params,
@@ -24,12 +24,14 @@ export async function generateStaticParams({
   params: { locale: string } | Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const slugs = await getPageSlugs(locale as Locale);
+  if (!isLocale(locale)) notFound();
+  const slugs = await getPageSlugs(locale);
   return slugs.map((pageSlug) => ({ pageSlug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, pageSlug } = await params;
+  if (!isLocale(locale)) notFound();
   const key = await getPageKeyBySlug(locale, pageSlug);
   if (!key) return {};
   const [page, pair] = await Promise.all([getPage(locale, key), getPageSlugPair(key)]);
@@ -42,7 +44,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TopLevelPage({ params }: Props) {
   const { locale, pageSlug } = await params;
+  if (!isLocale(locale)) notFound();
   const key = await getPageKeyBySlug(locale, pageSlug);
+
+  if (key && !(await getPage(locale, key))) notFound();
 
   // Resolved before the Suspense boundary below, so an unknown slug 404s with a
   // real 404 status instead of streaming the 404 UI into an already-sent 200.

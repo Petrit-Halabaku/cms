@@ -10,15 +10,13 @@ export async function setProductBrochure(
 ): Promise<ActionResult> {
   const { supabase } = await requireEditor();
 
-  // Remove the old file when replacing or clearing.
-  const { data: current } = await supabase
+  // Read the old reference before saving; clean up only after the new reference is persisted.
+  const { data: current, error: readError } = await supabase
     .from("projects")
     .select("brochure_url")
     .eq("id", productId)
     .single();
-  if (current?.brochure_url && !current.brochure_url.startsWith("http")) {
-    await supabase.storage.from("brochures").remove([current.brochure_url]);
-  }
+  if (readError) return { ok: false, error: readError.message };
 
   const { error } = await supabase
     .from("projects")
@@ -27,5 +25,9 @@ export async function setProductBrochure(
   if (error) return { ok: false, error: error.message };
 
   await revalidateSite();
+  if (current?.brochure_url && current.brochure_url !== path && !current.brochure_url.startsWith("http")) {
+    const { error: cleanupError } = await supabase.storage.from("brochures").remove([current.brochure_url]);
+    if (cleanupError) console.error("Brochure saved; old file cleanup failed", cleanupError.name);
+  }
   return { ok: true, id: productId };
 }
