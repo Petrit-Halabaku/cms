@@ -345,7 +345,7 @@ async function Partners({ section, ctx }: { section: PageSection; ctx: Ctx }) {
               <MediaImage
                 media={partner.logo}
                 locale={ctx.locale}
-                className="max-h-12 w-auto object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+                className="h-12 w-auto object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
                 sizes="160px"
               />
             ) : (
